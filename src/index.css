@@ -1,0 +1,136 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@font-face {
+  font-family: "KapsalonPrint";
+  src: url("./assets/fonts/KapsalonPrintDEMO.otf") format("opentype"); /* Adjust the format */
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  -webkit-appearance: none;
+  /* font-family: "KapsalonPrint", sans-serif !important;  */
+  font-family: "KapsalonPrint", sans-serif !important;
+}
+
+body {
+  /* background-image: url("./assets/bg.png") !important;
+  background-size: cover;
+  background-repeat: no-repeat; */
+}
+
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+.no-scrollbar {
+  -ms-overflow-style: none; /* IE and Edge */
+  scrollbar-width: none; /* Firefox */
+}
+
+.font-regular {
+  font-family: Gordita, sans-serif !important;
+}
+
+.shadow-text {
+  text-shadow: rgba(0, 0, 0, 0.298039) 0px 5px 0px;
+}
+
+@keyframes marquee {
+  0% {
+    transform: translateX(0%);
+  }
+
+  100% {
+    transform: translateX(-100%);
+  }
+}
+
+.canvas-container {
+  border-radius: 20px;
+}
+
+.canvas-container canvas {
+  border-radius: 20px;
+}
+
+.canvas-mobile,
+.canvas-mobile .canvas-container,
+.canvas-mobile canvas {
+  width: 300px !important;
+  height: 300px !important;
+}
+
+.hero-gradient-Text {
+  font-size: 2rem;
+
+  background: linear-gradient(
+    90deg,
+    #619b69,
+    #174312 8.72%,
+    #ed4f4f 20.57%,
+    #78b68e 37.11%,
+    #28c160 52.98%,
+    #873f1c 66.5%,
+    #df8830 79.35%,
+    #0e5a26 91.31%,
+    #62e088
+  );
+  background-size: 200% auto;
+  color: transparent;
+  -webkit-text-fill-color: transparent;
+  -webkit-background-clip: text;
+  background-clip: text;
+  animation: logoText 5s linear infinite;
+}
+@keyframes logoText {
+  to {
+    background-position: -200%;
+  }
+}
+
+.glow div {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 50px;
+  padding: 0.75rem 0;
+  border-radius: 10rem;
+  font-size: 12px;
+  font-weight: 600;
+  transition: 0.2s ease;
+}
+
+.glow div:hover {
+  transform: scale(1.05);
+}
+
+.red div {
+  border: 3px solid red;
+  padding-left: 10px;
+  padding-right: 10px;
+  background: radial-gradient(
+    70% 130% at 50% 100%,
+    rgb(236, 28, 13),
+    rgba(209, 112, 99, 0.912),
+    #0c0e1c
+  );
+  box-shadow: 0 0.5rem 30px -10px rgba(255, 0, 0, 0.918);
+  display: grid;
+  place-items: center;
+  color: white;
+}
+
+.red div:hover {
+  box-shadow: 0 0.5rem 40px -10px rgba(255, 0, 0, 0.918);
+}
+
+.p-text {
+  font-size: 1rem;
+  font-weight: 700;
+}
+
+.transition-transform {
+  transition: transform 0.5s ease-in-out;
+}
