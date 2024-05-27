@@ -403,7 +403,7 @@ function App() {
       /> */}
 
       <div
-        onClick={() => (window.location.href = "www.catownkimono.com")}
+        onClick={() => (window.location.href = "https://catownkimono.com")}
         className="flex cursor-pointer absolute top-5 left-10"
       >
         <svg
