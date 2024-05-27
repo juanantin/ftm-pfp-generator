@@ -59,11 +59,11 @@ const ImageScroller = ({
                 className="flex items-center justify-center border border-black rounded-md m-2 cursor-pointer transition-transform duration-0 ease-in-out transform hover:scale-125"
                 onClick={() => {
                   if (canvas != null) {
-                    if (category === "hat & mask") {
+                    if (category === "headwear") {
                       canvas.remove(hats);
                     } else if (category === "kimono") {
                       canvas.remove(kimonos);
-                    } else if (category === "weapons") {
+                    } else if (category === "accessory") {
                       canvas.remove(weapons);
                     }
                   }
@@ -85,11 +85,11 @@ const ImageScroller = ({
                   src={img}
                   key={i}
                   onClick={() => {
-                    if (category === "hat & mask") {
+                    if (category === "headwear") {
                       handleAddImage(hats, setHats, img);
                     } else if (category === "kimono") {
                       handleAddImage(kimonos, setKimonos, img);
-                    } else if (category === "weapons") {
+                    } else if (category === "accessory") {
                       handleAddImage(weapons, setWeapons, img);
                     } else if (category === "background") {
                       changeBackgroundImage(img, canvas);

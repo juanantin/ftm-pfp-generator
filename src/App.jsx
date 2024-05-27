@@ -222,9 +222,9 @@ function App() {
   };
 
   const generateRandom = () => {
-    const randomHats = getRandomImage("hat & mask");
+    const randomHats = getRandomImage("headwear");
     const randomKimonos = getRandomImage("kimono");
-    const randomWeapons = getRandomImage("weapons");
+    const randomWeapons = getRandomImage("accessory");
     const randomBackground = getRandomImage("background");
 
     if (randomHats) handleAddImage(hats, setHats, randomHats);
@@ -373,7 +373,7 @@ function App() {
   // };
 
   return (
-    <div className="max-w-screen min-h-screen overflow-x-auto overflow-y-auto bg-gradient-to-r from-blue-700 to-blue-300">
+    <div className="max-w-screen min-h-screen overflow-x-auto overflow-y-auto bg-gradient-to-r from-mainRed to-darkRed">
       {/* <img
         className="w-full h-full absolute top-0 left-0 opacity-[0.4] object-cover md:object-cover"
         src={isMobile ? all_bg_mobile : all_bg}
