@@ -262,14 +262,14 @@ function App() {
   };
 
   const saveImageToLocal = () => {
-    if (canvas) {
-      const link = document.createElement("a");
-      link.download = "cok_meme.png";
-      link.href = saveImageToDataURL();
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
-    }
+    // if (canvas) {
+    const link = document.createElement("a");
+    link.download = "cok_meme.png";
+    link.href = saveImageToDataURL();
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    // }
   };
 
   const saveImageToDataURL = () => {
