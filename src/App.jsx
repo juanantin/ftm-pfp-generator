@@ -395,7 +395,7 @@ function App() {
   // };
 
   return (
-    <div className="max-w-screen min-h-screen overflow-x-auto overflow-y-auto bg-gradient-to-r from-mainRed to-darkRed">
+    <div className=" min-h-screen overflow-y-auto bg-gradient-to-r from-mainRed to-darkRed">
       {/* <img
         className="w-full h-full absolute top-0 left-0 opacity-[0.4] object-cover md:object-cover"
         src={isMobile ? all_bg_mobile : all_bg}
@@ -436,7 +436,7 @@ function App() {
           ref={stickerImgInputRef}
           onChange={handleAddSticker}
         />
-        <div className="w-[80vw] px-5 mx-auto">
+        <div className="flex-1 px-5">
           <div className="flex item-center justify-center gap-5 md:gap-10 mb-5">
             {/* <img
               // onClick={() => window.open("https://madcatcoin.com/", "_blank")}
@@ -578,7 +578,7 @@ function App() {
           </div> */}
         </div>
 
-        <div className="mt-5 flex-1 px-5 lg:pl-0 ">
+        <div className="mt-5 w-full lg:w-[60%] px-5 lg:pl-0 ">
           <div className="flex-1">
             <h1 className="text-4xl text-center text-white mt-10">
               CLICK TO ADD STICKER
