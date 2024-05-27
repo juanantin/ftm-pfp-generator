@@ -262,14 +262,36 @@ function App() {
   };
 
   const saveImageToLocal = () => {
-    // if (canvas) {
-    const link = document.createElement("a");
-    link.download = "cok_meme.png";
-    link.href = saveImageToDataURL();
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
-    // }
+    if (canvas) {
+      const dataURL = saveImageToDataURL();
+      const blob = dataURLToBlob(dataURL);
+      const url = URL.createObjectURL(blob);
+
+      const link = document.createElement("a");
+      link.download = "cok_meme.png";
+      link.href = url;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+
+      // Release the object URL to free memory
+      URL.revokeObjectURL(url);
+    }
+  };
+
+  // Utility function to convert a data URL to a Blob
+  const dataURLToBlob = (dataURL) => {
+    const [header, data] = dataURL.split(",");
+    const mimeString = header.match(/:(.*?);/)[1];
+    const byteString = atob(data);
+    const arrayBuffer = new ArrayBuffer(byteString.length);
+    const uint8Array = new Uint8Array(arrayBuffer);
+
+    for (let i = 0; i < byteString.length; i++) {
+      uint8Array[i] = byteString.charCodeAt(i);
+    }
+
+    return new Blob([uint8Array], { type: mimeString });
   };
 
   const saveImageToDataURL = () => {
