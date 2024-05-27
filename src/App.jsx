@@ -402,8 +402,8 @@ function App() {
         alt=""
       /> */}
 
-      {/* <div
-        onClick={() => (window.location.href = "https://gojionsol.xyz")}
+      <div
+        onClick={() => (window.location.href = "www.catownkimono.com")}
         className="flex cursor-pointer absolute top-5 left-10"
       >
         <svg
@@ -418,7 +418,7 @@ function App() {
           />
         </svg>
         <h1 className="text-3xl">Home</h1>
-      </div> */}
+      </div>
 
       <div className="w-full flex py-10 flex-col lg:flex-row justify-center">
         <input
