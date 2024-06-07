@@ -16,13 +16,11 @@ function App() {
   const [selectedObject, setSelectedObject] = useState(null);
   const [backgroundImage, setBackgroundImage] = useState(null);
   const [isMobile, setIsMobile] = useState(false);
-  const [headwear, setHeadwear] = useState(null);
-  const [eyewear, setEyewear] = useState(null);
-  const [mouth, setMouth] = useState(null);
-  const [kimono, setKimono] = useState(null);
-  const [jewelry, setJewelry] = useState(null);
-  const [accessories, setAccessories] = useState(null);
-  const [pawAccessories, setPawAccessories] = useState(null);
+  const [hats, setHats] = useState(null);
+  // const [faces, setFaces] = useState(null);
+  const [kimonos, setKimonos] = useState(null);
+  // const [pants, Pants] = useState(null);
+  const [weapons, setWeapons] = useState(null);
 
   // const [isAtFront, setIsAtFront] = useState(false);
   // const [isAtBack, setIsAtBack] = useState(false);
@@ -203,10 +201,9 @@ function App() {
     }
     fabric.Image.fromURL(image, (img) => {
       const canvasWidth = canvas.getWidth();
-      const canvasHeight = canvas.getHeight();
 
       img.scaleToWidth(canvasWidth);
-      img.scaleToHeight(canvasHeight);
+      img.scaleToHeight(img.height * (canvasWidth / img.width));
       img.set({
         selectable: false, // Disable selection
       });
@@ -225,30 +222,16 @@ function App() {
   };
 
   const generateRandom = () => {
-    const randomHeadwear = getRandomImage("headwear");
-    if (randomHeadwear) handleAddImage(headwear, setHeadwear, randomHeadwear);
-
-    const randomEyewear = getRandomImage("eyewear");
-    if (randomEyewear) handleAddImage(eyewear, setEyewear, randomEyewear);
-
-    const randomMouth = getRandomImage("mouth");
-    if (randomMouth) handleAddImage(mouth, setMouth, randomMouth);
-
-    const randomKimono = getRandomImage("kimono");
-    if (randomKimono) handleAddImage(kimono, setKimono, randomKimono);
-
-    const randomJewelry = getRandomImage("jewelry");
-    if (randomJewelry) handleAddImage(jewelry, setJewelry, randomJewelry);
-
-    const randomAccessories = getRandomImage("accessories");
-    if (randomAccessories)
-      handleAddImage(accessories, setAccessories, randomAccessories);
-
-    const randomPawAccessories = getRandomImage("paw accessories");
-    if (randomPawAccessories)
-      handleAddImage(pawAccessories, setPawAccessories, randomPawAccessories);
-
+    const randomHats = getRandomImage("headwear");
+    const randomKimonos = getRandomImage("kimono");
+    const randomWeapons = getRandomImage("accessory");
     const randomBackground = getRandomImage("background");
+
+    if (randomHats) handleAddImage(hats, setHats, randomHats);
+    if (randomKimonos) handleAddImage(kimonos, setKimonos, randomKimonos);
+    // if (randomPants) handleAddImage(pants, setPants, randomPants);
+    if (randomWeapons) handleAddImage(weapons, setWeapons, randomWeapons);
+
     if (randomBackground) changeBackgroundImage(randomBackground, canvas);
   };
 
@@ -605,19 +588,12 @@ function App() {
               categorizedImages={stickers}
               handleAddImage={handleAddImage}
               changeBackgroundImage={changeBackgroundImage}
-              headwear={headwear}
-              eyewear={eyewear}
-              mouth={mouth}
-              jewelry={jewelry}
-              accessories={accessories}
-              pawAccessories={pawAccessories}
-              setHeadwear={setHeadwear}
-              setEyewear={setEyewear}
-              setMouth={setMouth}
-              setKimono={setKimono} // Adjusted to maintain consistent naming
-              setJewelry={setJewelry}
-              setAccessories={setAccessories}
-              setPawAccessories={setPawAccessories}
+              hats={hats}
+              kimonos={kimonos}
+              weapons={weapons}
+              setHats={setHats}
+              setKimonos={setKimonos}
+              setWeapons={setWeapons}
             />
           </div>
         </div>

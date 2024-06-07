@@ -5,12 +5,20 @@ const ImageScroller = ({
   categorizedImages,
   handleAddImage,
   changeBackgroundImage,
-  hats,
-  kimonos,
-  weapons,
-  setHats,
-  setKimonos,
-  setWeapons,
+  headwear,
+  eyewear,
+  mouth,
+  kimono,
+  jewelry,
+  accessories,
+  pawAccessories,
+  setHeadwear,
+  setEyewear,
+  setMouth,
+  setKimono,
+  setJewelry,
+  setAccessories,
+  setPawAccessories,
 }) => {
   const refs = useRef({});
 
@@ -60,11 +68,19 @@ const ImageScroller = ({
                 onClick={() => {
                   if (canvas != null) {
                     if (category === "headwear") {
-                      canvas.remove(hats);
+                      canvas.remove(headwear);
+                    } else if (category === "eyewear") {
+                      canvas.remove(eyewear);
+                    } else if (category === "mouth") {
+                      canvas.remove(mouth);
                     } else if (category === "kimono") {
-                      canvas.remove(kimonos);
-                    } else if (category === "accessory") {
-                      canvas.remove(weapons);
+                      canvas.remove(kimono);
+                    } else if (category === "jewelry") {
+                      canvas.remove(jewelry);
+                    } else if (category === "accessories") {
+                      canvas.remove(accessories);
+                    } else if (category === "paw accessories") {
+                      canvas.remove(pawAccessories);
                     }
                   }
                 }}
@@ -86,11 +102,19 @@ const ImageScroller = ({
                   key={i}
                   onClick={() => {
                     if (category === "headwear") {
-                      handleAddImage(hats, setHats, img);
+                      handleAddImage(headwear, setHeadwear, img);
+                    } else if (category === "eyewear") {
+                      handleAddImage(eyewear, setEyewear, img);
+                    } else if (category === "mouth") {
+                      handleAddImage(mouth, setMouth, img);
                     } else if (category === "kimono") {
-                      handleAddImage(kimonos, setKimonos, img);
-                    } else if (category === "accessory") {
-                      handleAddImage(weapons, setWeapons, img);
+                      handleAddImage(kimono, setKimono, img);
+                    } else if (category === "jewelry") {
+                      handleAddImage(jewelry, setJewelry, img);
+                    } else if (category === "accessories") {
+                      handleAddImage(accessories, setAccessories, img);
+                    } else if (category === "paw accessories") {
+                      handleAddImage(pawAccessories, setPawAccessories, img);
                     } else if (category === "background") {
                       changeBackgroundImage(img, canvas);
                     }
