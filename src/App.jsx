@@ -474,7 +474,7 @@ function App() {
   };
 
   const handleAddText = () => {
-    const text = prompt("Enter your text:");
+    const text = prompt("Input text to add:");
 
     if (text) {
       const newText = new fabric.Text(text, {
@@ -503,18 +503,11 @@ function App() {
         onClick={() => window.open("https://fantomsonic.com/", "_blank")}
         className="flex cursor-pointer absolute top-5 left-10"
       >
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          width="32"
-          height="32"
-          viewBox="0 0 24 24"
-        >
-          <path
-            fill="#0c46af" // Changed from white to #0c46af
-            d="m6.921 12.5l5.793 5.792L12 19l-7-7l7-7l.714.708L6.92 11.5H19v1z"
-          />
-        </svg>
-        <h1 className="text-3xl text-white content-font" style={{ fontFamily: "'Finger Paint', cursive !important" }}>Home</h1>
+        <img 
+          src="/lovable-uploads/d3db5656-828a-47f4-b0b4-888cde78af09.png" 
+          alt="Logo" 
+          className="h-10 w-10" 
+        />
       </div>
 
       <div className="w-full flex py-10 flex-col lg:flex-row justify-center">
