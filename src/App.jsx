@@ -1,9 +1,7 @@
 
 import { useState, useEffect, useRef } from "react";
-// Fixed fabric.js import
-import * as fabricjs from "fabric";
-// Handle both old and new fabric.js versions
-const fabric = fabricjs.fabric;
+// Import Fabric.js properly to prevent "Canvas is not a constructor" error
+import { fabric } from "fabric";
 import logo from "./assets/logo.png";
 import ImageScroller from "./ImageScroller";
 import bg from "./assets/bg.png";
@@ -13,9 +11,11 @@ function App() {
   console.log("App is running!"); // Add console log to verify app is running
   const [stickers, setStickers] = useState({});
 
+  // Ensure the canvas ref is properly initialized and persists across renders
   const canvasRef = useRef(null);
   const bgImgInputRef = useRef(null);
   const stickerImgInputRef = useRef(null);
+  const fabricInitialized = useRef(false);
 
   const [canvas, setCanvas] = useState(null);
   const [selectedObject, setSelectedObject] = useState(null);
@@ -113,6 +113,7 @@ function App() {
   }, [canvas, backgroundImage, isMobile]);
 
   useEffect(() => {
+    // Import stickers from asset folders
     const importStickers = async () => {
       // Import images from all subfolders in the 'assets/stickers' directory
       const imageContext = import.meta.glob(
@@ -147,45 +148,62 @@ function App() {
       setStickers(categorizedImages);
     };
 
+    // Start importing stickers
     importStickers();
 
-    const newCanvas = new fabric.Canvas(canvasRef.current, {
-      width: window.innerWidth <= 768 ? 400 : 400,
-      height: window.innerWidth <= 768 ? 400 : 400,
-      backgroundColor: "#fff",
-    });
+    // Only initialize fabric once to prevent errors
+    if (!fabricInitialized.current && typeof fabric !== 'undefined' && fabric.Canvas) {
+      try {
+        console.log("Starting canvas initialization");
+        
+        // Make sure we have a canvas element to work with
+        if (!canvasRef.current) {
+          console.error("Canvas reference element is not available!");
+          return;
+        }
+        
+        console.log("Canvas element found:", canvasRef.current);
+        
+        // Create the Fabric.js canvas instance
+        const newCanvas = new fabric.Canvas(canvasRef.current, {
+          width: window.innerWidth <= 768 ? 400 : 400,
+          height: window.innerWidth <= 768 ? 400 : 400,
+          backgroundColor: "#fff",
+        });
+        
+        console.log("Canvas created successfully:", newCanvas);
+        setCanvas(newCanvas);
+        fabricInitialized.current = true;
 
-    setCanvas(newCanvas);
+        // Set up event listeners
+        newCanvas.on("selection:created", (e) => {
+          setSelectedObject(e.selected[0]);
+        });
 
-    // Event listener for object selection
-    newCanvas.on("selection:created", (e) => {
-      setSelectedObject(e.selected[0]);
-    });
+        newCanvas.on("object:modified", (e) => {
+          setSelectedObject(e.target);
+        });
 
-    newCanvas.on("object:modified", (e) => {
-      setSelectedObject(e.target);
-    });
+        newCanvas.on("selection:cleared", () => {
+          setSelectedObject(null);
+        });
 
-    // Event listener for object deselection
-    newCanvas.on("selection:cleared", () => {
-      setSelectedObject(null);
-    });
+        // Add the main cat image
+        addMainImg(newCanvas, main_cat);
 
-    // fabric.Image.fromURL(bgImg, (img) => {
-    //   newCanvas.setBackgroundImage(img, newCanvas.renderAll.bind(newCanvas), {
-    //     scaleX: newCanvas.width / img.width,
-    //     scaleY: newCanvas.height / img.height,
-    //   });
-    // });
-
-    // changeBackgroundImage(bg, newCanvas);
-    // handleAddImage(null, null, logo);
-
-    addMainImg(newCanvas, main_cat);
-
-    return () => {
-      newCanvas.dispose();
-    };
+        // Clean up function to dispose canvas when component unmounts
+        return () => {
+          if (newCanvas) {
+            console.log("Disposing canvas");
+            newCanvas.dispose();
+            fabricInitialized.current = false;
+          }
+        };
+      } catch (error) {
+        console.error("Error initializing Fabric.js canvas:", error);
+        fabricInitialized.current = false;
+      }
+    }
   }, []);
 
   const addMainImg = (canvas, image) => {
@@ -325,23 +343,33 @@ function App() {
   };
 
   const handleCanvasClear = () => {
-    // canvas.clear();
-    const newCanvas = new fabric.Canvas(canvasRef.current, {
-      width: window.innerWidth <= 768 ? 400 : 400,
-      height: window.innerWidth <= 768 ? 400 : 400,
-      backgroundColor: "#fff",
-    });
+    try {
+      // Dispose of the old canvas first
+      if (canvas) {
+        canvas.dispose();
+      }
+      
+      if (!canvasRef.current) {
+        console.error("Canvas reference is null during clear!");
+        return;
+      }
+      
+      // Create a new canvas instance
+      const newCanvas = new fabric.Canvas(canvasRef.current, {
+        width: window.innerWidth <= 768 ? 400 : 400,
+        height: window.innerWidth <= 768 ? 400 : 400,
+        backgroundColor: "#fff",
+      });
 
-    // const newCanvas = new fabric.Canvas(canvasRef.current, {
-    //   width: 300,
-    //   height: 300,
-    //   backgroundColor: "#fff",
-    // });
-
-    setCanvas(newCanvas);
-    addMainImg(newCanvas, main_cat);
-
-    // changeBackgroundImage(bg, newCanvas);
+      console.log("New canvas created during clear:", newCanvas);
+      setCanvas(newCanvas);
+      fabricInitialized.current = true;
+      
+      // Add main cat image to the new canvas
+      addMainImg(newCanvas, main_cat);
+    } catch (error) {
+      console.error("Error during canvas clear:", error);
+    }
   };
 
   const handleDelete = () => {
