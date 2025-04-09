@@ -499,10 +499,9 @@ function App() {
 
   return (
     <div className="min-h-screen overflow-y-auto bg-black">
-      {/* Top Logo */}
       <div
         onClick={() => window.open("https://fantomsonic.com/", "_blank")}
-        className="flex cursor-pointer absolute top-5 left-10 mb-16"
+        className="flex cursor-pointer absolute top-5 left-10"
       >
         <img 
           src="/lovable-uploads/d3db5656-828a-47f4-b0b4-888cde78af09.png" 
@@ -511,7 +510,7 @@ function App() {
         />
       </div>
 
-      <div className="w-full flex py-10 pt-20 flex-col lg:flex-row justify-center">
+      <div className="w-full flex py-10 flex-col lg:flex-row justify-center">
         <input
           type="file"
           accept="image/*"
@@ -528,91 +527,40 @@ function App() {
           onChange={handleAddSticker}
         />
         <div className="flex-1 px-5">
-          <div className="flex item-center justify-center gap-5 md:gap-10 mb-10">
+          <div className="flex item-center justify-center gap-5 md:gap-10 mb-5">
             <img
               src="/lovable-uploads/13dd479a-7c88-43de-94c7-701c74fae6c8.png"
-              className="w-full max-w-[400px] h-auto mx-auto lg:mt-0"
+              className="w-full max-w-[400px] h-auto mx-auto"
               alt="FANTOM PFP GENERATOR"
-              style={{ margin: '0 auto' }}
             />
           </div>
 
-          {/* Mobile layout - Preview first, then stickers */}
-          {isMobile && (
-            <>
-              {/* Canvas Preview */}
-              <div
-                className="mx-auto mb-7 bg-transparent rounded-xl relative canvas-mobile"
-              >
-                <canvas ref={canvasRef} />
-                {selectedObject && (
-                  <img
-                    onClick={handleDelete}
-                    id="selected-img"
-                    style={{
-                      position: "absolute",
-                      top: selectedObject.top - 30,
-                      left: selectedObject.left,
-                      cursor: "pointer",
-                    }}
-                    src="https://cdn-icons-png.flaticon.com/512/5610/5610967.png"
-                    width={20}
-                    height={20}
-                    alt=""
-                  />
-                )}
-              </div>
-              
-              {/* Stickers */}
-              <div className="mb-8">
-                <ImageScroller
-                  canvas={canvas}
-                  categorizedImages={stickers}
-                  handleAddImage={handleAddImage}
-                  changeBackgroundImage={changeBackgroundImage}
-                  headwear={headwear}
-                  eyewear={eyewear}
-                  mouth={mouth}
-                  kimono={kimono}
-                  jewelry={jewelry}
-                  accessories={accessories}
-                  setHeadwear={setHeadwear}
-                  setEyewear={setEyewear}
-                  setMouth={setMouth}
-                  setKimono={setKimono}
-                  setJewelry={setJewelry}
-                  setAccessories={setAccessories}
-                />
-              </div>
-            </>
-          )}
-
-          {/* Desktop layout - Canvas Preview */}
-          {!isMobile && (
-            <div
-              className="mx-auto mb-7 bg-transparent rounded-xl relative w-[400px]"
-            >
-              <canvas ref={canvasRef} />
-              {selectedObject && (
-                <img
-                  onClick={handleDelete}
-                  id="selected-img"
-                  style={{
-                    position: "absolute",
-                    top: selectedObject.top - 30,
-                    left: selectedObject.left,
-                    cursor: "pointer",
-                  }}
-                  src="https://cdn-icons-png.flaticon.com/512/5610/5610967.png"
-                  width={20}
-                  height={20}
-                  alt=""
-                />
-              )}
-            </div>
-          )}
-          
-          {/* Control buttons - displayed after stickers on mobile */}
+          <div
+            className={`mx-auto mb-7 bg-transparent rounded-xl relative
+          ${isMobile ? "canvas-mobile" : "w-[400px]"}
+          `}
+          >
+            <canvas
+              ref={canvasRef}
+              // style={{ width: "550px", height: "550px" }}
+            />
+            {selectedObject && (
+              <img
+                onClick={handleDelete}
+                id="selected-img"
+                style={{
+                  position: "absolute",
+                  top: selectedObject.top - 30,
+                  left: selectedObject.left,
+                  cursor: "pointer",
+                }}
+                src="https://cdn-icons-png.flaticon.com/512/5610/5610967.png"
+                width={20}
+                height={20}
+                alt=""
+              />
+            )}
+          </div>
           <div className="flex flex-wrap w-full gap-5 justify-center">
             <div
               onClick={() => stickerImgInputRef.current.click()}
@@ -670,8 +618,9 @@ function App() {
             </div>
           </div>
           
-          {/* Result Preview Container - After upload buttons on mobile */}
+          {/* Result Preview Container */}
           <div className="mt-10 flex flex-col items-center justify-center">
+            <h2 className="text-3xl text-center text-white mb-4 content-font" style={{ fontFamily: "'Finger Paint', cursive" }}>Your FTM PFP Preview</h2>
             <div className="border-4 border-[#0c46af] p-2 rounded-lg bg-black/50">
               <img 
                 id="result-preview" 
@@ -683,41 +632,30 @@ function App() {
           </div>
         </div>
 
-        {/* Desktop layout - Show stickers on side aligned with preview */}
-        {!isMobile && (
-          <div className="w-full lg:w-[60%] px-5 lg:pl-0">
-            <div className="flex-1">
-              <ImageScroller
-                canvas={canvas}
-                categorizedImages={stickers}
-                handleAddImage={handleAddImage}
-                changeBackgroundImage={changeBackgroundImage}
-                headwear={headwear}
-                eyewear={eyewear}
-                mouth={mouth}
-                kimono={kimono}
-                jewelry={jewelry}
-                accessories={accessories}
-                setHeadwear={setHeadwear}
-                setEyewear={setEyewear}
-                setMouth={setMouth}
-                setKimono={setKimono}
-                setJewelry={setJewelry}
-                setAccessories={setAccessories}
-              />
-            </div>
+        <div className="mt-5 w-full lg:w-[60%] px-5 lg:pl-0 ">
+          <div className="flex-1">
+            <h1 className="text-4xl text-center text-white mt-10" style={{ fontFamily: "'Finger Paint', cursive" }}>
+              CLICK TO ADD STICKER
+            </h1>
+            <ImageScroller
+              canvas={canvas}
+              categorizedImages={stickers}
+              handleAddImage={handleAddImage}
+              changeBackgroundImage={changeBackgroundImage}
+              headwear={headwear}
+              eyewear={eyewear}
+              mouth={mouth}
+              jewelry={jewelry}
+              accessories={accessories}
+              setHeadwear={setHeadwear}
+              setEyewear={setEyewear}
+              setMouth={setMouth}
+              setKimono={setKimono}
+              setJewelry={setJewelry}
+              setAccessories={setAccessories}
+            />
           </div>
-        )}
-      </div>
-      
-      {/* Footer logo for navigation */}
-      <div className="w-full flex justify-center py-6 mt-8">
-        <img 
-          onClick={() => window.open("https://fantomsonic.com/", "_blank")}
-          src="/lovable-uploads/d3db5656-828a-47f4-b0b4-888cde78af09.png" 
-          alt="Logo" 
-          className="h-12 w-12 cursor-pointer" 
-        />
+        </div>
       </div>
     </div>
   );
