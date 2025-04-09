@@ -156,21 +156,41 @@ function App() {
           // Update preview after modifying object
           setTimeout(() => {
             saveImageToDataURL();
-          }, 300);
+          }, 500);
         });
 
         newCanvas.on("selection:cleared", () => {
           setSelectedObject(null);
         });
 
-        // Add the main cat image
-        addMainImg(newCanvas, main_cat);
+        // Add the main cat image and wait for it to fully load
+        fabric.Image.fromURL(main_cat, (img) => {
+          const canvasWidth = newCanvas.getWidth();
+          img.scaleToWidth(canvasWidth);
+          img.scaleToHeight(img.height * (canvasWidth / img.width));
+          img.set({ selectable: false });
+          
+          newCanvas.add(img);
+          newCanvas.renderAll();
+          
+          // Wait for image to be fully rendered before updating preview
+          setTimeout(() => {
+            console.log("Updating preview after adding main image");
+            newCanvas.renderAll(); // Force another render
+            
+            // Multiple attempts to update preview with increasing delays
+            setTimeout(() => {
+              saveImageToDataURL();
+              
+              // Force an additional update attempt after a longer delay
+              setTimeout(() => {
+                console.log("Final fallback preview update");
+                saveImageToDataURL();
+              }, 1500);
+            }, 1000);
+          }, 800);
+        });
         
-        // Update preview after initialization
-        setTimeout(() => {
-          console.log("Updating preview after canvas init");
-          saveImageToDataURL();
-        }, 500);
       } catch (error) {
         console.error("Error initializing Fabric.js canvas:", error);
         fabricInitialized.current = false;
@@ -250,6 +270,11 @@ function App() {
   }, []);
 
   const addMainImg = (canvas, image) => {
+    if (!canvas) {
+      console.error("Canvas is not available for adding main image");
+      return;
+    }
+    
     fabric.Image.fromURL(image, (img) => {
       const canvasWidth = canvas.getWidth();
 
@@ -257,14 +282,36 @@ function App() {
       img.scaleToHeight(img.height * (canvasWidth / img.width));
       img.set({
         selectable: false, // Disable selection
+        evented: false,    // Prevent events
+        lockMovementX: true,
+        lockMovementY: true,
+        lockScalingX: true,
+        lockScalingY: true,
+        lockRotation: true,
+        hasBorders: false,
+        hasControls: false,
+        zIndex: -1      // Put it at the bottom layer
       });
 
-      canvas.add(img);
+      // Clear existing objects if needed
+      if (canvas.getObjects().length === 0) {
+        canvas.add(img);
+      } else {
+        // Add the image at the bottom
+        canvas.insertAt(img, 0);
+      }
       
-      // Update preview after adding main image
+      canvas.renderAll();
+      
+      // Update preview after adding main image with multiple attempts
       setTimeout(() => {
         saveImageToDataURL();
-      }, 300);
+        
+        // One more attempt after a longer delay
+        setTimeout(() => {
+          saveImageToDataURL();
+        }, 1000);
+      }, 500);
     });
   };
 
@@ -412,10 +459,10 @@ function App() {
         console.log("Canvas has no objects, adding main cat image");
         addMainImg(canvas, main_cat);
         
-        // Give it time to render before exporting
+        // Give it more time to render before exporting
         setTimeout(() => {
           updatePreviewImage();
-        }, 500);
+        }, 1000);
         return '';
       } else {
         return updatePreviewImage();
@@ -428,11 +475,30 @@ function App() {
   
   const updatePreviewImage = () => {
     try {
-      const dataURL = canvas.toDataURL({
-        format: "png",
-        multiplier: 8,
-        quality: 1,
-      });
+      if (!canvas || !canvas.lowerCanvasEl) {
+        console.error("Canvas element not fully initialized");
+        // Retry after a delay
+        setTimeout(() => {
+          if (canvas && canvas.lowerCanvasEl) {
+            console.log("Retrying preview update");
+            updatePreviewImage();
+          }
+        }, 1000);
+        return '';
+      }
+      
+      // Use a try/catch for toDataURL to handle potential errors
+      let dataURL;
+      try {
+        dataURL = canvas.toDataURL({
+          format: "png",
+          multiplier: 4, // Reduced from 8 to 4 for better performance
+          quality: 1,
+        });
+      } catch (e) {
+        console.error("Error generating dataURL:", e);
+        return '';
+      }
       
       // Display the image preview to the user
       const resultPreview = document.getElementById('result-preview');
@@ -448,11 +514,15 @@ function App() {
         
         img.onerror = () => {
           console.error("Generated image data is invalid");
-          // Try again with a fallback
+          // Try again with a fallback with simpler options
           setTimeout(() => {
-            if (canvas && canvas.getObjects().length > 0) {
-              const fallbackURL = canvas.toDataURL();
-              resultPreview.src = fallbackURL;
+            if (canvas && canvas.lowerCanvasEl) {
+              try {
+                const fallbackURL = canvas.toDataURL();
+                resultPreview.src = fallbackURL;
+              } catch (e) {
+                console.error("Fallback preview generation failed:", e);
+              }
             }
           }, 500);
         };
@@ -492,14 +562,47 @@ function App() {
       setCanvas(newCanvas);
       fabricInitialized.current = true;
       
-      // Add main cat image to the new canvas
-      addMainImg(newCanvas, main_cat);
+      // Set up event listeners
+      newCanvas.on("selection:created", (e) => {
+        setSelectedObject(e.selected[0]);
+      });
+
+      newCanvas.on("object:modified", (e) => {
+        setSelectedObject(e.target);
+        setTimeout(() => {
+          saveImageToDataURL();
+        }, 500);
+      });
+
+      newCanvas.on("selection:cleared", () => {
+        setSelectedObject(null);
+      });
       
-      // Clear the preview image
-      const resultPreview = document.getElementById('result-preview');
-      if (resultPreview) {
-        resultPreview.src = '';
-      }
+      // Add main cat image to the new canvas with proper callback
+      fabric.Image.fromURL(main_cat, (img) => {
+        const canvasWidth = newCanvas.getWidth();
+        img.scaleToWidth(canvasWidth);
+        img.scaleToHeight(img.height * (canvasWidth / img.width));
+        img.set({ selectable: false });
+        
+        newCanvas.add(img);
+        newCanvas.renderAll();
+        
+        // Reset all state variables for stickers
+        setHeadwear(null);
+        setEyewear(null);
+        setMouth(null);
+        setKimono(null);
+        setJewelry(null);
+        setAccessories(null);
+        
+        // Update the preview after a delay to ensure canvas renders
+        setTimeout(() => {
+          console.log("Updating preview after reset");
+          saveImageToDataURL();
+        }, 1000);
+      });
+      
     } catch (error) {
       console.error("Error during canvas clear:", error);
     }
@@ -724,19 +827,36 @@ function App() {
           {/* Result Preview Container - After upload buttons on mobile */}
           <div className="mt-10 flex flex-col items-center justify-center">
             <div className="border-4 border-[#0c46af] p-2 rounded-lg bg-black/50">
-              <img 
-                id="result-preview" 
-                alt="Result Preview" 
-                className="max-w-[300px] max-h-[300px] block"
-                style={{
-                  display: 'block', 
-                  margin: '0 auto',
-                  minWidth: '300px',
-                  minHeight: '300px',
-                  backgroundColor: 'rgba(0, 0, 0, 0.5)'
-                }}
-                onError={(e) => console.log("Preview image loading error:", e)}
-              />
+              <div className="relative" style={{ width: '300px', height: '300px', backgroundColor: 'rgba(10, 31, 63, 0.3)' }}>
+                {/* Fallback message if preview fails */}
+                <div className="absolute inset-0 flex items-center justify-center text-white opacity-50 z-0">
+                  <p className="text-center" style={{ fontFamily: "'Finger Paint', cursive" }}>
+                    Preview will appear here
+                  </p>
+                </div>
+                
+                {/* The actual preview image */}
+                <img 
+                  id="result-preview" 
+                  alt="Result Preview" 
+                  className="absolute inset-0 z-10 max-w-[300px] max-h-[300px] object-contain"
+                  style={{
+                    display: 'block', 
+                    margin: '0 auto',
+                    backgroundColor: 'transparent'
+                  }}
+                  onError={(e) => {
+                    console.log("Preview image loading error:", e);
+                    e.target.style.display = 'none'; // Hide broken image
+                    // Try updating the preview again after a delay
+                    setTimeout(() => saveImageToDataURL(), 1000);
+                  }}
+                  onLoad={(e) => {
+                    console.log("Preview image loaded successfully");
+                    e.target.style.display = 'block';
+                  }}
+                />
+              </div>
             </div>
           </div>
         </div>
