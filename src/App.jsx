@@ -1,7 +1,8 @@
 
 import { useState, useEffect, useRef } from "react";
 // Import Fabric.js properly to prevent "Canvas is not a constructor" error
-import { fabric } from "fabric";
+import * as fabricjs from "fabric";
+const fabric = fabricjs.fabric ? fabricjs : { fabric: fabricjs };
 import logo from "./assets/logo.png";
 import ImageScroller from "./ImageScroller";
 import bg from "./assets/bg.png";
@@ -151,59 +152,68 @@ function App() {
     // Start importing stickers
     importStickers();
 
-    // Only initialize fabric once to prevent errors
-    if (!fabricInitialized.current && typeof fabric !== 'undefined' && fabric.Canvas) {
-      try {
-        console.log("Starting canvas initialization");
-        
-        // Make sure we have a canvas element to work with
-        if (!canvasRef.current) {
-          console.error("Canvas reference element is not available!");
-          return;
-        }
-        
-        console.log("Canvas element found:", canvasRef.current);
-        
-        // Create the Fabric.js canvas instance
-        const newCanvas = new fabric.Canvas(canvasRef.current, {
-          width: window.innerWidth <= 768 ? 400 : 400,
-          height: window.innerWidth <= 768 ? 400 : 400,
-          backgroundColor: "#fff",
-        });
-        
-        console.log("Canvas created successfully:", newCanvas);
-        setCanvas(newCanvas);
-        fabricInitialized.current = true;
-
-        // Set up event listeners
-        newCanvas.on("selection:created", (e) => {
-          setSelectedObject(e.selected[0]);
-        });
-
-        newCanvas.on("object:modified", (e) => {
-          setSelectedObject(e.target);
-        });
-
-        newCanvas.on("selection:cleared", () => {
-          setSelectedObject(null);
-        });
-
-        // Add the main cat image
-        addMainImg(newCanvas, main_cat);
-
-        // Clean up function to dispose canvas when component unmounts
-        return () => {
-          if (newCanvas) {
-            console.log("Disposing canvas");
-            newCanvas.dispose();
-            fabricInitialized.current = false;
+    console.log("Fabric object:", fabric);
+    
+    // Initialize canvas after a short delay to ensure DOM is ready
+    const initializeCanvas = () => {
+      // Only initialize fabric once to prevent errors
+      if (!fabricInitialized.current) {
+        try {
+          console.log("Starting canvas initialization");
+          
+          // Make sure we have a canvas element to work with
+          if (!canvasRef.current) {
+            console.error("Canvas reference element is not available!");
+            return;
           }
-        };
-      } catch (error) {
-        console.error("Error initializing Fabric.js canvas:", error);
+          
+          console.log("Canvas element found:", canvasRef.current);
+          
+          // Create the Fabric.js canvas instance
+          const newCanvas = new fabric.Canvas(canvasRef.current, {
+            width: window.innerWidth <= 768 ? 400 : 400,
+            height: window.innerWidth <= 768 ? 400 : 400,
+            backgroundColor: "#fff",
+          });
+          
+          console.log("Canvas created successfully:", newCanvas);
+          setCanvas(newCanvas);
+          fabricInitialized.current = true;
+
+          // Set up event listeners
+          newCanvas.on("selection:created", (e) => {
+            setSelectedObject(e.selected[0]);
+          });
+
+          newCanvas.on("object:modified", (e) => {
+            setSelectedObject(e.target);
+          });
+
+          newCanvas.on("selection:cleared", () => {
+            setSelectedObject(null);
+          });
+
+          // Add the main cat image
+          addMainImg(newCanvas, main_cat);
+        } catch (error) {
+          console.error("Error initializing Fabric.js canvas:", error);
+          fabricInitialized.current = false;
+        }
+      }
+    };
+
+    // Small timeout to ensure DOM is fully ready
+    const timer = setTimeout(initializeCanvas, 100);
+    
+    // Clean up function
+    return () => {
+      clearTimeout(timer);
+      if (canvas) {
+        console.log("Disposing canvas");
+        canvas.dispose();
         fabricInitialized.current = false;
       }
-    }
+    };
   }, []);
 
   const addMainImg = (canvas, image) => {
