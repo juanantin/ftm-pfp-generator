@@ -6,6 +6,7 @@ import bg from "./assets/bg.png";
 import main_cat from "./assets/main_cat.png";
 
 function App() {
+  console.log("App is running!"); // Add console log to verify app is running
   const [stickers, setStickers] = useState({});
 
   const canvasRef = useRef(null);
