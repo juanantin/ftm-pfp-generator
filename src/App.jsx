@@ -1,8 +1,7 @@
 
 import { useState, useEffect, useRef } from "react";
 // Import Fabric.js properly to prevent "Canvas is not a constructor" error
-import * as fabricjs from "fabric";
-const fabric = fabricjs.fabric ? fabricjs : { fabric: fabricjs };
+import { fabric } from "fabric";
 import logo from "./assets/logo.png";
 import ImageScroller from "./ImageScroller";
 import bg from "./assets/bg.png";

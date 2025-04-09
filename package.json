@@ -10,7 +10,7 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "fabric": "^6.6.2",
+    "fabric": "^5.5.1",
     "lovable-tagger": "^1.1.8",
     "react": "^19.1.0",
     "react-dom": "^19.1.0"
