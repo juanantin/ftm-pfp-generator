@@ -38,7 +38,7 @@ const ImageScroller = ({
     <div className="w-full mt-10">
       {Object.keys(categorizedImages).map((category) => (
         <div key={category} className="mb-8">
-          <h2 className="text-2xl text-center text-white mb-4 capitalize">
+          <h2 className="text-2xl text-center text-white mb-4 capitalize" style={{ fontFamily: "'Finger Paint', cursive" }}>
             {category}
           </h2>
           <div className="relative flex items-center">

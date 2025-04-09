@@ -10,3 +10,19 @@
 .canvas-container {
   margin: 0 auto;
 }
+
+/* Font styling */
+h1.title-font {
+  font-family: 'Crypster', cursive;
+}
+
+p.content-font, h2.content-font {
+  font-family: 'Finger Paint', cursive;
+}
+
+/* Preview image */
+#result-preview {
+  max-width: 300px;
+  max-height: 300px;
+  display: block;
+}

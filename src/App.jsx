@@ -100,6 +100,11 @@ function App() {
           scaleY: canvas.height / img.height,
         }
       );
+      
+      // Update preview after changing background
+      setTimeout(() => {
+        saveImageToDataURL();
+      }, 300);
     });
   };
 
@@ -111,7 +116,64 @@ function App() {
     } else {
       canvas.setBackgroundImage("", canvas.renderAll.bind(canvas));
     }
+    
+    // Update preview whenever canvas changes
+    setTimeout(() => {
+      saveImageToDataURL();
+    }, 300);
   }, [canvas, backgroundImage, isMobile]);
+
+  // Initialize canvas function
+  const initializeCanvas = () => {
+    // Only initialize fabric once to prevent errors
+    if (!fabricInitialized.current) {
+      try {
+        console.log("Starting canvas initialization");
+        
+        // Make sure we have a canvas element to work with
+        if (!canvasRef.current) {
+          console.error("Canvas reference element is not available!");
+          return;
+        }
+        
+        console.log("Canvas element found:", canvasRef.current);
+        
+        // Create the Fabric.js canvas instance
+        const newCanvas = new fabric.Canvas(canvasRef.current, {
+          width: window.innerWidth <= 768 ? 400 : 400,
+          height: window.innerWidth <= 768 ? 400 : 400,
+          backgroundColor: "#fff",
+        });
+        
+        console.log("Canvas created successfully:", newCanvas);
+        setCanvas(newCanvas);
+        fabricInitialized.current = true;
+
+        // Set up event listeners
+        newCanvas.on("selection:created", (e) => {
+          setSelectedObject(e.selected[0]);
+        });
+
+        newCanvas.on("object:modified", (e) => {
+          setSelectedObject(e.target);
+          // Update preview after modifying object
+          setTimeout(() => {
+            saveImageToDataURL();
+          }, 300);
+        });
+
+        newCanvas.on("selection:cleared", () => {
+          setSelectedObject(null);
+        });
+
+        // Add the main cat image
+        addMainImg(newCanvas, main_cat);
+      } catch (error) {
+        console.error("Error initializing Fabric.js canvas:", error);
+        fabricInitialized.current = false;
+      }
+    }
+  };
 
   useEffect(() => {
     // Import stickers from asset folders
@@ -147,6 +209,9 @@ function App() {
 
       // Use the categorized images as needed
       setStickers(categorizedImages);
+      
+      // After loading stickers, try to initialize the canvas
+      setTimeout(initializeCanvas, 100);
     };
 
     // Start importing stickers
@@ -154,60 +219,8 @@ function App() {
 
     console.log("Fabric object:", fabric);
     
-    // Initialize canvas after a short delay to ensure DOM is ready
-    const initializeCanvas = () => {
-      // Only initialize fabric once to prevent errors
-      if (!fabricInitialized.current) {
-        try {
-          console.log("Starting canvas initialization");
-          
-          // Make sure we have a canvas element to work with
-          if (!canvasRef.current) {
-            console.error("Canvas reference element is not available!");
-            return;
-          }
-          
-          console.log("Canvas element found:", canvasRef.current);
-          
-          // Create the Fabric.js canvas instance
-          const newCanvas = new fabric.Canvas(canvasRef.current, {
-            width: window.innerWidth <= 768 ? 400 : 400,
-            height: window.innerWidth <= 768 ? 400 : 400,
-            backgroundColor: "#fff",
-          });
-          
-          console.log("Canvas created successfully:", newCanvas);
-          setCanvas(newCanvas);
-          fabricInitialized.current = true;
-
-          // Set up event listeners
-          newCanvas.on("selection:created", (e) => {
-            setSelectedObject(e.selected[0]);
-          });
-
-          newCanvas.on("object:modified", (e) => {
-            setSelectedObject(e.target);
-          });
-
-          newCanvas.on("selection:cleared", () => {
-            setSelectedObject(null);
-          });
-
-          // Add the main cat image
-          addMainImg(newCanvas, main_cat);
-        } catch (error) {
-          console.error("Error initializing Fabric.js canvas:", error);
-          fabricInitialized.current = false;
-        }
-      }
-    };
-
-    // Small timeout to ensure DOM is fully ready
-    const timer = setTimeout(initializeCanvas, 100);
-    
     // Clean up function
     return () => {
-      clearTimeout(timer);
       if (canvas) {
         console.log("Disposing canvas");
         canvas.dispose();
@@ -227,6 +240,11 @@ function App() {
       });
 
       canvas.add(img);
+      
+      // Update preview after adding main image
+      setTimeout(() => {
+        saveImageToDataURL();
+      }, 300);
     });
   };
 
@@ -247,6 +265,11 @@ function App() {
       setState(img);
 
       canvas.add(img);
+      
+      // Update the preview after adding the image
+      setTimeout(() => {
+        saveImageToDataURL();
+      }, 100);
     });
   };
 
@@ -310,6 +333,11 @@ function App() {
           img.scaleToWidth(100);
           img.scaleToHeight(img.height * (100 / img.width));
           canvas.add(img);
+          
+          // Update preview after adding sticker
+          setTimeout(() => {
+            saveImageToDataURL();
+          }, 100);
         });
       };
       reader.readAsDataURL(file);
@@ -350,18 +378,24 @@ function App() {
   };
 
   const saveImageToDataURL = () => {
-    const dataURL = canvas.toDataURL({
-      format: "png",
-      multiplier: 8,
-      quality: 1,
-    });
-    // Display the image preview to the user
-    const resultPreview = document.getElementById('result-preview');
-    if (resultPreview) {
-      resultPreview.src = dataURL;
-      resultPreview.style.display = 'block';
+    if (!canvas) return '';
+    
+    try {
+      const dataURL = canvas.toDataURL({
+        format: "png",
+        multiplier: 8,
+        quality: 1,
+      });
+      // Display the image preview to the user
+      const resultPreview = document.getElementById('result-preview');
+      if (resultPreview) {
+        resultPreview.src = dataURL;
+      }
+      return dataURL;
+    } catch (error) {
+      console.error("Error saving image to data URL:", error);
+      return '';
     }
-    return dataURL;
   };
 
   const handleCanvasClear = () => {
@@ -393,7 +427,7 @@ function App() {
       // Clear the preview image
       const resultPreview = document.getElementById('result-preview');
       if (resultPreview) {
-        resultPreview.style.display = 'none';
+        resultPreview.src = '';
       }
     } catch (error) {
       console.error("Error during canvas clear:", error);
@@ -409,6 +443,11 @@ function App() {
         }
       });
       canvas.discardActiveObject().renderAll();
+      
+      // Update the preview after deletion
+      setTimeout(() => {
+        saveImageToDataURL();
+      }, 100);
     }
   };
 
@@ -417,7 +456,7 @@ function App() {
 
     if (text) {
       const newText = new fabric.Text(text, {
-        fontFamily: "Tahoma",
+        fontFamily: "'Finger Paint', cursive",
         fontSize: 20,
         fill: "#fff",
         stroke: "#000",
@@ -428,11 +467,16 @@ function App() {
       });
 
       canvas.add(newText);
+      
+      // Update the preview
+      setTimeout(() => {
+        saveImageToDataURL();
+      }, 100);
     }
   };
 
   return (
-    <div className=" min-h-screen overflow-y-auto bg-gradient-to-r from-mainRed to-darkRed">
+    <div className="min-h-screen overflow-y-auto bg-black">
       {/* <img
         className="w-full h-full absolute top-0 left-0 opacity-[0.4] object-cover md:object-cover"
         src={isMobile ? all_bg_mobile : all_bg}
@@ -450,11 +494,11 @@ function App() {
           viewBox="0 0 24 24"
         >
           <path
-            fill="#000"
+            fill="#fff"
             d="m6.921 12.5l5.793 5.792L12 19l-7-7l7-7l.714.708L6.92 11.5H19v1z"
           />
         </svg>
-        <h1 className="text-3xl">Home</h1>
+        <h1 className="text-3xl text-white" style={{ fontFamily: "'Finger Paint', cursive" }}>Home</h1>
       </div>
 
       <div className="w-full flex py-10 flex-col lg:flex-row justify-center">
@@ -481,9 +525,10 @@ function App() {
               className="w-[100px] lg:w-[150px] h-auto cursor-pointer"
               alt=""
             /> */}
-            <h1 className="text-white mt-5 lg:mt-0 text-5xl md:text-7xl text-center font-black ">
-              FANTOM <br />
-              FTM PFP GENERATOR
+            <h1 className="text-white mt-5 lg:mt-0 text-5xl md:text-7xl text-center" style={{ fontFamily: "'Crypster', cursive" }}>
+              FANTOM FTM
+              <br />
+              PFP GENERATOR
             </h1>
           </div>
 
@@ -518,7 +563,7 @@ function App() {
               onClick={() => stickerImgInputRef.current.click()}
               className="border-4 cursor-pointer border-black bg-white text-black px-5 py-2 rounded-lg flex justify-center items-center overflow-hidden relative group transition-all duration-300 ease-in-out transform hover:scale-105 w-full sm:w-full md:w-1/3 lg:w-1/3"
             >
-              <p className="text-black text-center text-2xl tracking-wider font-medium relative">
+              <p className="text-black text-center text-2xl tracking-wider relative" style={{ fontFamily: "'Finger Paint', cursive" }}>
                 UPLOAD STICKER
               </p>
               <div className="absolute top-0 left-0 w-full h-full bg-black opacity-0 z-0 transition duration-300 ease-in-out group-hover:opacity-50"></div>
@@ -527,7 +572,7 @@ function App() {
               onClick={() => bgImgInputRef.current.click()}
               className="border-4 cursor-pointer border-black bg-white text-black px-5 py-2 rounded-lg flex justify-center items-center overflow-hidden relative group transition-all duration-300 ease-in-out transform hover:scale-105 w-full sm:w-full md:w-1/3 lg:w-1/3"
             >
-              <p className="text-black text-center text-2xl tracking-wider font-medium relative">
+              <p className="text-black text-center text-2xl tracking-wider relative" style={{ fontFamily: "'Finger Paint', cursive" }}>
                 UPLOAD BACKGROUND
               </p>
               <div className="absolute top-0 left-0 w-full h-full bg-black opacity-0 z-0 transition duration-300 ease-in-out group-hover:opacity-50"></div>
@@ -536,7 +581,7 @@ function App() {
               onClick={handleAddText}
               className="border-4 cursor-pointer border-black bg-white text-black px-5 py-2 rounded-lg flex justify-center items-center overflow-hidden relative group transition-all duration-300 ease-in-out transform hover:scale-105 w-full sm:w-full md:w-1/3 lg:w-1/3"
             >
-              <p className="text-black text-center text-2xl tracking-wider font-medium relative">
+              <p className="text-black text-center text-2xl tracking-wider relative" style={{ fontFamily: "'Finger Paint', cursive" }}>
                 ADD TEXT
               </p>
               <div className="absolute top-0 left-0 w-full h-full bg-black opacity-0 z-0 transition duration-300 ease-in-out group-hover:opacity-50"></div>
@@ -545,7 +590,7 @@ function App() {
               onClick={handleCanvasClear}
               className="border-4 cursor-pointer border-black bg-white text-black px-5 py-2 rounded-lg flex justify-center items-center overflow-hidden relative group transition-all duration-300 ease-in-out transform hover:scale-105 w-full sm:w-full md:w-1/3 lg:w-1/3"
             >
-              <p className="text-black text-center text-2xl tracking-wider font-medium relative">
+              <p className="text-black text-center text-2xl tracking-wider relative" style={{ fontFamily: "'Finger Paint', cursive" }}>
                 RESET
               </p>
               <div className="absolute top-0 left-0 w-full h-full bg-black opacity-0 z-0 transition duration-300 ease-in-out group-hover:opacity-50"></div>
@@ -554,7 +599,7 @@ function App() {
               onClick={generateRandom}
               className="border-4 cursor-pointer border-black bg-white text-black px-5 py-2 rounded-lg flex justify-center items-center overflow-hidden relative group transition-all duration-300 ease-in-out transform hover:scale-105 w-full sm:w-full md:w-1/3 lg:w-1/3"
             >
-              <p className="text-black text-center text-2xl tracking-wider font-medium relative">
+              <p className="text-black text-center text-2xl tracking-wider relative" style={{ fontFamily: "'Finger Paint', cursive" }}>
                 GENERATE RANDOM FTM
               </p>
               <div className="absolute top-0 left-0 w-full h-full bg-black opacity-0 z-0 transition duration-300 ease-in-out group-hover:opacity-50"></div>
@@ -563,7 +608,7 @@ function App() {
               onClick={saveImageToLocal}
               className="border-4 cursor-pointer border-black bg-white text-black px-5 py-2 rounded-lg flex justify-center items-center overflow-hidden relative group transition-all duration-300 ease-in-out transform hover:scale-105 w-full sm:w-full md:w-1/3 lg:w-1/3"
             >
-              <p className="text-black text-center text-2xl tracking-wider font-medium relative">
+              <p className="text-black text-center text-2xl tracking-wider relative" style={{ fontFamily: "'Finger Paint', cursive" }}>
                 SAVE PFP
               </p>
               <div className="absolute top-0 left-0 w-full h-full bg-black opacity-0 z-0 transition duration-300 ease-in-out group-hover:opacity-50"></div>
@@ -572,13 +617,12 @@ function App() {
           
           {/* Result Preview Container */}
           <div className="mt-10 flex flex-col items-center justify-center">
-            <h2 className="text-3xl text-center text-white mb-4">Your FTM PFP Preview</h2>
+            <h2 className="text-3xl text-center text-white mb-4" style={{ fontFamily: "'Finger Paint', cursive" }}>Your FTM PFP Preview</h2>
             <div className="border-4 border-white p-2 rounded-lg bg-black/50">
               <img 
                 id="result-preview" 
                 alt="Result Preview" 
-                className="max-w-[300px] max-h-[300px]" 
-                style={{ display: 'none' }}
+                className="max-w-[300px] max-h-[300px]"
               />
             </div>
           </div>
@@ -586,7 +630,7 @@ function App() {
 
         <div className="mt-5 w-full lg:w-[60%] px-5 lg:pl-0 ">
           <div className="flex-1">
-            <h1 className="text-4xl text-center text-white mt-10">
+            <h1 className="text-4xl text-center text-white mt-10" style={{ fontFamily: "'Finger Paint', cursive" }}>
               CLICK TO ADD STICKER
             </h1>
             <ImageScroller
