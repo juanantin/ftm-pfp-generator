@@ -27,10 +27,7 @@ function App() {
   const [kimono, setKimono] = useState(null);
   const [jewelry, setJewelry] = useState(null);
   const [accessories, setAccessories] = useState(null);
-  const [pawAccessories, setPawAccessories] = useState(null);
-
-  // const [isAtFront, setIsAtFront] = useState(false);
-  // const [isAtBack, setIsAtBack] = useState(false);
+  // Removed pawAccessories state
 
   useEffect(() => {
     const handleResize = () => {
@@ -289,7 +286,7 @@ function App() {
 
   const getRandomImage = (category) => {
     const categoryItems = stickers[category];
-    if (categoryItems.length === 0) return null;
+    if (!categoryItems || categoryItems.length === 0) return null;
     const randomIndex = Math.floor(Math.random() * categoryItems.length);
     return categoryItems[randomIndex];
   };
@@ -314,9 +311,7 @@ function App() {
     if (randomAccessories)
       handleAddImage(accessories, setAccessories, randomAccessories);
 
-    const randomPawAccessories = getRandomImage("paw accessories");
-    if (randomPawAccessories)
-      handleAddImage(pawAccessories, setPawAccessories, randomPawAccessories);
+    // Removed randomPawAccessories section
 
     const randomBackground = getRandomImage("background");
     if (randomBackground) changeBackgroundImage(randomBackground, canvas);
@@ -486,7 +481,7 @@ function App() {
         fontFamily: "'Finger Paint', cursive",
         fontSize: 20,
         fill: "#fff",
-        stroke: "#000",
+        stroke: "#0c46af", // Changed from black to #0c46af
         fontWeight: "bold",
         left: 100,
         top: 100,
@@ -504,12 +499,6 @@ function App() {
 
   return (
     <div className="min-h-screen overflow-y-auto bg-black">
-      {/* <img
-        className="w-full h-full absolute top-0 left-0 opacity-[0.4] object-cover md:object-cover"
-        src={isMobile ? all_bg_mobile : all_bg}
-        alt=""
-      /> */}
-
       <div
         onClick={() => window.open("https://fantomsonic.com/", "_blank")}
         className="flex cursor-pointer absolute top-5 left-10"
@@ -521,7 +510,7 @@ function App() {
           viewBox="0 0 24 24"
         >
           <path
-            fill="#fff"
+            fill="#0c46af" // Changed from white to #0c46af
             d="m6.921 12.5l5.793 5.792L12 19l-7-7l7-7l.714.708L6.92 11.5H19v1z"
           />
         </svg>
@@ -546,17 +535,11 @@ function App() {
         />
         <div className="flex-1 px-5">
           <div className="flex item-center justify-center gap-5 md:gap-10 mb-5">
-            {/* <img
-              // onClick={() => window.open("https://madcatcoin.com/", "_blank")}
-              src={logo}
-              className="w-[100px] lg:w-[150px] h-auto cursor-pointer"
-              alt=""
-            /> */}
-            <h1 className="text-white mt-5 lg:mt-0 text-5xl md:text-7xl text-center title-font" style={{ fontFamily: "'Crypster', cursive !important" }}>
-              FANTOM FTM
-              <br />
-              PFP GENERATOR
-            </h1>
+            <img
+              src="/lovable-uploads/13dd479a-7c88-43de-94c7-701c74fae6c8.png"
+              className="w-full max-w-[400px] h-auto mx-auto"
+              alt="FANTOM PFP GENERATOR"
+            />
           </div>
 
           <div
@@ -588,55 +571,55 @@ function App() {
           <div className="flex flex-wrap w-full gap-5 justify-center">
             <div
               onClick={() => stickerImgInputRef.current.click()}
-              className="border-4 cursor-pointer border-black bg-white text-black px-5 py-2 rounded-lg flex justify-center items-center overflow-hidden relative group transition-all duration-300 ease-in-out transform hover:scale-105 w-full sm:w-full md:w-1/3 lg:w-1/3"
+              className="border-2 cursor-pointer border-white bg-[#0c46af] text-white px-5 py-2 rounded-lg flex justify-center items-center overflow-hidden relative group transition-all duration-300 ease-in-out transform hover:scale-105 w-full sm:w-full md:w-1/3 lg:w-1/3"
             >
-              <p className="text-black text-center text-2xl tracking-wider relative" style={{ fontFamily: "'Finger Paint', cursive" }}>
-                UPLOAD STICKER
+              <p className="text-white text-center text-lg tracking-wider relative" style={{ fontFamily: "'Finger Paint', cursive" }}>
+                UPLOAD
               </p>
               <div className="absolute top-0 left-0 w-full h-full bg-black opacity-0 z-0 transition duration-300 ease-in-out group-hover:opacity-50"></div>
             </div>
             <div
               onClick={() => bgImgInputRef.current.click()}
-              className="border-4 cursor-pointer border-black bg-white text-black px-5 py-2 rounded-lg flex justify-center items-center overflow-hidden relative group transition-all duration-300 ease-in-out transform hover:scale-105 w-full sm:w-full md:w-1/3 lg:w-1/3"
+              className="border-2 cursor-pointer border-white bg-[#0c46af] text-white px-5 py-2 rounded-lg flex justify-center items-center overflow-hidden relative group transition-all duration-300 ease-in-out transform hover:scale-105 w-full sm:w-full md:w-1/3 lg:w-1/3"
             >
-              <p className="text-black text-center text-2xl tracking-wider relative" style={{ fontFamily: "'Finger Paint', cursive" }}>
-                UPLOAD BACKGROUND
+              <p className="text-white text-center text-lg tracking-wider relative" style={{ fontFamily: "'Finger Paint', cursive" }}>
+                BG
               </p>
               <div className="absolute top-0 left-0 w-full h-full bg-black opacity-0 z-0 transition duration-300 ease-in-out group-hover:opacity-50"></div>
             </div>
             <div
               onClick={handleAddText}
-              className="border-4 cursor-pointer border-black bg-white text-black px-5 py-2 rounded-lg flex justify-center items-center overflow-hidden relative group transition-all duration-300 ease-in-out transform hover:scale-105 w-full sm:w-full md:w-1/3 lg:w-1/3"
+              className="border-2 cursor-pointer border-white bg-[#0c46af] text-white px-5 py-2 rounded-lg flex justify-center items-center overflow-hidden relative group transition-all duration-300 ease-in-out transform hover:scale-105 w-full sm:w-full md:w-1/3 lg:w-1/3"
             >
-              <p className="text-black text-center text-2xl tracking-wider relative" style={{ fontFamily: "'Finger Paint', cursive" }}>
-                ADD TEXT
+              <p className="text-white text-center text-lg tracking-wider relative" style={{ fontFamily: "'Finger Paint', cursive" }}>
+                TEXT
               </p>
               <div className="absolute top-0 left-0 w-full h-full bg-black opacity-0 z-0 transition duration-300 ease-in-out group-hover:opacity-50"></div>
             </div>
             <div
               onClick={handleCanvasClear}
-              className="border-4 cursor-pointer border-black bg-white text-black px-5 py-2 rounded-lg flex justify-center items-center overflow-hidden relative group transition-all duration-300 ease-in-out transform hover:scale-105 w-full sm:w-full md:w-1/3 lg:w-1/3"
+              className="border-2 cursor-pointer border-white bg-[#0c46af] text-white px-5 py-2 rounded-lg flex justify-center items-center overflow-hidden relative group transition-all duration-300 ease-in-out transform hover:scale-105 w-full sm:w-full md:w-1/3 lg:w-1/3"
             >
-              <p className="text-black text-center text-2xl tracking-wider relative" style={{ fontFamily: "'Finger Paint', cursive" }}>
+              <p className="text-white text-center text-lg tracking-wider relative" style={{ fontFamily: "'Finger Paint', cursive" }}>
                 RESET
               </p>
               <div className="absolute top-0 left-0 w-full h-full bg-black opacity-0 z-0 transition duration-300 ease-in-out group-hover:opacity-50"></div>
             </div>
             <div
               onClick={generateRandom}
-              className="border-4 cursor-pointer border-black bg-white text-black px-5 py-2 rounded-lg flex justify-center items-center overflow-hidden relative group transition-all duration-300 ease-in-out transform hover:scale-105 w-full sm:w-full md:w-1/3 lg:w-1/3"
+              className="border-2 cursor-pointer border-white bg-[#0c46af] text-white px-5 py-2 rounded-lg flex justify-center items-center overflow-hidden relative group transition-all duration-300 ease-in-out transform hover:scale-105 w-full sm:w-full md:w-1/3 lg:w-1/3"
             >
-              <p className="text-black text-center text-2xl tracking-wider relative" style={{ fontFamily: "'Finger Paint', cursive" }}>
-                GENERATE RANDOM FTM
+              <p className="text-white text-center text-lg tracking-wider relative" style={{ fontFamily: "'Finger Paint', cursive" }}>
+                RANDOM
               </p>
               <div className="absolute top-0 left-0 w-full h-full bg-black opacity-0 z-0 transition duration-300 ease-in-out group-hover:opacity-50"></div>
             </div>
             <div
               onClick={saveImageToLocal}
-              className="border-4 cursor-pointer border-black bg-white text-black px-5 py-2 rounded-lg flex justify-center items-center overflow-hidden relative group transition-all duration-300 ease-in-out transform hover:scale-105 w-full sm:w-full md:w-1/3 lg:w-1/3"
+              className="border-2 cursor-pointer border-white bg-[#0c46af] text-white px-5 py-2 rounded-lg flex justify-center items-center overflow-hidden relative group transition-all duration-300 ease-in-out transform hover:scale-105 w-full sm:w-full md:w-1/3 lg:w-1/3"
             >
-              <p className="text-black text-center text-2xl tracking-wider relative" style={{ fontFamily: "'Finger Paint', cursive" }}>
-                SAVE PFP
+              <p className="text-white text-center text-lg tracking-wider relative" style={{ fontFamily: "'Finger Paint', cursive" }}>
+                SAVE
               </p>
               <div className="absolute top-0 left-0 w-full h-full bg-black opacity-0 z-0 transition duration-300 ease-in-out group-hover:opacity-50"></div>
             </div>
@@ -645,7 +628,7 @@ function App() {
           {/* Result Preview Container */}
           <div className="mt-10 flex flex-col items-center justify-center">
             <h2 className="text-3xl text-center text-white mb-4 content-font" style={{ fontFamily: "'Finger Paint', cursive" }}>Your FTM PFP Preview</h2>
-            <div className="border-4 border-white p-2 rounded-lg bg-black/50">
+            <div className="border-4 border-[#0c46af] p-2 rounded-lg bg-black/50">
               <img 
                 id="result-preview" 
                 alt="Result Preview" 
@@ -671,14 +654,12 @@ function App() {
               mouth={mouth}
               jewelry={jewelry}
               accessories={accessories}
-              pawAccessories={pawAccessories}
               setHeadwear={setHeadwear}
               setEyewear={setEyewear}
               setMouth={setMouth}
-              setKimono={setKimono} // Adjusted to maintain consistent naming
+              setKimono={setKimono}
               setJewelry={setJewelry}
               setAccessories={setAccessories}
-              setPawAccessories={setPawAccessories}
             />
           </div>
         </div>
