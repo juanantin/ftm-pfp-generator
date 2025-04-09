@@ -35,12 +35,16 @@ const ImageScroller = ({
 
   // Change "kimono" display name to "clothing"
   const getCategoryDisplayName = (category) => {
-    if (category === "kimono") return "clothing";
+    if (category === "kimono") return "Clothing";
     return category;
   };
 
+  const goToHomepage = () => {
+    window.open("https://fantomsonic.com/", "_blank");
+  };
+
   return (
-    <div className="w-full mt-10">
+    <div className="w-full mt-5">
       {Object.keys(categorizedImages).filter(category => category !== "paw accessories").map((category) => (
         <div key={category} className="mb-8">
           <h2 className="text-2xl text-center text-white mb-4 capitalize" style={{ fontFamily: "'Finger Paint', cursive" }}>

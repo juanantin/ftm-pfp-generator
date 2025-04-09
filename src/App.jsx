@@ -499,9 +499,10 @@ function App() {
 
   return (
     <div className="min-h-screen overflow-y-auto bg-black">
+      {/* Top Logo */}
       <div
         onClick={() => window.open("https://fantomsonic.com/", "_blank")}
-        className="flex cursor-pointer absolute top-5 left-10"
+        className="flex cursor-pointer absolute top-5 left-10 mb-16"
       >
         <img 
           src="/lovable-uploads/d3db5656-828a-47f4-b0b4-888cde78af09.png" 
@@ -527,13 +528,40 @@ function App() {
           onChange={handleAddSticker}
         />
         <div className="flex-1 px-5">
-          <div className="flex item-center justify-center gap-5 md:gap-10 mb-5">
+          <div className="flex item-center justify-center gap-5 md:gap-10 mb-10">
             <img
               src="/lovable-uploads/13dd479a-7c88-43de-94c7-701c74fae6c8.png"
-              className="w-full max-w-[400px] h-auto mx-auto"
+              className="w-full max-w-[400px] h-auto mx-auto mt-8"
               alt="FANTOM PFP GENERATOR"
             />
           </div>
+
+          {/* Mobile layout - Show stickers first on mobile */}
+          {isMobile && (
+            <div className="mb-8">
+              <h1 className="text-2xl text-center text-white mt-6" style={{ fontFamily: "'Finger Paint', cursive" }}>
+                CLICK TO ADD STICKER
+              </h1>
+              <ImageScroller
+                canvas={canvas}
+                categorizedImages={stickers}
+                handleAddImage={handleAddImage}
+                changeBackgroundImage={changeBackgroundImage}
+                headwear={headwear}
+                eyewear={eyewear}
+                mouth={mouth}
+                kimono={kimono}
+                jewelry={jewelry}
+                accessories={accessories}
+                setHeadwear={setHeadwear}
+                setEyewear={setEyewear}
+                setMouth={setMouth}
+                setKimono={setKimono}
+                setJewelry={setJewelry}
+                setAccessories={setAccessories}
+              />
+            </div>
+          )}
 
           <div
             className={`mx-auto mb-7 bg-transparent rounded-xl relative
@@ -561,6 +589,8 @@ function App() {
               />
             )}
           </div>
+          
+          {/* Control buttons - displayed after stickers on mobile */}
           <div className="flex flex-wrap w-full gap-5 justify-center">
             <div
               onClick={() => stickerImgInputRef.current.click()}
@@ -618,9 +648,8 @@ function App() {
             </div>
           </div>
           
-          {/* Result Preview Container */}
+          {/* Result Preview Container - After upload buttons on mobile */}
           <div className="mt-10 flex flex-col items-center justify-center">
-            <h2 className="text-3xl text-center text-white mb-4 content-font" style={{ fontFamily: "'Finger Paint', cursive" }}>Your FTM PFP Preview</h2>
             <div className="border-4 border-[#0c46af] p-2 rounded-lg bg-black/50">
               <img 
                 id="result-preview" 
@@ -632,30 +661,44 @@ function App() {
           </div>
         </div>
 
-        <div className="mt-5 w-full lg:w-[60%] px-5 lg:pl-0 ">
-          <div className="flex-1">
-            <h1 className="text-4xl text-center text-white mt-10" style={{ fontFamily: "'Finger Paint', cursive" }}>
-              CLICK TO ADD STICKER
-            </h1>
-            <ImageScroller
-              canvas={canvas}
-              categorizedImages={stickers}
-              handleAddImage={handleAddImage}
-              changeBackgroundImage={changeBackgroundImage}
-              headwear={headwear}
-              eyewear={eyewear}
-              mouth={mouth}
-              jewelry={jewelry}
-              accessories={accessories}
-              setHeadwear={setHeadwear}
-              setEyewear={setEyewear}
-              setMouth={setMouth}
-              setKimono={setKimono}
-              setJewelry={setJewelry}
-              setAccessories={setAccessories}
-            />
+        {/* Desktop layout - Show stickers on side */}
+        {!isMobile && (
+          <div className="mt-5 w-full lg:w-[60%] px-5 lg:pl-0">
+            <div className="flex-1">
+              <h1 className="text-2xl text-center text-white mt-10" style={{ fontFamily: "'Finger Paint', cursive" }}>
+                CLICK TO ADD STICKER
+              </h1>
+              <ImageScroller
+                canvas={canvas}
+                categorizedImages={stickers}
+                handleAddImage={handleAddImage}
+                changeBackgroundImage={changeBackgroundImage}
+                headwear={headwear}
+                eyewear={eyewear}
+                mouth={mouth}
+                kimono={kimono}
+                jewelry={jewelry}
+                accessories={accessories}
+                setHeadwear={setHeadwear}
+                setEyewear={setEyewear}
+                setMouth={setMouth}
+                setKimono={setKimono}
+                setJewelry={setJewelry}
+                setAccessories={setAccessories}
+              />
+            </div>
           </div>
-        </div>
+        )}
+      </div>
+      
+      {/* Footer logo for navigation */}
+      <div className="w-full flex justify-center py-6 mt-8">
+        <img 
+          onClick={() => window.open("https://fantomsonic.com/", "_blank")}
+          src="/lovable-uploads/d3db5656-828a-47f4-b0b4-888cde78af09.png" 
+          alt="Logo" 
+          className="h-12 w-12 cursor-pointer" 
+        />
       </div>
     </div>
   );
