@@ -217,12 +217,21 @@ function App() {
       setTimeout(() => {
         initializeCanvas();
         
-        // Force an initial preview update after everything is loaded
+        // Force an initial preview update after everything is loaded with longer delay
         setTimeout(() => {
           console.log("Initial preview update");
           saveImageToDataURL();
-        }, 1000);
-      }, 200);
+          
+          // Ensure preview is visible by forcing another update
+          setTimeout(() => {
+            const resultPreview = document.getElementById('result-preview');
+            if (resultPreview && (!resultPreview.src || resultPreview.src === '')) {
+              console.log("Forcing additional preview update");
+              saveImageToDataURL();
+            }
+          }, 1500);
+        }, 2000);
+      }, 500);
     };
 
     // Start importing stickers
@@ -316,10 +325,10 @@ function App() {
     const randomBackground = getRandomImage("background");
     if (randomBackground) changeBackgroundImage(randomBackground, canvas);
     
-    // Update the preview after a slight delay to allow canvas to render
+    // Update the preview after a longer delay to ensure canvas renders completely
     setTimeout(() => {
       saveImageToDataURL();
-    }, 500);
+    }, 1000);
   };
 
   const handleBackgroundImageChange = (e) => {
@@ -398,6 +407,27 @@ function App() {
     }
     
     try {
+      // Ensure the canvas has content before exporting
+      if (canvas.getObjects().length === 0) {
+        console.log("Canvas has no objects, adding main cat image");
+        addMainImg(canvas, main_cat);
+        
+        // Give it time to render before exporting
+        setTimeout(() => {
+          updatePreviewImage();
+        }, 500);
+        return '';
+      } else {
+        return updatePreviewImage();
+      }
+    } catch (error) {
+      console.error("Error saving image to data URL:", error);
+      return '';
+    }
+  };
+  
+  const updatePreviewImage = () => {
+    try {
       const dataURL = canvas.toDataURL({
         format: "png",
         multiplier: 8,
@@ -407,15 +437,34 @@ function App() {
       // Display the image preview to the user
       const resultPreview = document.getElementById('result-preview');
       if (resultPreview) {
-        resultPreview.src = dataURL;
-        resultPreview.style.display = 'block';
-        console.log("Preview updated with image data", resultPreview);
+        // Create a new Image object to verify the data URL is valid
+        const img = new Image();
+        img.onload = () => {
+          // Image loaded successfully, update the preview
+          resultPreview.src = dataURL;
+          resultPreview.style.display = 'block';
+          console.log("Preview updated successfully");
+        };
+        
+        img.onerror = () => {
+          console.error("Generated image data is invalid");
+          // Try again with a fallback
+          setTimeout(() => {
+            if (canvas && canvas.getObjects().length > 0) {
+              const fallbackURL = canvas.toDataURL();
+              resultPreview.src = fallbackURL;
+            }
+          }, 500);
+        };
+        
+        // Set source to load the image
+        img.src = dataURL;
       } else {
         console.error("Cannot find preview element with ID 'result-preview'");
       }
       return dataURL;
     } catch (error) {
-      console.error("Error saving image to data URL:", error);
+      console.error("Error in updatePreviewImage:", error);
       return '';
     }
   };
@@ -498,7 +547,9 @@ function App() {
   };
 
   return (
-    <div className="min-h-screen overflow-y-auto bg-black">
+    <div className="min-h-screen overflow-y-auto night-sky-bg" style={{ 
+      backgroundImage: `url('/lovable-uploads/501c37e0-441b-4827-b6a8-f3a8064316f6.png')` 
+    }}>
       {/* Top Logo */}
       <div
         onClick={() => window.open("https://fantomsonic.com/", "_blank")}
@@ -677,7 +728,13 @@ function App() {
                 id="result-preview" 
                 alt="Result Preview" 
                 className="max-w-[300px] max-h-[300px] block"
-                style={{display: 'block', margin: '0 auto'}}
+                style={{
+                  display: 'block', 
+                  margin: '0 auto',
+                  minWidth: '300px',
+                  minHeight: '300px'
+                }}
+                onError={(e) => console.log("Preview image loading error:", e)}
               />
             </div>
           </div>

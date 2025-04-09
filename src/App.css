@@ -35,4 +35,20 @@ p.content-font, h2.content-font {
   max-height: 300px;
   display: block;
   margin: 0 auto;
+  background-color: rgba(0, 0, 0, 0.3);
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+/* Night sky background styling */
+.night-sky-bg {
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-position: center;
+  background-attachment: fixed;
 }
