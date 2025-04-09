@@ -52,7 +52,7 @@ const ImageScroller = ({
           </h2>
           <div className="relative flex items-center">
             <button
-              className="absolute left-0 z-10 p-2 bg-[#0c46af] rounded-full hover:bg-blue-600"
+              className="absolute left-0 z-10 p-2 bg-[#0A1F3F] rounded-full hover:bg-blue-900"
               onClick={() => scrollLeft(category)}
             >
               <svg
@@ -73,7 +73,7 @@ const ImageScroller = ({
             >
               <div className="flex-shrink-0 w-10"></div>
               <div
-                className="flex items-center justify-center border border-white rounded-md m-2 cursor-pointer transition-transform duration-0 ease-in-out transform hover:scale-125 bg-[#0c46af]"
+                className="flex items-center justify-center border border-white rounded-md m-2 cursor-pointer transition-transform duration-0 ease-in-out transform hover:scale-125 bg-[#0A1F3F]"
                 onClick={() => {
                   if (canvas != null) {
                     if (category === "headwear") {
@@ -124,14 +124,14 @@ const ImageScroller = ({
                       changeBackgroundImage(img, canvas);
                     }
                   }}
-                  className="w-[80px] h-[80px] border border-[#0c46af] rounded-md m-2 cursor-pointer transition-transform duration-0 ease-in-out transform hover:scale-125"
+                  className="w-[80px] h-[80px] border border-[#0A1F3F] rounded-md m-2 cursor-pointer transition-transform duration-0 ease-in-out transform hover:scale-125"
                   alt={`img-${i}`}
                 />
               ))}
               <div className="flex-shrink-0 w-10"></div>
             </div>
             <button
-              className="absolute right-0 z-10 p-2 bg-[#0c46af] rounded-full hover:bg-blue-600"
+              className="absolute right-0 z-10 p-2 bg-[#0A1F3F] rounded-full hover:bg-blue-900"
               onClick={() => scrollRight(category)}
             >
               <svg

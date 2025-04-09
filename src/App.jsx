@@ -5,7 +5,7 @@ import { fabric } from "fabric";
 import logo from "./assets/logo.png";
 import ImageScroller from "./ImageScroller";
 import bg from "./assets/bg.png";
-import main_cat from "./assets/main_cat.png";
+import main_cat from "/lovable-uploads/70dd08cb-4613-4e6d-9537-49181107ac2d.png"; // Updated to blue ghost image
 
 function App() {
   console.log("App is running!"); // Add console log to verify app is running
@@ -139,7 +139,7 @@ function App() {
         const newCanvas = new fabric.Canvas(canvasRef.current, {
           width: window.innerWidth <= 768 ? 400 : 400,
           height: window.innerWidth <= 768 ? 400 : 400,
-          backgroundColor: "#fff",
+          backgroundColor: "#000", // Changed background color to black
         });
         
         console.log("Canvas created successfully:", newCanvas);
@@ -485,7 +485,7 @@ function App() {
       const newCanvas = new fabric.Canvas(canvasRef.current, {
         width: window.innerWidth <= 768 ? 400 : 400,
         height: window.innerWidth <= 768 ? 400 : 400,
-        backgroundColor: "#fff",
+        backgroundColor: "#000", // Changed background color to black
       });
 
       console.log("New canvas created during clear:", newCanvas);
@@ -530,7 +530,7 @@ function App() {
         fontFamily: "'Finger Paint', cursive",
         fontSize: 20,
         fill: "#fff",
-        stroke: "#0c46af", // Changed from black to #0c46af
+        stroke: "#0A1F3F", // Updated to darker blue
         fontWeight: "bold",
         left: 100,
         top: 100,
@@ -667,7 +667,7 @@ function App() {
           <div className="flex flex-wrap w-full gap-5 justify-center">
             <div
               onClick={() => stickerImgInputRef.current.click()}
-              className="border-2 cursor-pointer border-white bg-[#0c46af] text-white px-5 py-2 rounded-lg flex justify-center items-center overflow-hidden relative group transition-all duration-300 ease-in-out transform hover:scale-105 w-full sm:w-full md:w-1/3 lg:w-1/3"
+              className="border-2 cursor-pointer border-white bg-[#0A1F3F] text-white px-5 py-2 rounded-lg flex justify-center items-center overflow-hidden relative group transition-all duration-300 ease-in-out transform hover:scale-105 w-full sm:w-full md:w-1/3 lg:w-1/3"
             >
               <p className="text-white text-center text-lg tracking-wider relative" style={{ fontFamily: "'Finger Paint', cursive" }}>
                 UPLOAD
@@ -676,7 +676,7 @@ function App() {
             </div>
             <div
               onClick={() => bgImgInputRef.current.click()}
-              className="border-2 cursor-pointer border-white bg-[#0c46af] text-white px-5 py-2 rounded-lg flex justify-center items-center overflow-hidden relative group transition-all duration-300 ease-in-out transform hover:scale-105 w-full sm:w-full md:w-1/3 lg:w-1/3"
+              className="border-2 cursor-pointer border-white bg-[#0A1F3F] text-white px-5 py-2 rounded-lg flex justify-center items-center overflow-hidden relative group transition-all duration-300 ease-in-out transform hover:scale-105 w-full sm:w-full md:w-1/3 lg:w-1/3"
             >
               <p className="text-white text-center text-lg tracking-wider relative" style={{ fontFamily: "'Finger Paint', cursive" }}>
                 BG
@@ -685,7 +685,7 @@ function App() {
             </div>
             <div
               onClick={handleAddText}
-              className="border-2 cursor-pointer border-white bg-[#0c46af] text-white px-5 py-2 rounded-lg flex justify-center items-center overflow-hidden relative group transition-all duration-300 ease-in-out transform hover:scale-105 w-full sm:w-full md:w-1/3 lg:w-1/3"
+              className="border-2 cursor-pointer border-white bg-[#0A1F3F] text-white px-5 py-2 rounded-lg flex justify-center items-center overflow-hidden relative group transition-all duration-300 ease-in-out transform hover:scale-105 w-full sm:w-full md:w-1/3 lg:w-1/3"
             >
               <p className="text-white text-center text-lg tracking-wider relative" style={{ fontFamily: "'Finger Paint', cursive" }}>
                 TEXT
@@ -694,7 +694,7 @@ function App() {
             </div>
             <div
               onClick={handleCanvasClear}
-              className="border-2 cursor-pointer border-white bg-[#0c46af] text-white px-5 py-2 rounded-lg flex justify-center items-center overflow-hidden relative group transition-all duration-300 ease-in-out transform hover:scale-105 w-full sm:w-full md:w-1/3 lg:w-1/3"
+              className="border-2 cursor-pointer border-white bg-[#0A1F3F] text-white px-5 py-2 rounded-lg flex justify-center items-center overflow-hidden relative group transition-all duration-300 ease-in-out transform hover:scale-105 w-full sm:w-full md:w-1/3 lg:w-1/3"
             >
               <p className="text-white text-center text-lg tracking-wider relative" style={{ fontFamily: "'Finger Paint', cursive" }}>
                 RESET
@@ -732,7 +732,8 @@ function App() {
                   display: 'block', 
                   margin: '0 auto',
                   minWidth: '300px',
-                  minHeight: '300px'
+                  minHeight: '300px',
+                  backgroundColor: 'rgba(0, 0, 0, 0.5)'
                 }}
                 onError={(e) => console.log("Preview image loading error:", e)}
               />
