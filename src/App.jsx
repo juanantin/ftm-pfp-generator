@@ -511,7 +511,7 @@ function App() {
         />
       </div>
 
-      <div className="w-full flex py-10 flex-col lg:flex-row justify-center">
+      <div className="w-full flex py-10 pt-20 flex-col lg:flex-row justify-center">
         <input
           type="file"
           accept="image/*"
@@ -531,64 +531,86 @@ function App() {
           <div className="flex item-center justify-center gap-5 md:gap-10 mb-10">
             <img
               src="/lovable-uploads/13dd479a-7c88-43de-94c7-701c74fae6c8.png"
-              className="w-full max-w-[400px] h-auto mx-auto mt-8"
+              className="w-full max-w-[400px] h-auto mx-auto lg:mt-0"
               alt="FANTOM PFP GENERATOR"
+              style={{ margin: '0 auto' }}
             />
           </div>
 
-          {/* Mobile layout - Show stickers first on mobile */}
+          {/* Mobile layout - Preview first, then stickers */}
           {isMobile && (
-            <div className="mb-8">
-              <h1 className="text-2xl text-center text-white mt-6" style={{ fontFamily: "'Finger Paint', cursive" }}>
-                CLICK TO ADD STICKER
-              </h1>
-              <ImageScroller
-                canvas={canvas}
-                categorizedImages={stickers}
-                handleAddImage={handleAddImage}
-                changeBackgroundImage={changeBackgroundImage}
-                headwear={headwear}
-                eyewear={eyewear}
-                mouth={mouth}
-                kimono={kimono}
-                jewelry={jewelry}
-                accessories={accessories}
-                setHeadwear={setHeadwear}
-                setEyewear={setEyewear}
-                setMouth={setMouth}
-                setKimono={setKimono}
-                setJewelry={setJewelry}
-                setAccessories={setAccessories}
-              />
-            </div>
+            <>
+              {/* Canvas Preview */}
+              <div
+                className="mx-auto mb-7 bg-transparent rounded-xl relative canvas-mobile"
+              >
+                <canvas ref={canvasRef} />
+                {selectedObject && (
+                  <img
+                    onClick={handleDelete}
+                    id="selected-img"
+                    style={{
+                      position: "absolute",
+                      top: selectedObject.top - 30,
+                      left: selectedObject.left,
+                      cursor: "pointer",
+                    }}
+                    src="https://cdn-icons-png.flaticon.com/512/5610/5610967.png"
+                    width={20}
+                    height={20}
+                    alt=""
+                  />
+                )}
+              </div>
+              
+              {/* Stickers */}
+              <div className="mb-8">
+                <ImageScroller
+                  canvas={canvas}
+                  categorizedImages={stickers}
+                  handleAddImage={handleAddImage}
+                  changeBackgroundImage={changeBackgroundImage}
+                  headwear={headwear}
+                  eyewear={eyewear}
+                  mouth={mouth}
+                  kimono={kimono}
+                  jewelry={jewelry}
+                  accessories={accessories}
+                  setHeadwear={setHeadwear}
+                  setEyewear={setEyewear}
+                  setMouth={setMouth}
+                  setKimono={setKimono}
+                  setJewelry={setJewelry}
+                  setAccessories={setAccessories}
+                />
+              </div>
+            </>
           )}
 
-          <div
-            className={`mx-auto mb-7 bg-transparent rounded-xl relative
-          ${isMobile ? "canvas-mobile" : "w-[400px]"}
-          `}
-          >
-            <canvas
-              ref={canvasRef}
-              // style={{ width: "550px", height: "550px" }}
-            />
-            {selectedObject && (
-              <img
-                onClick={handleDelete}
-                id="selected-img"
-                style={{
-                  position: "absolute",
-                  top: selectedObject.top - 30,
-                  left: selectedObject.left,
-                  cursor: "pointer",
-                }}
-                src="https://cdn-icons-png.flaticon.com/512/5610/5610967.png"
-                width={20}
-                height={20}
-                alt=""
-              />
-            )}
-          </div>
+          {/* Desktop layout - Canvas Preview */}
+          {!isMobile && (
+            <div
+              className="mx-auto mb-7 bg-transparent rounded-xl relative w-[400px]"
+            >
+              <canvas ref={canvasRef} />
+              {selectedObject && (
+                <img
+                  onClick={handleDelete}
+                  id="selected-img"
+                  style={{
+                    position: "absolute",
+                    top: selectedObject.top - 30,
+                    left: selectedObject.left,
+                    cursor: "pointer",
+                  }}
+                  src="https://cdn-icons-png.flaticon.com/512/5610/5610967.png"
+                  width={20}
+                  height={20}
+                  alt=""
+                />
+              )}
+            </div>
+          )}
           
           {/* Control buttons - displayed after stickers on mobile */}
           <div className="flex flex-wrap w-full gap-5 justify-center">
@@ -661,13 +683,10 @@ function App() {
           </div>
         </div>
 
-        {/* Desktop layout - Show stickers on side */}
+        {/* Desktop layout - Show stickers on side aligned with preview */}
         {!isMobile && (
-          <div className="mt-5 w-full lg:w-[60%] px-5 lg:pl-0">
+          <div className="w-full lg:w-[60%] px-5 lg:pl-0">
             <div className="flex-1">
-              <h1 className="text-2xl text-center text-white mt-10" style={{ fontFamily: "'Finger Paint', cursive" }}>
-                CLICK TO ADD STICKER
-              </h1>
               <ImageScroller
                 canvas={canvas}
                 categorizedImages={stickers}
