@@ -5,7 +5,7 @@ import { fabric } from "fabric";
 import logo from "./assets/logo.png";
 import ImageScroller from "./ImageScroller";
 import bg from "./assets/bg.png";
-import main_cat from "/lovable-uploads/70dd08cb-4613-4e6d-9537-49181107ac2d.png"; // Updated to blue ghost image
+import main_cat from "/lovable-uploads/03d5a47f-cd41-4583-bb7b-3b3ab0f362ce.png"; // Updated to new base image
 
 function App() {
   console.log("App is running!"); // Add console log to verify app is running
@@ -60,6 +60,11 @@ function App() {
       // Also, listen for object modification and update the image position accordingly
       const objectModifiedHandler = () => {
         updateImagePosition();
+        
+        // Update preview when object is modified
+        setTimeout(() => {
+          saveImageToDataURL();
+        }, 100);
       };
 
       canvas.on("object:modified", objectModifiedHandler);
@@ -130,6 +135,8 @@ function App() {
         // Make sure we have a canvas element to work with
         if (!canvasRef.current) {
           console.error("Canvas reference element is not available!");
+          // Try again after a short delay
+          setTimeout(() => initializeCanvas(), 500);
           return;
         }
         
@@ -139,7 +146,8 @@ function App() {
         const newCanvas = new fabric.Canvas(canvasRef.current, {
           width: window.innerWidth <= 768 ? 400 : 400,
           height: window.innerWidth <= 768 ? 400 : 400,
-          backgroundColor: "#000", // Changed background color to black
+          backgroundColor: "#000", // Black background
+          preserveObjectStacking: true, // Maintain stacking order of objects
         });
         
         console.log("Canvas created successfully:", newCanvas);
@@ -165,35 +173,67 @@ function App() {
 
         // Add the main cat image and wait for it to fully load
         fabric.Image.fromURL(main_cat, (img) => {
-          const canvasWidth = newCanvas.getWidth();
-          img.scaleToWidth(canvasWidth);
-          img.scaleToHeight(img.height * (canvasWidth / img.width));
-          img.set({ selectable: false });
-          
-          newCanvas.add(img);
-          newCanvas.renderAll();
-          
-          // Wait for image to be fully rendered before updating preview
-          setTimeout(() => {
-            console.log("Updating preview after adding main image");
-            newCanvas.renderAll(); // Force another render
-            
-            // Multiple attempts to update preview with increasing delays
+          if (!img) {
+            console.error("Failed to load main image");
+            // Try loading a backup image or retry
             setTimeout(() => {
-              saveImageToDataURL();
-              
-              // Force an additional update attempt after a longer delay
-              setTimeout(() => {
-                console.log("Final fallback preview update");
-                saveImageToDataURL();
-              }, 1500);
+              fabric.Image.fromURL(main_cat, handleImageLoad);
             }, 1000);
-          }, 800);
+            return;
+          }
+          
+          handleImageLoad(img);
         });
+        
+        function handleImageLoad(img) {
+          try {
+            const canvasWidth = newCanvas.getWidth();
+            img.scaleToWidth(canvasWidth);
+            img.scaleToHeight(img.height * (canvasWidth / img.width));
+            img.set({ 
+              selectable: false,
+              evented: false,
+              lockMovementX: true,
+              lockMovementY: true,
+              lockScalingX: true,
+              lockScalingY: true,
+              lockRotation: true,
+              hasBorders: false,
+              hasControls: false
+            });
+            
+            newCanvas.add(img);
+            newCanvas.renderAll();
+            
+            // Wait for image to be fully rendered before updating preview
+            setTimeout(() => {
+              console.log("Updating preview after adding main image");
+              newCanvas.renderAll(); // Force another render
+              
+              // Multiple attempts to update preview with increasing delays
+              setTimeout(() => {
+                saveImageToDataURL();
+                
+                // Force an additional update attempt after a longer delay
+                setTimeout(() => {
+                  console.log("Final fallback preview update");
+                  saveImageToDataURL();
+                }, 2000);
+              }, 1200);
+            }, 1000);
+          } catch (err) {
+            console.error("Error handling main image:", err);
+          }
+        }
         
       } catch (error) {
         console.error("Error initializing Fabric.js canvas:", error);
         fabricInitialized.current = false;
+        // Try again after a delay
+        setTimeout(() => {
+          fabricInitialized.current = false;
+          initializeCanvas();
+        }, 2000);
       }
     }
   };
@@ -275,69 +315,106 @@ function App() {
       return;
     }
     
+    // Clear any existing objects first
+    if (canvas.getObjects().length > 0) {
+      const mainImages = canvas.getObjects().filter(obj => !obj.selectable);
+      mainImages.forEach(obj => canvas.remove(obj));
+    }
+    
+    // Load the new image
     fabric.Image.fromURL(image, (img) => {
-      const canvasWidth = canvas.getWidth();
-
-      img.scaleToWidth(canvasWidth);
-      img.scaleToHeight(img.height * (canvasWidth / img.width));
-      img.set({
-        selectable: false, // Disable selection
-        evented: false,    // Prevent events
-        lockMovementX: true,
-        lockMovementY: true,
-        lockScalingX: true,
-        lockScalingY: true,
-        lockRotation: true,
-        hasBorders: false,
-        hasControls: false,
-        zIndex: -1      // Put it at the bottom layer
-      });
-
-      // Clear existing objects if needed
-      if (canvas.getObjects().length === 0) {
-        canvas.add(img);
-      } else {
-        // Add the image at the bottom
-        canvas.insertAt(img, 0);
+      if (!img) {
+        console.error("Failed to load main image in addMainImg");
+        return;
       }
       
-      canvas.renderAll();
-      
-      // Update preview after adding main image with multiple attempts
-      setTimeout(() => {
-        saveImageToDataURL();
+      try {
+        const canvasWidth = canvas.getWidth();
+
+        img.scaleToWidth(canvasWidth);
+        img.scaleToHeight(img.height * (canvasWidth / img.width));
+        img.set({
+          selectable: false,     // Disable selection
+          evented: false,        // Prevent events
+          lockMovementX: true,
+          lockMovementY: true,
+          lockScalingX: true,
+          lockScalingY: true,
+          lockRotation: true,
+          hasBorders: false,
+          hasControls: false,
+          zIndex: -1            // Put it at the bottom layer
+        });
+
+        // Insert at index 0 to ensure it's at the bottom
+        canvas.insertAt(img, 0);
+        canvas.renderAll();
         
-        // One more attempt after a longer delay
+        console.log("Main image added successfully");
+        
+        // Update preview after adding main image with multiple attempts
         setTimeout(() => {
           saveImageToDataURL();
-        }, 1000);
-      }, 500);
-    });
+          
+          // One more attempt after a longer delay
+          setTimeout(() => {
+            saveImageToDataURL();
+          }, 1200);
+        }, 800);
+      } catch (error) {
+        console.error("Error setting up main image:", error);
+      }
+    }, { crossOrigin: 'anonymous' });
   };
 
   const handleAddImage = (state, setState, image) => {
     if (state != null) {
       canvas.remove(state);
     }
+    
     fabric.Image.fromURL(image, (img) => {
-      const canvasWidth = canvas.getWidth();
-      const canvasHeight = canvas.getHeight();
-
-      img.scaleToWidth(canvasWidth);
-      img.scaleToHeight(canvasHeight);
-      img.set({
-        selectable: false, // Disable selection
-      });
-
-      setState(img);
-
-      canvas.add(img);
+      if (!img) {
+        console.error("Failed to load sticker image:", image);
+        return;
+      }
       
-      // Update the preview after adding the image
-      setTimeout(() => {
-        saveImageToDataURL();
-      }, 100);
-    });
+      try {
+        const canvasWidth = canvas.getWidth();
+        const canvasHeight = canvas.getHeight();
+
+        // Set reasonable maximum dimensions for stickers
+        const maxWidth = canvasWidth * 0.8;
+        const maxHeight = canvasHeight * 0.8;
+        
+        // Scale image appropriately
+        if (img.width > maxWidth) {
+          const scale = maxWidth / img.width;
+          img.scaleX = scale;
+          img.scaleY = scale;
+        } else {
+          img.scaleToWidth(canvasWidth);
+          img.scaleToHeight(canvasHeight);
+        }
+        
+        img.set({
+          selectable: false, // Disable selection
+          evented: true     // Allow events for interaction
+        });
+
+        setState(img);
+        canvas.add(img);
+        canvas.renderAll();
+        
+        console.log("Added sticker image successfully");
+        
+        // Update the preview after adding the image
+        setTimeout(() => {
+          saveImageToDataURL();
+        }, 300);
+      } catch (error) {
+        console.error("Error adding sticker image:", error);
+      }
+    }, { crossOrigin: 'anonymous' });
   };
 
   const getRandomImage = (category) => {
@@ -462,7 +539,7 @@ function App() {
         // Give it more time to render before exporting
         setTimeout(() => {
           updatePreviewImage();
-        }, 1000);
+        }, 1200);
         return '';
       } else {
         return updatePreviewImage();
@@ -487,12 +564,27 @@ function App() {
         return '';
       }
       
+      // Make sure canvas has the main image
+      if (canvas.getObjects().length === 0) {
+        console.log("Canvas is empty during preview update, adding base image");
+        addMainImg(canvas, main_cat);
+        
+        // Try again after image is added
+        setTimeout(() => {
+          updatePreviewImage();
+        }, 1000);
+        return '';
+      }
+      
       // Use a try/catch for toDataURL to handle potential errors
       let dataURL;
       try {
+        // Force a render before generating the data URL
+        canvas.renderAll();
+        
         dataURL = canvas.toDataURL({
           format: "png",
-          multiplier: 4, // Reduced from 8 to 4 for better performance
+          multiplier: 3, // Lower multiplier for better performance
           quality: 1,
         });
       } catch (e) {
@@ -518,13 +610,18 @@ function App() {
           setTimeout(() => {
             if (canvas && canvas.lowerCanvasEl) {
               try {
-                const fallbackURL = canvas.toDataURL();
+                canvas.renderAll();
+                const fallbackURL = canvas.toDataURL({
+                  format: "png",
+                  multiplier: 1
+                });
                 resultPreview.src = fallbackURL;
+                console.log("Used fallback preview generation");
               } catch (e) {
                 console.error("Fallback preview generation failed:", e);
               }
             }
-          }, 500);
+          }, 800);
         };
         
         // Set source to load the image
@@ -541,52 +638,17 @@ function App() {
 
   const handleCanvasClear = () => {
     try {
-      // Dispose of the old canvas first
+      // First clear all objects on the current canvas
       if (canvas) {
-        canvas.dispose();
-      }
-      
-      if (!canvasRef.current) {
-        console.error("Canvas reference is null during clear!");
-        return;
-      }
-      
-      // Create a new canvas instance
-      const newCanvas = new fabric.Canvas(canvasRef.current, {
-        width: window.innerWidth <= 768 ? 400 : 400,
-        height: window.innerWidth <= 768 ? 400 : 400,
-        backgroundColor: "#000", // Changed background color to black
-      });
-
-      console.log("New canvas created during clear:", newCanvas);
-      setCanvas(newCanvas);
-      fabricInitialized.current = true;
-      
-      // Set up event listeners
-      newCanvas.on("selection:created", (e) => {
-        setSelectedObject(e.selected[0]);
-      });
-
-      newCanvas.on("object:modified", (e) => {
-        setSelectedObject(e.target);
-        setTimeout(() => {
-          saveImageToDataURL();
-        }, 500);
-      });
-
-      newCanvas.on("selection:cleared", () => {
-        setSelectedObject(null);
-      });
-      
-      // Add main cat image to the new canvas with proper callback
-      fabric.Image.fromURL(main_cat, (img) => {
-        const canvasWidth = newCanvas.getWidth();
-        img.scaleToWidth(canvasWidth);
-        img.scaleToHeight(img.height * (canvasWidth / img.width));
-        img.set({ selectable: false });
+        // Save the canvas dimensions before clearing
+        const canvasWidth = canvas.getWidth();
+        const canvasHeight = canvas.getHeight();
         
-        newCanvas.add(img);
-        newCanvas.renderAll();
+        // Clear all objects
+        canvas.clear();
+        
+        // Reset the background color
+        canvas.setBackgroundColor("#000", canvas.renderAll.bind(canvas));
         
         // Reset all state variables for stickers
         setHeadwear(null);
@@ -595,16 +657,50 @@ function App() {
         setKimono(null);
         setJewelry(null);
         setAccessories(null);
+        setBackgroundImage(null);
         
-        // Update the preview after a delay to ensure canvas renders
-        setTimeout(() => {
-          console.log("Updating preview after reset");
-          saveImageToDataURL();
-        }, 1000);
-      });
-      
+        // Add main cat image with proper callback
+        fabric.Image.fromURL(main_cat, (img) => {
+          if (!img) {
+            console.error("Failed to load main image in reset");
+            return;
+          }
+          
+          img.scaleToWidth(canvasWidth);
+          img.scaleToHeight(img.height * (canvasWidth / img.width));
+          img.set({
+            selectable: false,
+            evented: false,
+            lockMovementX: true,
+            lockMovementY: true,
+            lockScalingX: true,
+            lockScalingY: true,
+            lockRotation: true,
+            hasBorders: false,
+            hasControls: false
+          });
+          
+          canvas.add(img);
+          canvas.renderAll();
+          
+          console.log("Canvas reset completed successfully");
+          
+          // Update the preview after a delay to ensure canvas renders
+          setTimeout(() => {
+            console.log("Updating preview after reset");
+            saveImageToDataURL();
+          }, 1000);
+        }, { crossOrigin: 'anonymous' });
+      } else {
+        // If canvas doesn't exist, initialize it
+        console.log("Canvas not available during reset, initializing new canvas");
+        initializeCanvas();
+      }
     } catch (error) {
       console.error("Error during canvas clear:", error);
+      // Try to recover by reinitializing
+      fabricInitialized.current = false;
+      setTimeout(() => initializeCanvas(), 1000);
     }
   };
 
@@ -827,7 +923,7 @@ function App() {
           {/* Result Preview Container - After upload buttons on mobile */}
           <div className="mt-10 flex flex-col items-center justify-center">
             <div className="border-4 border-[#0c46af] p-2 rounded-lg bg-black/50">
-              <div className="relative" style={{ width: '300px', height: '300px', backgroundColor: 'rgba(10, 31, 63, 0.3)' }}>
+              <div className="preview-container relative" style={{ width: '300px', height: '300px', backgroundColor: 'rgba(10, 31, 63, 0.3)' }}>
                 {/* Fallback message if preview fails */}
                 <div className="absolute inset-0 flex items-center justify-center text-white opacity-50 z-0">
                   <p className="text-center" style={{ fontFamily: "'Finger Paint', cursive" }}>
@@ -839,7 +935,7 @@ function App() {
                 <img 
                   id="result-preview" 
                   alt="Result Preview" 
-                  className="absolute inset-0 z-10 max-w-[300px] max-h-[300px] object-contain"
+                  className="z-10 max-w-[300px] max-h-[300px] object-contain w-full h-full"
                   style={{
                     display: 'block', 
                     margin: '0 auto',
