@@ -1,0 +1,12 @@
+
+/* App.css - Updated for latest Lovable version */
+
+.lovable-app {
+  width: 100%;
+  height: 100%;
+}
+
+/* Additional styles for Fabric.js canvas */
+.canvas-container {
+  margin: 0 auto;
+}
