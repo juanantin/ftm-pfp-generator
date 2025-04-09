@@ -404,15 +404,19 @@ function App() {
         quality: 1,
       });
       
-      // Display the image preview to the user
+      // Display the image preview to the user for both mobile and desktop
       const resultPreview = document.getElementById('result-preview');
       if (resultPreview) {
         resultPreview.src = dataURL;
         resultPreview.style.display = 'block';
-        console.log("Preview updated with image data", resultPreview);
-      } else {
-        console.error("Cannot find preview element with ID 'result-preview'");
       }
+      
+      const resultPreviewMobile = document.getElementById('result-preview-mobile');
+      if (resultPreviewMobile) {
+        resultPreviewMobile.src = dataURL;
+        resultPreviewMobile.style.display = 'block';
+      }
+      
       return dataURL;
     } catch (error) {
       console.error("Error saving image to data URL:", error);
@@ -506,11 +510,19 @@ function App() {
         <img 
           src="/lovable-uploads/d3db5656-828a-47f4-b0b4-888cde78af09.png" 
           alt="Logo" 
-          className="h-10 w-10" 
+          className="h-10 w-10 mb-8" 
         />
       </div>
 
       <div className="w-full flex py-10 flex-col lg:flex-row justify-center">
+        {/* Title centered for desktop */}
+        <div className="flex item-center justify-center gap-5 md:gap-10 mb-8 w-full">
+          <img
+            src="/lovable-uploads/13dd479a-7c88-43de-94c7-701c74fae6c8.png"
+            className="w-full max-w-[400px] h-auto mx-auto"
+            alt="FANTOM PFP GENERATOR"
+          />
+        </div>
         <input
           type="file"
           accept="image/*"
@@ -561,7 +573,32 @@ function App() {
               />
             )}
           </div>
-          <div className="flex flex-wrap w-full gap-5 justify-center">
+          {/* For mobile: Show stickers first, then buttons */}
+          {isMobile && (
+            <div className="mt-5 w-full px-5">
+              <div className="flex-1">
+                <ImageScroller
+                  canvas={canvas}
+                  categorizedImages={stickers}
+                  handleAddImage={handleAddImage}
+                  changeBackgroundImage={changeBackgroundImage}
+                  headwear={headwear}
+                  eyewear={eyewear}
+                  mouth={mouth}
+                  jewelry={jewelry}
+                  accessories={accessories}
+                  setHeadwear={setHeadwear}
+                  setEyewear={setEyewear}
+                  setMouth={setMouth}
+                  setKimono={setKimono}
+                  setJewelry={setJewelry}
+                  setAccessories={setAccessories}
+                />
+              </div>
+            </div>
+          )}
+          
+          <div className="flex flex-wrap w-full gap-5 justify-center mt-8">
             <div
               onClick={() => stickerImgInputRef.current.click()}
               className="border-2 cursor-pointer border-white bg-[#0c46af] text-white px-5 py-2 rounded-lg flex justify-center items-center overflow-hidden relative group transition-all duration-300 ease-in-out transform hover:scale-105 w-full sm:w-full md:w-1/3 lg:w-1/3"
@@ -618,44 +655,71 @@ function App() {
             </div>
           </div>
           
-          {/* Result Preview Container */}
-          <div className="mt-10 flex flex-col items-center justify-center">
-            <h2 className="text-3xl text-center text-white mb-4 content-font" style={{ fontFamily: "'Finger Paint', cursive" }}>Your FTM PFP Preview</h2>
-            <div className="border-4 border-[#0c46af] p-2 rounded-lg bg-black/50">
-              <img 
-                id="result-preview" 
-                alt="Result Preview" 
-                className="max-w-[300px] max-h-[300px] block"
-                style={{display: 'block', margin: '0 auto'}}
+          {/* Result Preview Container - only shown on desktop or at bottom on mobile */}
+          {!isMobile && (
+            <div className="mt-10 flex flex-col items-center justify-center">
+              <div className="border-4 border-[#0c46af] p-2 rounded-lg bg-black/50">
+                <img 
+                  id="result-preview" 
+                  alt="Result Preview" 
+                  className="max-w-[300px] max-h-[300px] block"
+                  style={{display: 'block', margin: '0 auto'}}
+                />
+              </div>
+            </div>
+          )}
+          
+          {/* Second preview for mobile at the bottom */}
+          {isMobile && (
+            <div className="mt-10 flex flex-col items-center justify-center">
+              <div className="border-4 border-[#0c46af] p-2 rounded-lg bg-black/50">
+                <img 
+                  id="result-preview" 
+                  alt="Result Preview" 
+                  className="max-w-[300px] max-h-[300px] block"
+                  style={{display: 'block', margin: '0 auto'}}
+                />
+              </div>
+            </div>
+          )}
+        </div>
+
+        {/* Stickers section - only shown on desktop */}
+        {!isMobile && (
+          <div className="mt-24 w-full lg:w-[60%] px-5 lg:pl-0">
+            <div className="flex-1">
+              <ImageScroller
+                canvas={canvas}
+                categorizedImages={stickers}
+                handleAddImage={handleAddImage}
+                changeBackgroundImage={changeBackgroundImage}
+                headwear={headwear}
+                eyewear={eyewear}
+                mouth={mouth}
+                jewelry={jewelry}
+                accessories={accessories}
+                setHeadwear={setHeadwear}
+                setEyewear={setEyewear}
+                setMouth={setMouth}
+                setKimono={setKimono}
+                setJewelry={setJewelry}
+                setAccessories={setAccessories}
               />
             </div>
           </div>
-        </div>
-
-        <div className="mt-5 w-full lg:w-[60%] px-5 lg:pl-0 ">
-          <div className="flex-1">
-            <h1 className="text-4xl text-center text-white mt-10" style={{ fontFamily: "'Finger Paint', cursive" }}>
-              CLICK TO ADD STICKER
-            </h1>
-            <ImageScroller
-              canvas={canvas}
-              categorizedImages={stickers}
-              handleAddImage={handleAddImage}
-              changeBackgroundImage={changeBackgroundImage}
-              headwear={headwear}
-              eyewear={eyewear}
-              mouth={mouth}
-              jewelry={jewelry}
-              accessories={accessories}
-              setHeadwear={setHeadwear}
-              setEyewear={setEyewear}
-              setMouth={setMouth}
-              setKimono={setKimono}
-              setJewelry={setJewelry}
-              setAccessories={setAccessories}
-            />
-          </div>
-        </div>
+        )}
+      </div>
+      
+      {/* Bottom logo to go back */}
+      <div 
+        onClick={() => window.open("https://fantomsonic.com/", "_blank")}
+        className="w-full flex justify-center mt-10 mb-8 cursor-pointer"
+      >
+        <img 
+          src="/lovable-uploads/d3db5656-828a-47f4-b0b4-888cde78af09.png" 
+          alt="Logo" 
+          className="h-12 w-12" 
+        />
       </div>
     </div>
   );
