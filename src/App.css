@@ -9,15 +9,24 @@
 /* Additional styles for Fabric.js canvas */
 .canvas-container {
   margin: 0 auto;
+  border-radius: 20px;
 }
 
 /* Font styling */
 h1.title-font {
-  font-family: 'Crypster', cursive;
+  font-family: 'Crypster', cursive !important;
 }
 
 p.content-font, h2.content-font {
-  font-family: 'Finger Paint', cursive;
+  font-family: 'Finger Paint', cursive !important;
+}
+
+.title-font {
+  font-family: 'Crypster', cursive !important;
+}
+
+.content-font {
+  font-family: 'Finger Paint', cursive !important;
 }
 
 /* Preview image */
@@ -25,4 +34,5 @@ p.content-font, h2.content-font {
   max-width: 300px;
   max-height: 300px;
   display: block;
+  margin: 0 auto;
 }

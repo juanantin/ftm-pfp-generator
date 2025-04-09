@@ -119,8 +119,9 @@ function App() {
     
     // Update preview whenever canvas changes
     setTimeout(() => {
+      console.log("Updating preview from background change effect");
       saveImageToDataURL();
-    }, 300);
+    }, 500);
   }, [canvas, backgroundImage, isMobile]);
 
   // Initialize canvas function
@@ -168,6 +169,12 @@ function App() {
 
         // Add the main cat image
         addMainImg(newCanvas, main_cat);
+        
+        // Update preview after initialization
+        setTimeout(() => {
+          console.log("Updating preview after canvas init");
+          saveImageToDataURL();
+        }, 500);
       } catch (error) {
         console.error("Error initializing Fabric.js canvas:", error);
         fabricInitialized.current = false;
@@ -211,7 +218,15 @@ function App() {
       setStickers(categorizedImages);
       
       // After loading stickers, try to initialize the canvas
-      setTimeout(initializeCanvas, 100);
+      setTimeout(() => {
+        initializeCanvas();
+        
+        // Force an initial preview update after everything is loaded
+        setTimeout(() => {
+          console.log("Initial preview update");
+          saveImageToDataURL();
+        }, 1000);
+      }, 200);
     };
 
     // Start importing stickers
@@ -347,6 +362,11 @@ function App() {
   const saveImageToLocal = () => {
     if (canvas) {
       const dataURL = saveImageToDataURL();
+      if (!dataURL) {
+        console.error("No image data available");
+        return;
+      }
+      
       const blob = dataURLToBlob(dataURL);
       const url = URL.createObjectURL(blob);
 
@@ -378,7 +398,10 @@ function App() {
   };
 
   const saveImageToDataURL = () => {
-    if (!canvas) return '';
+    if (!canvas) {
+      console.error("Canvas not available for preview");
+      return '';
+    }
     
     try {
       const dataURL = canvas.toDataURL({
@@ -386,10 +409,15 @@ function App() {
         multiplier: 8,
         quality: 1,
       });
+      
       // Display the image preview to the user
       const resultPreview = document.getElementById('result-preview');
       if (resultPreview) {
         resultPreview.src = dataURL;
+        resultPreview.style.display = 'block';
+        console.log("Preview updated with image data", resultPreview);
+      } else {
+        console.error("Cannot find preview element with ID 'result-preview'");
       }
       return dataURL;
     } catch (error) {
@@ -484,7 +512,7 @@ function App() {
       /> */}
 
       <div
-        onClick={() => (window.location.href = "https://fantomsonic.com/")}
+        onClick={() => window.open("https://fantomsonic.com/", "_blank")}
         className="flex cursor-pointer absolute top-5 left-10"
       >
         <svg
@@ -498,7 +526,7 @@ function App() {
             d="m6.921 12.5l5.793 5.792L12 19l-7-7l7-7l.714.708L6.92 11.5H19v1z"
           />
         </svg>
-        <h1 className="text-3xl text-white" style={{ fontFamily: "'Finger Paint', cursive" }}>Home</h1>
+        <h1 className="text-3xl text-white content-font" style={{ fontFamily: "'Finger Paint', cursive !important" }}>Home</h1>
       </div>
 
       <div className="w-full flex py-10 flex-col lg:flex-row justify-center">
@@ -525,7 +553,7 @@ function App() {
               className="w-[100px] lg:w-[150px] h-auto cursor-pointer"
               alt=""
             /> */}
-            <h1 className="text-white mt-5 lg:mt-0 text-5xl md:text-7xl text-center" style={{ fontFamily: "'Crypster', cursive" }}>
+            <h1 className="text-white mt-5 lg:mt-0 text-5xl md:text-7xl text-center title-font" style={{ fontFamily: "'Crypster', cursive !important" }}>
               FANTOM FTM
               <br />
               PFP GENERATOR
@@ -617,12 +645,13 @@ function App() {
           
           {/* Result Preview Container */}
           <div className="mt-10 flex flex-col items-center justify-center">
-            <h2 className="text-3xl text-center text-white mb-4" style={{ fontFamily: "'Finger Paint', cursive" }}>Your FTM PFP Preview</h2>
+            <h2 className="text-3xl text-center text-white mb-4 content-font" style={{ fontFamily: "'Finger Paint', cursive" }}>Your FTM PFP Preview</h2>
             <div className="border-4 border-white p-2 rounded-lg bg-black/50">
               <img 
                 id="result-preview" 
                 alt="Result Preview" 
-                className="max-w-[300px] max-h-[300px]"
+                className="max-w-[300px] max-h-[300px] block"
+                style={{display: 'block', margin: '0 auto'}}
               />
             </div>
           </div>
