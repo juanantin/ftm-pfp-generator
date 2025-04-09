@@ -1,5 +1,9 @@
+
 import { useState, useEffect, useRef } from "react";
-import { fabric } from "fabric";
+// Fixed fabric.js import
+import * as fabricjs from "fabric";
+// Handle both old and new fabric.js versions
+const fabric = fabricjs.fabric;
 import logo from "./assets/logo.png";
 import ImageScroller from "./ImageScroller";
 import bg from "./assets/bg.png";
