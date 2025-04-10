@@ -1,9 +1,10 @@
 {
-  "name": "cok_meme_generator",
+  "name": "ftm_meme_generator",
   "private": true,
   "version": "0.0.0",
   "type": "module",
-  
+}
+
   "scripts": {
     "dev": "vite",
     "build": "vite build",
