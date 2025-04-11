@@ -381,15 +381,21 @@ function App() {
         const canvasWidth = canvas.getWidth();
         const canvasHeight = canvas.getHeight();
         
-        // Keep the original size of the sticker
-        // Center the image on the canvas
+        // Make stickers non-movable and position them at the same proportional position as base model
         img.set({
           left: canvasWidth / 2,
           top: canvasHeight / 2,
           originX: 'center',
           originY: 'center',
-          selectable: true,
-          evented: true
+          selectable: false,
+          evented: false,
+          lockMovementX: true,
+          lockMovementY: true,
+          lockScalingX: true,
+          lockScalingY: true,
+          lockRotation: true,
+          hasBorders: false,
+          hasControls: false
         });
 
         setState(img);
@@ -455,14 +461,21 @@ function App() {
           const canvasWidth = canvas.getWidth();
           const canvasHeight = canvas.getHeight();
           
-          // Center the image on the canvas at full size
+          // Add uploaded stickers at original size, but make them non-movable
           img.set({
             left: canvasWidth / 2,
             top: canvasHeight / 2,
             originX: 'center',
             originY: 'center',
-            selectable: true,
-            evented: true
+            selectable: false,
+            evented: false,
+            lockMovementX: true,
+            lockMovementY: true,
+            lockScalingX: true,
+            lockScalingY: true,
+            lockRotation: true,
+            hasBorders: false,
+            hasControls: false
           });
           
           canvas.add(img);
@@ -489,7 +502,7 @@ function App() {
       const url = URL.createObjectURL(blob);
 
       const link = document.createElement("a");
-      link.download = "pixel_meme.png";
+      link.download = "ftm_pfp.png";
       link.href = url;
       document.body.appendChild(link);
       link.click();
