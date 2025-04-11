@@ -735,7 +735,10 @@ function App() {
 
   return (
     <div className="min-h-screen overflow-y-auto night-sky-bg" style={{ 
-      backgroundImage: `url('/lovable-uploads/501c37e0-441b-4827-b6a8-f3a8064316f6.png')` 
+      backgroundImage: `url('/lovable-uploads/be971682-1466-471f-96a4-78b21fb504ff.png')`,
+      backgroundSize: 'cover',
+      backgroundPosition: 'center',
+      backgroundRepeat: 'no-repeat'
     }}>
       {/* Top Logo */}
       <div
@@ -905,7 +908,7 @@ function App() {
           {/* Result Preview Container - After upload buttons on mobile */}
           <div className="mt-10 flex flex-col items-center justify-center">
             <div className="border-4 border-[#0c46af] p-2 rounded-lg bg-black/50">
-              <div className="preview-container relative" style={{ width: '300px', height: '300px', backgroundColor: 'rgba(10, 31, 63, 0.3)' }}>
+              <div className="preview-container relative" style={{ width: '300px', height: '300px', backgroundColor: 'rgba(1, 10, 30, 0.4)' }}>
                 {/* Fallback message if preview fails */}
                 <div className="absolute inset-0 flex items-center justify-center text-white opacity-50 z-0">
                   <p className="text-center" style={{ fontFamily: "'Finger Paint', cursive" }}>

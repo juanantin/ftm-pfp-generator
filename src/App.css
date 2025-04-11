@@ -65,4 +65,5 @@ body {
   background-repeat: no-repeat;
   background-position: center;
   background-attachment: fixed;
+  background-color: #050b1f; /* Fallback color matching the night sky */
 }
