@@ -5,7 +5,7 @@ import { fabric } from "fabric";
 import logo from "./assets/logo.png";
 import ImageScroller from "./ImageScroller";
 import bg from "./assets/bg.png";
-import main_cat from "./assets/main_cat.png";
+import main_cat from "public/lovable-uploads/b9485130-b21f-4a80-84a1-7fffa1f3e4fe.png";
 
 function App() {
   console.log("App is running!"); // Add console log to verify app is running
@@ -485,7 +485,7 @@ function App() {
       const url = URL.createObjectURL(blob);
 
       const link = document.createElement("a");
-      link.download = "ftm_pfp.png";
+      link.download = "pixel_meme.png";
       link.href = url;
       document.body.appendChild(link);
       link.click();
