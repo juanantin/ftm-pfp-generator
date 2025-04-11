@@ -380,31 +380,23 @@ function App() {
       try {
         const canvasWidth = canvas.getWidth();
         const canvasHeight = canvas.getHeight();
-
-        // Set reasonable maximum dimensions for stickers
-        const maxWidth = canvasWidth * 0.8;
-        const maxHeight = canvasHeight * 0.8;
         
-        // Scale image appropriately
-        if (img.width > maxWidth) {
-          const scale = maxWidth / img.width;
-          img.scaleX = scale;
-          img.scaleY = scale;
-        } else {
-          img.scaleToWidth(canvasWidth);
-          img.scaleToHeight(canvasHeight);
-        }
-        
+        // Keep the original size of the sticker
+        // Center the image on the canvas
         img.set({
-          selectable: true, // Enable selection
-          evented: true     // Allow events for interaction
+          left: canvasWidth / 2,
+          top: canvasHeight / 2,
+          originX: 'center',
+          originY: 'center',
+          selectable: true,
+          evented: true
         });
 
         setState(img);
         canvas.add(img);
         canvas.renderAll();
         
-        console.log("Added sticker image successfully");
+        console.log("Added sticker image successfully at center, full size");
         
         // Update the preview after adding the image
         setTimeout(() => {
@@ -460,8 +452,19 @@ function App() {
       const reader = new FileReader();
       reader.onload = (event) => {
         fabric.Image.fromURL(event.target.result, (img) => {
-          img.scaleToWidth(100);
-          img.scaleToHeight(img.height * (100 / img.width));
+          const canvasWidth = canvas.getWidth();
+          const canvasHeight = canvas.getHeight();
+          
+          // Center the image on the canvas at full size
+          img.set({
+            left: canvasWidth / 2,
+            top: canvasHeight / 2,
+            originX: 'center',
+            originY: 'center',
+            selectable: true,
+            evented: true
+          });
+          
           canvas.add(img);
           
           // Update preview after adding sticker
