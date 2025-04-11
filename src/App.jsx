@@ -191,6 +191,13 @@ function App() {
             const canvasWidth = newCanvas.getWidth();
             img.scaleToWidth(canvasWidth);
             img.scaleToHeight(img.height * (canvasWidth / img.width));
+            
+            // Store the base model's scaling factors for reference
+            newCanvas.baseModelScaleFactor = {
+              scaleX: img.scaleX,
+              scaleY: img.scaleY
+            };
+            
             img.set({ 
               selectable: false,
               evented: false,
@@ -330,8 +337,16 @@ function App() {
       try {
         const canvasWidth = canvas.getWidth();
 
+        // Scale base image to fit the canvas width
         img.scaleToWidth(canvasWidth);
         img.scaleToHeight(img.height * (canvasWidth / img.width));
+        
+        // Store the base model's scaling factors for reference
+        canvas.baseModelScaleFactor = {
+          scaleX: img.scaleX,
+          scaleY: img.scaleY
+        };
+        
         img.set({
           selectable: false,     // Disable selection
           evented: false,        // Prevent events
@@ -381,7 +396,14 @@ function App() {
         const canvasWidth = canvas.getWidth();
         const canvasHeight = canvas.getHeight();
         
-        // Make stickers non-movable and position them at the same proportional position as base model
+        // If the sticker is much larger than the canvas, scale it down proportionally
+        // to prevent it from being too large compared to the base model
+        if (img.width > canvasWidth * 0.8) {
+          const scaleFactor = (canvasWidth * 0.7) / img.width;
+          img.scale(scaleFactor);
+        }
+        
+        // Center the sticker on the canvas
         img.set({
           left: canvasWidth / 2,
           top: canvasHeight / 2,
@@ -402,7 +424,7 @@ function App() {
         canvas.add(img);
         canvas.renderAll();
         
-        console.log("Added sticker image successfully at center, full size");
+        console.log("Added sticker image at correct size, centered");
         
         // Update the preview after adding the image
         setTimeout(() => {
@@ -461,7 +483,14 @@ function App() {
           const canvasWidth = canvas.getWidth();
           const canvasHeight = canvas.getHeight();
           
-          // Add uploaded stickers at original size, but make them non-movable
+          // If the sticker is much larger than the canvas, scale it down proportionally
+          // to prevent it from being too large compared to the base model
+          if (img.width > canvasWidth * 0.8) {
+            const scaleFactor = (canvasWidth * 0.7) / img.width;
+            img.scale(scaleFactor);
+          }
+          
+          // Center the sticker on the canvas
           img.set({
             left: canvasWidth / 2,
             top: canvasHeight / 2,
