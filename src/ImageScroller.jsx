@@ -6,18 +6,12 @@ const ImageScroller = ({
   categorizedImages,
   handleAddImage,
   changeBackgroundImage,
-  headwear,
-  eyewear,
-  mouth,
-  kimono,
-  jewelry,
-  accessories,
-  setHeadwear,
-  setEyewear,
-  setMouth,
-  setKimono,
-  setJewelry,
-  setAccessories,
+  hats,
+  kimonos,
+  weapons,
+  setHats,
+  setKimonos,
+  setWeapons,
 }) => {
   const refs = useRef({});
 
@@ -77,17 +71,11 @@ const ImageScroller = ({
                 onClick={() => {
                   if (canvas != null) {
                     if (category === "headwear") {
-                      canvas.remove(headwear);
-                    } else if (category === "eyewear") {
-                      canvas.remove(eyewear);
-                    } else if (category === "mouth") {
-                      canvas.remove(mouth);
+                      canvas.remove(hats);
                     } else if (category === "kimono") {
-                      canvas.remove(kimono);
-                    } else if (category === "jewelry") {
-                      canvas.remove(jewelry);
+                      canvas.remove(kimonos);
                     } else if (category === "accessories") {
-                      canvas.remove(accessories);
+                      canvas.remove(weapons);
                     }
                   }
                 }}
@@ -109,17 +97,11 @@ const ImageScroller = ({
                   key={i}
                   onClick={() => {
                     if (category === "headwear") {
-                      handleAddImage(headwear, setHeadwear, img);
-                    } else if (category === "eyewear") {
-                      handleAddImage(eyewear, setEyewear, img);
-                    } else if (category === "mouth") {
-                      handleAddImage(mouth, setMouth, img);
+                      handleAddImage(hats, setHats, img);
                     } else if (category === "kimono") {
-                      handleAddImage(kimono, setKimono, img);
-                    } else if (category === "jewelry") {
-                      handleAddImage(jewelry, setJewelry, img);
+                      handleAddImage(kimonos, setKimonos, img);
                     } else if (category === "accessories") {
-                      handleAddImage(accessories, setAccessories, img);
+                      handleAddImage(weapons, setWeapons, img);
                     } else if (category === "background") {
                       changeBackgroundImage(img, canvas);
                     }

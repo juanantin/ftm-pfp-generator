@@ -5,7 +5,7 @@ import { fabric } from "fabric";
 import logo from "./assets/logo.png";
 import ImageScroller from "./ImageScroller";
 import bg from "./assets/bg.png";
-import main_cat from "/lovable-uploads/03d5a47f-cd41-4583-bb7b-3b3ab0f362ce.png"; // Updated to new base image
+import main_cat from "./assets/main_cat.png";
 
 function App() {
   console.log("App is running!"); // Add console log to verify app is running
@@ -243,32 +243,30 @@ function App() {
     const importStickers = async () => {
       // Import images from all subfolders in the 'assets/stickers' directory
       const imageContext = import.meta.glob(
-        "./assets/stickers/*/*.(png|jpg|jpeg|svg)"
+        "./assets/stickers/*/*.(png|jpg|jpeg|svg)",
+        { eager: true } // Using eager loading to avoid dynamic imports which can fail with spaces in filenames
       );
 
       // Object to store categorized images
       const categorizedImages = {};
 
-      // Process each import promise
-      await Promise.all(
-        Object.entries(imageContext).map(async ([path, importPromise]) => {
-          const imageModule = await importPromise();
-          const imagePath = imageModule.default;
+      // Process each import (now using eager loading)
+      Object.entries(imageContext).forEach(([path, module]) => {
+        const imagePath = module.default;
 
-          // Extract the category (subfolder name) from the path
-          const pathParts = path.split("/");
-          const folderName = pathParts[pathParts.length - 2];
-          const category = folderName.split(" ").slice(1).join(" ");
+        // Extract the category (subfolder name) from the path
+        const pathParts = path.split("/");
+        const folderName = pathParts[pathParts.length - 2];
+        const category = folderName.split(" ").slice(1).join(" ");
 
-          // Initialize the array for the category if it doesn't exist
-          if (!categorizedImages[category]) {
-            categorizedImages[category] = [];
-          }
+        // Initialize the array for the category if it doesn't exist
+        if (!categorizedImages[category]) {
+          categorizedImages[category] = [];
+        }
 
-          // Add the image path to the appropriate category
-          categorizedImages[category].push(imagePath);
-        })
-      );
+        // Add the image path to the appropriate category
+        categorizedImages[category].push(imagePath);
+      });
 
       // Use the categorized images as needed
       setStickers(categorizedImages);
@@ -397,7 +395,7 @@ function App() {
         }
         
         img.set({
-          selectable: false, // Disable selection
+          selectable: true, // Enable selection
           evented: true     // Allow events for interaction
         });
 
@@ -428,23 +426,12 @@ function App() {
     const randomHeadwear = getRandomImage("headwear");
     if (randomHeadwear) handleAddImage(headwear, setHeadwear, randomHeadwear);
 
-    const randomEyewear = getRandomImage("eyewear");
-    if (randomEyewear) handleAddImage(eyewear, setEyewear, randomEyewear);
-
-    const randomMouth = getRandomImage("mouth");
-    if (randomMouth) handleAddImage(mouth, setMouth, randomMouth);
-
     const randomKimono = getRandomImage("kimono");
     if (randomKimono) handleAddImage(kimono, setKimono, randomKimono);
-
-    const randomJewelry = getRandomImage("jewelry");
-    if (randomJewelry) handleAddImage(jewelry, setJewelry, randomJewelry);
 
     const randomAccessories = getRandomImage("accessories");
     if (randomAccessories)
       handleAddImage(accessories, setAccessories, randomAccessories);
-
-    // Removed randomPawAccessories section
 
     const randomBackground = getRandomImage("background");
     if (randomBackground) changeBackgroundImage(randomBackground, canvas);
@@ -820,18 +807,12 @@ function App() {
                   categorizedImages={stickers}
                   handleAddImage={handleAddImage}
                   changeBackgroundImage={changeBackgroundImage}
-                  headwear={headwear}
-                  eyewear={eyewear}
-                  mouth={mouth}
-                  kimono={kimono}
-                  jewelry={jewelry}
-                  accessories={accessories}
-                  setHeadwear={setHeadwear}
-                  setEyewear={setEyewear}
-                  setMouth={setMouth}
-                  setKimono={setKimono}
-                  setJewelry={setJewelry}
-                  setAccessories={setAccessories}
+                  hats={headwear}
+                  kimonos={kimono}
+                  weapons={accessories}
+                  setHats={setHeadwear}
+                  setKimonos={setKimono}
+                  setWeapons={setAccessories}
                 />
               </div>
             </>
@@ -966,18 +947,12 @@ function App() {
                 categorizedImages={stickers}
                 handleAddImage={handleAddImage}
                 changeBackgroundImage={changeBackgroundImage}
-                headwear={headwear}
-                eyewear={eyewear}
-                mouth={mouth}
-                kimono={kimono}
-                jewelry={jewelry}
-                accessories={accessories}
-                setHeadwear={setHeadwear}
-                setEyewear={setEyewear}
-                setMouth={setMouth}
-                setKimono={setKimono}
-                setJewelry={setJewelry}
-                setAccessories={setAccessories}
+                hats={headwear}
+                kimonos={kimono}
+                weapons={accessories}
+                setHats={setHeadwear}
+                setKimonos={setKimono}
+                setWeapons={setAccessories}
               />
             </div>
           </div>
