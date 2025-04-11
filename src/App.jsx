@@ -5,7 +5,8 @@ import { fabric } from "fabric";
 import logo from "./assets/logo.png";
 import ImageScroller from "./ImageScroller";
 import bg from "./assets/bg.png";
-import main_cat from "public/lovable-uploads/b9485130-b21f-4a80-84a1-7fffa1f3e4fe.png";
+// Instead of importing directly, we'll reference the image by its URL
+const main_cat = "/lovable-uploads/b9485130-b21f-4a80-84a1-7fffa1f3e4fe.png";
 
 function App() {
   console.log("App is running!"); // Add console log to verify app is running
