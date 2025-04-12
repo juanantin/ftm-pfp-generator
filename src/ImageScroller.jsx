@@ -79,21 +79,57 @@ const ImageScroller = ({
                     } else if (category === "eyewear") {
                       // Find and remove all eyewear objects
                       const objects = canvas.getObjects();
+                      let removed = false;
                       objects.forEach(obj => {
-                        // Use data attribute or examine object source to identify eyewear
-                        if (obj._element && obj._element.src && obj._element.src.toLowerCase().includes("eyewear")) {
-                          canvas.remove(obj);
+                        // First try with direct image src url check
+                        if (obj._element && obj._element.src) {
+                          const src = obj._element.src.toLowerCase();
+                          if (src.includes("eyewear") || src.includes("/02 eyewear/")) {
+                            canvas.remove(obj);
+                            removed = true;
+                          }
                         }
                       });
+                      
+                      // If nothing was removed, try again with a broader approach
+                      if (!removed) {
+                        // Try removing based on position and other attributes
+                        objects.forEach(obj => {
+                          // Look for objects added recently that are positioned in the upper third of the canvas
+                          // and are not the main image (selectable is false for main image)
+                          if (obj.top < canvas.height * 0.4 && !obj.selectable === false) {
+                            canvas.remove(obj);
+                          }
+                        });
+                      }
                     } else if (category === "mouth") {
                       // Find and remove all mouth objects
                       const objects = canvas.getObjects();
+                      let removed = false;
                       objects.forEach(obj => {
-                        // Use data attribute or examine object source to identify mouth items
-                        if (obj._element && obj._element.src && obj._element.src.toLowerCase().includes("mouth")) {
-                          canvas.remove(obj);
+                        // First try with direct image src url check
+                        if (obj._element && obj._element.src) {
+                          const src = obj._element.src.toLowerCase();
+                          if (src.includes("mouth") || src.includes("/03 mouth/")) {
+                            canvas.remove(obj);
+                            removed = true;
+                          }
                         }
                       });
+                      
+                      // If nothing was removed, try again with a broader approach
+                      if (!removed) {
+                        // Try removing based on position and other attributes
+                        objects.forEach(obj => {
+                          // Look for objects positioned in the middle area of the canvas
+                          // and are not the main image (selectable is false for main image)
+                          if (obj.top > canvas.height * 0.4 && 
+                              obj.top < canvas.height * 0.6 && 
+                              !obj.selectable === false) {
+                            canvas.remove(obj);
+                          }
+                        });
+                      }
                     }
                     canvas.renderAll();
                     

@@ -660,7 +660,7 @@ function App() {
         return '';
       }
       
-      // Update both preview elements (mobile top preview and bottom preview)
+      // Update the mobile preview element only
       const updatePreviewElement = (elementId) => {
         const previewElement = document.getElementById(elementId);
         if (previewElement) {
@@ -700,9 +700,12 @@ function App() {
         }
       };
       
-      // Update both preview elements
-      updatePreviewElement('result-preview');
+      // Update only the mobile preview element
+      // The result-preview still exists but is hidden for compatibility with existing code
       updatePreviewElement('mobile-preview');
+      // Make sure both previews work for compatibility with any code that expects them
+      const resultPreview = document.getElementById('result-preview');
+      if (resultPreview) resultPreview.src = dataURL;
       
       return dataURL;
     } catch (error) {
@@ -856,7 +859,7 @@ function App() {
           onChange={handleAddSticker}
         />
         <div className="flex-1 px-5">
-          <div className="flex item-center justify-center gap-5 md:gap-10 mb-10">
+          <div className="flex item-center justify-center gap-5 md:gap-10 mb-3">
             <img
               src="/lovable-uploads/13dd479a-7c88-43de-94c7-701c74fae6c8.png"
               className="w-full max-w-[400px] h-auto mx-auto lg:mt-0"
@@ -869,9 +872,9 @@ function App() {
           {isMobile && (
             <>
               {/* Mobile Preview directly after title */}
-              <div className="mt-2 mb-8 flex flex-col items-center justify-center">
-                <div className="border-4 border-[#0c46af] p-2 rounded-lg bg-black/50 max-w-[300px]">
-                  <div className="preview-container relative" style={{ width: '250px', height: '250px', backgroundColor: 'rgba(1, 10, 30, 0.4)' }}>
+              <div className="mt-0 mb-6 flex flex-col items-center justify-center">
+                <div className="border-4 border-[#0c46af] p-2 rounded-lg bg-black/50 max-w-[350px]">
+                  <div className="preview-container relative" style={{ width: '300px', height: '300px', backgroundColor: 'rgba(1, 10, 30, 0.4)' }}>
                     {/* Fallback message if preview fails */}
                     <div className="absolute inset-0 flex items-center justify-center text-white opacity-50 z-0">
                       <p className="text-center" style={{ fontFamily: "'Finger Paint', cursive" }}>
@@ -883,7 +886,7 @@ function App() {
                     <img 
                       id="mobile-preview" 
                       alt="Mobile Preview" 
-                      className="z-10 max-w-[250px] max-h-[250px] object-contain w-full h-full"
+                      className="z-10 max-w-[300px] max-h-[300px] object-contain w-full h-full"
                       style={{
                         display: 'block', 
                         margin: '0 auto',
@@ -1026,40 +1029,9 @@ function App() {
             </div>
           </div>
           
-          {/* Result Preview Container - After upload buttons on mobile */}
-          <div className="mt-10 flex flex-col items-center justify-center">
-            <div className="border-4 border-[#0c46af] p-2 rounded-lg bg-black/50">
-              <div className="preview-container relative" style={{ width: '300px', height: '300px', backgroundColor: 'rgba(1, 10, 30, 0.4)' }}>
-                {/* Fallback message if preview fails */}
-                <div className="absolute inset-0 flex items-center justify-center text-white opacity-50 z-0">
-                  <p className="text-center" style={{ fontFamily: "'Finger Paint', cursive" }}>
-                    Preview will appear here
-                  </p>
-                </div>
-                
-                {/* The actual preview image */}
-                <img 
-                  id="result-preview" 
-                  alt="Result Preview" 
-                  className="z-10 max-w-[300px] max-h-[300px] object-contain w-full h-full"
-                  style={{
-                    display: 'block', 
-                    margin: '0 auto',
-                    backgroundColor: 'transparent'
-                  }}
-                  onError={(e) => {
-                    console.log("Preview image loading error:", e);
-                    e.target.style.display = 'none'; // Hide broken image
-                    // Try updating the preview again after a delay
-                    setTimeout(() => saveImageToDataURL(), 1000);
-                  }}
-                  onLoad={(e) => {
-                    console.log("Preview image loaded successfully");
-                    e.target.style.display = 'block';
-                  }}
-                />
-              </div>
-            </div>
+          {/* Hidden element for compatibility with existing code */}
+          <div style={{ display: 'none' }}>
+            <img id="result-preview" alt="Hidden Preview" />
           </div>
         </div>
 
