@@ -397,10 +397,11 @@ function App() {
         const canvasHeight = canvas.getHeight();
         
         // Make stickers larger - use a standard scale factor 
-        const scaleFactor = 3.0; // Increased scale factor to make stickers larger
+        const scaleFactor = 3.2; // Increased scale factor to make stickers slightly bigger
         
-        // Apply the scaling to make stickers larger
-        img.scale(scaleFactor);
+        // Apply the scaling to make stickers slightly bigger (3.0 → 3.2)
+        const updatedScaleFactor = 3.2;
+        img.scale(updatedScaleFactor);
         
         // Determine which type of sticker this is and apply vertical offset
         let yOffset = 0;
@@ -409,17 +410,17 @@ function App() {
         const imagePath = image.toLowerCase();
         
         if (imagePath.includes("kimono") || imagePath.includes("clothing")) {
-          // Move clothing down
-          yOffset = 30; 
+          // Move clothing down, but less than before (was 30)
+          yOffset = 15; 
         } else if (imagePath.includes("accessories")) {
           // Move accessories down slightly
-          yOffset = 20;
+          yOffset = 15;
         } else if (imagePath.includes("mouth")) {
-          // Move mouth items down slightly
-          yOffset = 10;
+          // Move mouth items slightly higher (was 10)
+          yOffset = 5;
         } else if (imagePath.includes("eyewear")) {
-          // Keep eyewear centered but slightly up
-          yOffset = -5;
+          // Move eyewear up more (was -5)
+          yOffset = -8;
         }
         
         // Center the sticker on the canvas with offset
