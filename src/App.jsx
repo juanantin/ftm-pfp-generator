@@ -82,7 +82,7 @@ function App() {
       let newWidth = img.width;
       let newHeight = img.height;
 
-      let maxWidth = isMobile ? 420 : 400;
+      let maxWidth = isMobile ? 500 : 400;
 
       if (img.width > maxWidth) {
         newWidth = maxWidth;
@@ -90,7 +90,7 @@ function App() {
       }
 
       canvas.setWidth(newWidth);
-      canvas.setHeight(isMobile ? 420 : 400);
+      canvas.setHeight(isMobile ? 500 : 400);
 
       canvas.renderAll();
 
@@ -145,8 +145,8 @@ function App() {
         
         // Create the Fabric.js canvas instance
         const newCanvas = new fabric.Canvas(canvasRef.current, {
-          width: window.innerWidth <= 768 ? 420 : 400,
-          height: window.innerWidth <= 768 ? 420 : 400,
+          width: window.innerWidth <= 768 ? 500 : 400,
+          height: window.innerWidth <= 768 ? 500 : 400,
           backgroundColor: "#000", // Black background
           preserveObjectStacking: true, // Maintain stacking order of objects
         });
@@ -409,7 +409,11 @@ function App() {
         // Check the image path to determine the category
         const imagePath = image.toLowerCase();
         
-        if (imagePath.includes("kimono") || imagePath.includes("clothing")) {
+        if (imagePath.includes("headwear")) {
+          // Move headwear slightly up and to the right
+          yOffset = -10; // Move up by 10px
+          // We'll adjust the left position separately
+        } else if (imagePath.includes("kimono") || imagePath.includes("clothing")) {
           // Move clothing slightly up from previous position
           yOffset = 5; 
         } else if (imagePath.includes("accessories")) {
@@ -423,9 +427,15 @@ function App() {
           yOffset = -8;
         }
         
+        // Determine horizontal positioning (moving headwear to the right)
+        let xOffset = 0;
+        if (imagePath.includes("headwear")) {
+          xOffset = 15; // Move headwear to the right by 15px
+        }
+        
         // Center the sticker on the canvas with offset
         img.set({
-          left: canvasWidth / 2,
+          left: (canvasWidth / 2) + xOffset,
           top: (canvasHeight / 2) + yOffset,
           originX: 'center',
           originY: 'center',
@@ -981,8 +991,8 @@ function App() {
             <>
               {/* Mobile Preview directly after title - LARGER */}
               <div className="mt-1 mb-1 flex flex-col items-center justify-center">
-                <div className="border-4 border-[#0c46af] p-2 rounded-lg bg-black/50 w-[95%] max-w-[450px]">
-                  <div className="preview-container relative" style={{ width: '100%', height: '450px', backgroundColor: 'rgba(1, 10, 30, 0.4)' }}>
+                <div className="border-4 border-[#0c46af] p-2 rounded-lg bg-black/50 w-[98%] max-w-[500px]">
+                  <div className="preview-container relative" style={{ width: '100%', height: '500px', backgroundColor: 'rgba(1, 10, 30, 0.4)' }}>
                     {/* Fallback message if preview fails */}
                     <div className="absolute inset-0 flex items-center justify-center text-white opacity-50 z-0">
                       <p className="text-center" style={{ fontFamily: "'Finger Paint', cursive" }}>
