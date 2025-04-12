@@ -1056,10 +1056,10 @@ function App() {
           {/* Mobile layout - Preview right after title */}
           {isMobile && (
             <>
-              {/* Mobile Preview directly after title - Height matches the preview itself */}
+              {/* Mobile Preview directly after title - Height reduced to match image content */}
               <div className="mt-0 mb-0 flex flex-col items-center justify-center">
                 <div className="p-2 rounded-2xl bg-black/50 w-[95%] max-w-[470px]">
-                  <div className="preview-container relative rounded-xl" style={{ width: '100%', height: '400px', backgroundColor: 'rgba(1, 10, 30, 0.4)' }}>
+                  <div className="preview-container relative rounded-xl" style={{ width: '100%', height: '320px', backgroundColor: 'rgba(1, 10, 30, 0.4)' }}>
                     {/* Fallback message if preview fails */}
                     <div className="absolute inset-0 flex items-center justify-center text-white opacity-50 z-0">
                       <p className="text-center" style={{ fontFamily: "'Finger Paint', cursive" }}>
@@ -1075,7 +1075,8 @@ function App() {
                       style={{
                         display: 'block', 
                         margin: '0 auto',
-                        backgroundColor: 'transparent'
+                        backgroundColor: 'transparent',
+                        objectFit: 'contain' 
                       }}
                       onError={(e) => {
                         console.log("Mobile preview image loading error");
@@ -1301,7 +1302,7 @@ function App() {
           {/* Bottom preview container */}
           <div className="absolute inset-0 flex items-center justify-center z-10">
             <div className="p-2 rounded-2xl bg-black/50 w-[80%] max-w-[300px]">
-              <div className="preview-container relative rounded-xl" style={{ width: '100%', height: '120px', backgroundColor: 'rgba(1, 10, 30, 0.4)' }}>
+              <div className="preview-container relative rounded-xl" style={{ width: '100%', height: '100px', backgroundColor: 'rgba(1, 10, 30, 0.4)' }}>
                 {/* Bottom preview image */}
                 <img 
                   id="bottom-mobile-preview" 
