@@ -402,10 +402,30 @@ function App() {
         // Apply the scaling to make stickers larger
         img.scale(scaleFactor);
         
-        // Center the sticker on the canvas
+        // Determine which type of sticker this is and apply vertical offset
+        let yOffset = 0;
+        
+        // Check the image path to determine the category
+        const imagePath = image.toLowerCase();
+        
+        if (imagePath.includes("kimono") || imagePath.includes("clothing")) {
+          // Move clothing down
+          yOffset = 30; 
+        } else if (imagePath.includes("accessories")) {
+          // Move accessories down slightly
+          yOffset = 20;
+        } else if (imagePath.includes("mouth")) {
+          // Move mouth items down slightly
+          yOffset = 10;
+        } else if (imagePath.includes("eyewear")) {
+          // Keep eyewear centered but slightly up
+          yOffset = -5;
+        }
+        
+        // Center the sticker on the canvas with offset
         img.set({
           left: canvasWidth / 2,
-          top: canvasHeight / 2,
+          top: (canvasHeight / 2) + yOffset,
           originX: 'center',
           originY: 'center',
           selectable: false,
@@ -425,7 +445,11 @@ function App() {
           img.scale(img.scaleX * adjustedScale);
         }
 
-        setState(img);
+        // Make sure to set state if setState is provided
+        if (setState) {
+          setState(img);
+        }
+        
         canvas.add(img);
         canvas.renderAll();
         

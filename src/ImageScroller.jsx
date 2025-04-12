@@ -102,6 +102,10 @@ const ImageScroller = ({
                       handleAddImage(kimonos, setKimonos, img);
                     } else if (category === "accessories") {
                       handleAddImage(weapons, setWeapons, img);
+                    } else if (category === "eyewear") {
+                      handleAddImage(null, null, img);
+                    } else if (category === "mouth") {
+                      handleAddImage(null, null, img);
                     } else if (category === "background") {
                       changeBackgroundImage(img, canvas);
                     }
