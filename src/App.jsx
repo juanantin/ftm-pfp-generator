@@ -861,6 +861,64 @@ function App() {
     input.style.borderRadius = '5px';
     input.style.fontSize = '16px';
     
+    // Create color picker section
+    const colorSection = document.createElement('div');
+    colorSection.style.marginBottom = '20px';
+    
+    const colorLabel = document.createElement('p');
+    colorLabel.innerText = 'SELECT COLOR:';
+    colorLabel.style.color = 'white';
+    colorLabel.style.marginBottom = '10px';
+    colorLabel.style.fontFamily = "'Finger Paint', cursive";
+    colorLabel.style.fontSize = '16px';
+    
+    // Color options container
+    const colorOptions = document.createElement('div');
+    colorOptions.style.display = 'flex';
+    colorOptions.style.flexWrap = 'wrap';
+    colorOptions.style.justifyContent = 'center';
+    colorOptions.style.gap = '10px';
+    
+    // Define color choices
+    const colors = [
+      { name: 'White', value: '#FFFFFF' },
+      { name: 'Red', value: '#FF0000' },
+      { name: 'Blue', value: '#0000FF' },
+      { name: 'Green', value: '#00FF00' },
+      { name: 'Yellow', value: '#FFFF00' },
+      { name: 'Purple', value: '#800080' },
+      { name: 'Orange', value: '#FFA500' },
+      { name: 'Pink', value: '#FFC0CB' }
+    ];
+    
+    let selectedColor = '#FFFFFF'; // Default color: white
+    
+    // Create color buttons
+    colors.forEach(color => {
+      const colorButton = document.createElement('div');
+      colorButton.style.width = '30px';
+      colorButton.style.height = '30px';
+      colorButton.style.backgroundColor = color.value;
+      colorButton.style.borderRadius = '50%';
+      colorButton.style.cursor = 'pointer';
+      colorButton.style.border = '2px solid #FFFFFF';
+      colorButton.title = color.name;
+      
+      // Selection indicator
+      colorButton.addEventListener('click', () => {
+        // Remove selection border from all color buttons
+        colorOptions.querySelectorAll('div').forEach(btn => {
+          btn.style.border = '2px solid #FFFFFF';
+        });
+        
+        // Add selection border to selected color
+        colorButton.style.border = '2px solid #00FFFF';
+        selectedColor = color.value;
+      });
+      
+      colorOptions.appendChild(colorButton);
+    });
+    
     // Create buttons container
     const buttonsContainer = document.createElement('div');
     buttonsContainer.style.display = 'flex';
@@ -899,8 +957,8 @@ function App() {
         const newText = new fabric.Text(text.toUpperCase(), {
           fontFamily: "'Finger Paint', cursive",
           fontSize: 20,
-          fill: "#fff", // White text
-          stroke: "", // No border/outline
+          fill: selectedColor,
+          stroke: "",
           fontWeight: "bold",
           left: 100,
           top: 100,
@@ -924,8 +982,16 @@ function App() {
     // Build modal
     buttonsContainer.appendChild(addButton);
     buttonsContainer.appendChild(cancelButton);
+    
+    // Assemble the modal content
     modalContent.appendChild(heading);
     modalContent.appendChild(input);
+    
+    // Add the color section
+    colorSection.appendChild(colorLabel);
+    colorSection.appendChild(colorOptions);
+    modalContent.appendChild(colorSection);
+    
     modalContent.appendChild(buttonsContainer);
     modal.appendChild(modalContent);
     
@@ -991,8 +1057,8 @@ function App() {
             <>
               {/* Mobile Preview directly after title - Height matches the preview itself */}
               <div className="mt-0 mb-0 flex flex-col items-center justify-center">
-                <div className="border-4 border-[#0c46af] p-2 rounded-lg bg-black/50 w-[95%] max-w-[470px]">
-                  <div className="preview-container relative" style={{ width: '100%', height: '400px', backgroundColor: 'rgba(1, 10, 30, 0.4)' }}>
+                <div className="p-2 rounded-2xl bg-black/50 w-[95%] max-w-[470px]">
+                  <div className="preview-container relative rounded-xl" style={{ width: '100%', height: '400px', backgroundColor: 'rgba(1, 10, 30, 0.4)' }}>
                     {/* Fallback message if preview fails */}
                     <div className="absolute inset-0 flex items-center justify-center text-white opacity-50 z-0">
                       <p className="text-center" style={{ fontFamily: "'Finger Paint', cursive" }}>
@@ -1046,8 +1112,60 @@ function App() {
                 )}
               </div>
               
-              {/* Stickers - moved up to 50px away from preview */}
-              <div className="mb-0 mt-[-50px]">
+              {/* Mobile control buttons - Moved up to be right after the preview */}
+              <div className="flex flex-wrap w-full gap-3 justify-center mt-2 mb-4">
+                <div
+                  onClick={() => stickerImgInputRef.current.click()}
+                  className="border-2 cursor-pointer border-white bg-[#0A1F3F] text-white px-3 py-2 rounded-lg flex justify-center items-center overflow-hidden relative group transition-all duration-300 ease-in-out transform hover:scale-105 w-[30%]"
+                >
+                  <p className="text-white text-center text-sm tracking-wider relative" style={{ fontFamily: "'Finger Paint', cursive" }}>
+                    UPLOAD
+                  </p>
+                </div>
+                <div
+                  onClick={() => bgImgInputRef.current.click()}
+                  className="border-2 cursor-pointer border-white bg-[#0A1F3F] text-white px-3 py-2 rounded-lg flex justify-center items-center overflow-hidden relative group transition-all duration-300 ease-in-out transform hover:scale-105 w-[30%]"
+                >
+                  <p className="text-white text-center text-sm tracking-wider relative" style={{ fontFamily: "'Finger Paint', cursive" }}>
+                    BG
+                  </p>
+                </div>
+                <div
+                  onClick={handleAddText}
+                  className="border-2 cursor-pointer border-white bg-[#0A1F3F] text-white px-3 py-2 rounded-lg flex justify-center items-center overflow-hidden relative group transition-all duration-300 ease-in-out transform hover:scale-105 w-[30%]"
+                >
+                  <p className="text-white text-center text-sm tracking-wider relative" style={{ fontFamily: "'Finger Paint', cursive" }}>
+                    TEXT
+                  </p>
+                </div>
+                <div
+                  onClick={handleCanvasClear}
+                  className="border-2 cursor-pointer border-white bg-[#0A1F3F] text-white px-3 py-2 rounded-lg flex justify-center items-center overflow-hidden relative group transition-all duration-300 ease-in-out transform hover:scale-105 w-[30%]"
+                >
+                  <p className="text-white text-center text-sm tracking-wider relative" style={{ fontFamily: "'Finger Paint', cursive" }}>
+                    RESET
+                  </p>
+                </div>
+                <div
+                  onClick={generateRandom}
+                  className="border-2 cursor-pointer border-white bg-[#0c46af] text-white px-3 py-2 rounded-lg flex justify-center items-center overflow-hidden relative group transition-all duration-300 ease-in-out transform hover:scale-105 w-[30%]"
+                >
+                  <p className="text-white text-center text-sm tracking-wider relative" style={{ fontFamily: "'Finger Paint', cursive" }}>
+                    RANDOM
+                  </p>
+                </div>
+                <div
+                  onClick={saveImageToLocal}
+                  className="border-2 cursor-pointer border-white bg-[#0c46af] text-white px-3 py-2 rounded-lg flex justify-center items-center overflow-hidden relative group transition-all duration-300 ease-in-out transform hover:scale-105 w-[30%]"
+                >
+                  <p className="text-white text-center text-sm tracking-wider relative" style={{ fontFamily: "'Finger Paint', cursive" }}>
+                    SAVE
+                  </p>
+                </div>
+              </div>
+              
+              {/* Stickers - moved up to come right after the image */}
+              <div className="mb-0 mt-[-30px]">
                 <ImageScroller
                   canvas={canvas}
                   categorizedImages={stickers}
@@ -1067,7 +1185,7 @@ function App() {
           {/* Desktop layout - Canvas Preview */}
           {!isMobile && (
             <div
-              className="mx-auto mb-7 bg-transparent rounded-xl relative w-[400px]"
+              className="mx-auto mb-7 bg-transparent rounded-2xl relative w-[400px]"
             >
               <canvas ref={canvasRef} />
               {selectedObject && (
@@ -1089,63 +1207,65 @@ function App() {
             </div>
           )}
           
-          {/* Control buttons - displayed after stickers on mobile */}
-          <div className="flex flex-wrap w-full gap-5 justify-center">
-            <div
-              onClick={() => stickerImgInputRef.current.click()}
-              className="border-2 cursor-pointer border-white bg-[#0A1F3F] text-white px-5 py-2 rounded-lg flex justify-center items-center overflow-hidden relative group transition-all duration-300 ease-in-out transform hover:scale-105 w-full sm:w-full md:w-1/3 lg:w-1/3"
-            >
-              <p className="text-white text-center text-lg tracking-wider relative" style={{ fontFamily: "'Finger Paint', cursive" }}>
-                UPLOAD
-              </p>
-              <div className="absolute top-0 left-0 w-full h-full bg-black opacity-0 z-0 transition duration-300 ease-in-out group-hover:opacity-50"></div>
+          {/* Control buttons - shown only on desktop */}
+          {!isMobile && (
+            <div className="flex flex-wrap w-full gap-5 justify-center">
+              <div
+                onClick={() => stickerImgInputRef.current.click()}
+                className="border-2 cursor-pointer border-white bg-[#0A1F3F] text-white px-5 py-2 rounded-lg flex justify-center items-center overflow-hidden relative group transition-all duration-300 ease-in-out transform hover:scale-105 w-full sm:w-full md:w-1/3 lg:w-1/3"
+              >
+                <p className="text-white text-center text-lg tracking-wider relative" style={{ fontFamily: "'Finger Paint', cursive" }}>
+                  UPLOAD
+                </p>
+                <div className="absolute top-0 left-0 w-full h-full bg-black opacity-0 z-0 transition duration-300 ease-in-out group-hover:opacity-50"></div>
+              </div>
+              <div
+                onClick={() => bgImgInputRef.current.click()}
+                className="border-2 cursor-pointer border-white bg-[#0A1F3F] text-white px-5 py-2 rounded-lg flex justify-center items-center overflow-hidden relative group transition-all duration-300 ease-in-out transform hover:scale-105 w-full sm:w-full md:w-1/3 lg:w-1/3"
+              >
+                <p className="text-white text-center text-lg tracking-wider relative" style={{ fontFamily: "'Finger Paint', cursive" }}>
+                  BG
+                </p>
+                <div className="absolute top-0 left-0 w-full h-full bg-black opacity-0 z-0 transition duration-300 ease-in-out group-hover:opacity-50"></div>
+              </div>
+              <div
+                onClick={handleAddText}
+                className="border-2 cursor-pointer border-white bg-[#0A1F3F] text-white px-5 py-2 rounded-lg flex justify-center items-center overflow-hidden relative group transition-all duration-300 ease-in-out transform hover:scale-105 w-full sm:w-full md:w-1/3 lg:w-1/3"
+              >
+                <p className="text-white text-center text-lg tracking-wider relative" style={{ fontFamily: "'Finger Paint', cursive" }}>
+                  TEXT
+                </p>
+                <div className="absolute top-0 left-0 w-full h-full bg-black opacity-0 z-0 transition duration-300 ease-in-out group-hover:opacity-50"></div>
+              </div>
+              <div
+                onClick={handleCanvasClear}
+                className="border-2 cursor-pointer border-white bg-[#0A1F3F] text-white px-5 py-2 rounded-lg flex justify-center items-center overflow-hidden relative group transition-all duration-300 ease-in-out transform hover:scale-105 w-full sm:w-full md:w-1/3 lg:w-1/3"
+              >
+                <p className="text-white text-center text-lg tracking-wider relative" style={{ fontFamily: "'Finger Paint', cursive" }}>
+                  RESET
+                </p>
+                <div className="absolute top-0 left-0 w-full h-full bg-black opacity-0 z-0 transition duration-300 ease-in-out group-hover:opacity-50"></div>
+              </div>
+              <div
+                onClick={generateRandom}
+                className="border-2 cursor-pointer border-white bg-[#0c46af] text-white px-5 py-2 rounded-lg flex justify-center items-center overflow-hidden relative group transition-all duration-300 ease-in-out transform hover:scale-105 w-full sm:w-full md:w-1/3 lg:w-1/3"
+              >
+                <p className="text-white text-center text-lg tracking-wider relative" style={{ fontFamily: "'Finger Paint', cursive" }}>
+                  RANDOM
+                </p>
+                <div className="absolute top-0 left-0 w-full h-full bg-black opacity-0 z-0 transition duration-300 ease-in-out group-hover:opacity-50"></div>
+              </div>
+              <div
+                onClick={saveImageToLocal}
+                className="border-2 cursor-pointer border-white bg-[#0c46af] text-white px-5 py-2 rounded-lg flex justify-center items-center overflow-hidden relative group transition-all duration-300 ease-in-out transform hover:scale-105 w-full sm:w-full md:w-1/3 lg:w-1/3"
+              >
+                <p className="text-white text-center text-lg tracking-wider relative" style={{ fontFamily: "'Finger Paint', cursive" }}>
+                  SAVE
+                </p>
+                <div className="absolute top-0 left-0 w-full h-full bg-black opacity-0 z-0 transition duration-300 ease-in-out group-hover:opacity-50"></div>
+              </div>
             </div>
-            <div
-              onClick={() => bgImgInputRef.current.click()}
-              className="border-2 cursor-pointer border-white bg-[#0A1F3F] text-white px-5 py-2 rounded-lg flex justify-center items-center overflow-hidden relative group transition-all duration-300 ease-in-out transform hover:scale-105 w-full sm:w-full md:w-1/3 lg:w-1/3"
-            >
-              <p className="text-white text-center text-lg tracking-wider relative" style={{ fontFamily: "'Finger Paint', cursive" }}>
-                BG
-              </p>
-              <div className="absolute top-0 left-0 w-full h-full bg-black opacity-0 z-0 transition duration-300 ease-in-out group-hover:opacity-50"></div>
-            </div>
-            <div
-              onClick={handleAddText}
-              className="border-2 cursor-pointer border-white bg-[#0A1F3F] text-white px-5 py-2 rounded-lg flex justify-center items-center overflow-hidden relative group transition-all duration-300 ease-in-out transform hover:scale-105 w-full sm:w-full md:w-1/3 lg:w-1/3"
-            >
-              <p className="text-white text-center text-lg tracking-wider relative" style={{ fontFamily: "'Finger Paint', cursive" }}>
-                TEXT
-              </p>
-              <div className="absolute top-0 left-0 w-full h-full bg-black opacity-0 z-0 transition duration-300 ease-in-out group-hover:opacity-50"></div>
-            </div>
-            <div
-              onClick={handleCanvasClear}
-              className="border-2 cursor-pointer border-white bg-[#0A1F3F] text-white px-5 py-2 rounded-lg flex justify-center items-center overflow-hidden relative group transition-all duration-300 ease-in-out transform hover:scale-105 w-full sm:w-full md:w-1/3 lg:w-1/3"
-            >
-              <p className="text-white text-center text-lg tracking-wider relative" style={{ fontFamily: "'Finger Paint', cursive" }}>
-                RESET
-              </p>
-              <div className="absolute top-0 left-0 w-full h-full bg-black opacity-0 z-0 transition duration-300 ease-in-out group-hover:opacity-50"></div>
-            </div>
-            <div
-              onClick={generateRandom}
-              className="border-2 cursor-pointer border-white bg-[#0c46af] text-white px-5 py-2 rounded-lg flex justify-center items-center overflow-hidden relative group transition-all duration-300 ease-in-out transform hover:scale-105 w-full sm:w-full md:w-1/3 lg:w-1/3"
-            >
-              <p className="text-white text-center text-lg tracking-wider relative" style={{ fontFamily: "'Finger Paint', cursive" }}>
-                RANDOM
-              </p>
-              <div className="absolute top-0 left-0 w-full h-full bg-black opacity-0 z-0 transition duration-300 ease-in-out group-hover:opacity-50"></div>
-            </div>
-            <div
-              onClick={saveImageToLocal}
-              className="border-2 cursor-pointer border-white bg-[#0c46af] text-white px-5 py-2 rounded-lg flex justify-center items-center overflow-hidden relative group transition-all duration-300 ease-in-out transform hover:scale-105 w-full sm:w-full md:w-1/3 lg:w-1/3"
-            >
-              <p className="text-white text-center text-lg tracking-wider relative" style={{ fontFamily: "'Finger Paint', cursive" }}>
-                SAVE
-              </p>
-              <div className="absolute top-0 left-0 w-full h-full bg-black opacity-0 z-0 transition duration-300 ease-in-out group-hover:opacity-50"></div>
-            </div>
-          </div>
+          )}
           
           {/* Hidden element for compatibility with existing code */}
           <div style={{ display: 'none' }}>

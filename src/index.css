@@ -54,6 +54,10 @@ body {
   border-radius: 20px;
 }
 
+.preview-container img {
+  border-radius: 16px;
+}
+
 .canvas-mobile,
 .canvas-mobile .canvas-container,
 .canvas-mobile canvas {
