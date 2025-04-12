@@ -1010,7 +1010,7 @@ function App() {
   };
 
   return (
-    <div className="min-h-screen overflow-y-auto night-sky-bg" style={{ 
+    <div className="min-h-screen overflow-y-auto night-sky-bg pb-20" style={{ 
       backgroundImage: `url('/lovable-uploads/be971682-1466-471f-96a4-78b21fb504ff.png')`,
       backgroundSize: 'cover',
       backgroundPosition: 'center',
@@ -1318,11 +1318,11 @@ function App() {
         )}
       </div>
       
-      {/* Mobile bottom preview over the footer logo - with no frame at all */}
+      {/* Mobile bottom preview and footer logo - proper spacing */}
       {isMobile && (
-        <div className="w-full relative mt-0 mb-0">
+        <div className="w-full relative mt-4 mb-16 pt-4">
           {/* Bottom preview container - no border, maximum image size */}
-          <div className="absolute inset-0 flex items-center justify-center z-10">
+          <div className="flex items-center justify-center my-6">
             <div className="p-0 rounded-3xl w-[95%] max-w-[350px]">
               <div className="preview-container relative rounded-2xl" style={{ width: '100%', height: '120px', backgroundColor: 'transparent' }}>
                 {/* Bottom preview image - maximized to fill frame */}
@@ -1340,14 +1340,19 @@ function App() {
             </div>
           </div>
           
-          {/* Footer logo for navigation - reduced spacing */}
-          <div className="w-full flex justify-center py-2 mt-3">
+          {/* Footer logo with proper spacing and caption */}
+          <div className="w-full flex flex-col items-center justify-center py-6 mt-4 mb-10">
             <img 
               onClick={() => window.open("https://fantomsonic.com/", "_blank")}
               src="/lovable-uploads/d3db5656-828a-47f4-b0b4-888cde78af09.png" 
               alt="Logo" 
-              className="h-12 w-12 cursor-pointer" 
+              className="h-16 w-16 cursor-pointer mb-3" 
             />
+            <p className="text-white mb-4 text-center text-xs" style={{ fontFamily: "'Finger Paint', cursive" }}>
+              FANTOM SONIC
+            </p>
+            {/* Extra space at bottom */}
+            <div className="h-16"></div>
           </div>
         </div>
       )}
