@@ -660,43 +660,50 @@ function App() {
         return '';
       }
       
-      // Display the image preview to the user
-      const resultPreview = document.getElementById('result-preview');
-      if (resultPreview) {
-        // Create a new Image object to verify the data URL is valid
-        const img = new Image();
-        img.onload = () => {
-          // Image loaded successfully, update the preview
-          resultPreview.src = dataURL;
-          resultPreview.style.display = 'block';
-          console.log("Preview updated successfully");
-        };
-        
-        img.onerror = () => {
-          console.error("Generated image data is invalid");
-          // Try again with a fallback with simpler options
-          setTimeout(() => {
-            if (canvas && canvas.lowerCanvasEl) {
-              try {
-                canvas.renderAll();
-                const fallbackURL = canvas.toDataURL({
-                  format: "png",
-                  multiplier: 1
-                });
-                resultPreview.src = fallbackURL;
-                console.log("Used fallback preview generation");
-              } catch (e) {
-                console.error("Fallback preview generation failed:", e);
+      // Update both preview elements (mobile top preview and bottom preview)
+      const updatePreviewElement = (elementId) => {
+        const previewElement = document.getElementById(elementId);
+        if (previewElement) {
+          // Create a new Image object to verify the data URL is valid
+          const img = new Image();
+          img.onload = () => {
+            // Image loaded successfully, update the preview
+            previewElement.src = dataURL;
+            previewElement.style.display = 'block';
+            console.log(`${elementId} updated successfully`);
+          };
+          
+          img.onerror = () => {
+            console.error(`Generated image data is invalid for ${elementId}`);
+            // Try again with a fallback with simpler options
+            setTimeout(() => {
+              if (canvas && canvas.lowerCanvasEl) {
+                try {
+                  canvas.renderAll();
+                  const fallbackURL = canvas.toDataURL({
+                    format: "png",
+                    multiplier: 1
+                  });
+                  previewElement.src = fallbackURL;
+                  console.log(`Used fallback preview generation for ${elementId}`);
+                } catch (e) {
+                  console.error(`Fallback preview generation failed for ${elementId}:`, e);
+                }
               }
-            }
-          }, 800);
-        };
-        
-        // Set source to load the image
-        img.src = dataURL;
-      } else {
-        console.error("Cannot find preview element with ID 'result-preview'");
-      }
+            }, 800);
+          };
+          
+          // Set source to load the image
+          img.src = dataURL;
+        } else {
+          console.error(`Cannot find preview element with ID '${elementId}'`);
+        }
+      };
+      
+      // Update both preview elements
+      updatePreviewElement('result-preview');
+      updatePreviewElement('mobile-preview');
+      
       return dataURL;
     } catch (error) {
       console.error("Error in updatePreviewImage:", error);
@@ -858,10 +865,44 @@ function App() {
             />
           </div>
 
-          {/* Mobile layout - Preview first, then stickers */}
+          {/* Mobile layout - Preview right after title */}
           {isMobile && (
             <>
-              {/* Canvas Preview */}
+              {/* Mobile Preview directly after title */}
+              <div className="mt-2 mb-8 flex flex-col items-center justify-center">
+                <div className="border-4 border-[#0c46af] p-2 rounded-lg bg-black/50 max-w-[300px]">
+                  <div className="preview-container relative" style={{ width: '250px', height: '250px', backgroundColor: 'rgba(1, 10, 30, 0.4)' }}>
+                    {/* Fallback message if preview fails */}
+                    <div className="absolute inset-0 flex items-center justify-center text-white opacity-50 z-0">
+                      <p className="text-center" style={{ fontFamily: "'Finger Paint', cursive" }}>
+                        Preview
+                      </p>
+                    </div>
+                    
+                    {/* Mobile top preview image */}
+                    <img 
+                      id="mobile-preview" 
+                      alt="Mobile Preview" 
+                      className="z-10 max-w-[250px] max-h-[250px] object-contain w-full h-full"
+                      style={{
+                        display: 'block', 
+                        margin: '0 auto',
+                        backgroundColor: 'transparent'
+                      }}
+                      onError={(e) => {
+                        console.log("Mobile preview image loading error");
+                        e.target.style.display = 'none'; // Hide broken image
+                      }}
+                      onLoad={(e) => {
+                        console.log("Mobile preview image loaded successfully");
+                        e.target.style.display = 'block';
+                      }}
+                    />
+                  </div>
+                </div>
+              </div>
+
+              {/* Canvas Preview - actual canvas element */}
               <div
                 className="mx-auto mb-7 bg-transparent rounded-xl relative canvas-mobile"
               >

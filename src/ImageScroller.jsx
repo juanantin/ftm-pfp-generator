@@ -76,7 +76,33 @@ const ImageScroller = ({
                       canvas.remove(kimonos);
                     } else if (category === "accessories") {
                       canvas.remove(weapons);
+                    } else if (category === "eyewear") {
+                      // Find and remove all eyewear objects
+                      const objects = canvas.getObjects();
+                      objects.forEach(obj => {
+                        // Use data attribute or examine object source to identify eyewear
+                        if (obj._element && obj._element.src && obj._element.src.toLowerCase().includes("eyewear")) {
+                          canvas.remove(obj);
+                        }
+                      });
+                    } else if (category === "mouth") {
+                      // Find and remove all mouth objects
+                      const objects = canvas.getObjects();
+                      objects.forEach(obj => {
+                        // Use data attribute or examine object source to identify mouth items
+                        if (obj._element && obj._element.src && obj._element.src.toLowerCase().includes("mouth")) {
+                          canvas.remove(obj);
+                        }
+                      });
                     }
+                    canvas.renderAll();
+                    
+                    // Update the preview after deletion
+                    setTimeout(() => {
+                      if (canvas && typeof canvas.renderAll === 'function') {
+                        canvas.renderAll();
+                      }
+                    }, 100);
                   }
                 }}
               >
