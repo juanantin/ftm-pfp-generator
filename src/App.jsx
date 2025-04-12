@@ -1056,10 +1056,10 @@ function App() {
           {/* Mobile layout - Preview right after title */}
           {isMobile && (
             <>
-              {/* Mobile Preview directly after title - Height reduced to match image content */}
+              {/* Mobile Preview directly after title - Further reduced height */}
               <div className="mt-0 mb-0 flex flex-col items-center justify-center">
-                <div className="p-2 rounded-2xl bg-black/50 w-[95%] max-w-[470px]">
-                  <div className="preview-container relative rounded-xl" style={{ width: '100%', height: '280px', backgroundColor: 'rgba(1, 10, 30, 0.4)' }}>
+                <div className="p-1 rounded-2xl bg-black/50 w-[95%] max-w-[470px]">
+                  <div className="preview-container relative rounded-xl" style={{ width: '100%', height: '240px', backgroundColor: 'rgba(1, 10, 30, 0.4)' }}>
                     {/* Fallback message if preview fails */}
                     <div className="absolute inset-0 flex items-center justify-center text-white opacity-50 z-0">
                       <p className="text-center" style={{ fontFamily: "'Finger Paint', cursive" }}>
@@ -1091,10 +1091,10 @@ function App() {
                 </div>
               </div>
 
-              {/* Canvas Preview - actual canvas element - hidden with zero height to save space */}
+              {/* Canvas Preview - hidden completely */}
               <div
                 className="mx-auto mb-0 bg-transparent rounded-xl relative canvas-mobile"
-                style={{ height: 0, overflow: 'hidden' }}
+                style={{ height: 0, overflow: 'hidden', display: 'none' }}
               >
                 <canvas ref={canvasRef} />
                 {selectedObject && (
@@ -1115,8 +1115,8 @@ function App() {
                 )}
               </div>
               
-              {/* Mobile control buttons - Positioned directly under preview with minimal spacing */}
-              <div className="flex flex-wrap w-full gap-3 justify-center mt-0 mb-2">
+              {/* Mobile control buttons - Zero margin to eliminate space */}
+              <div className="flex flex-wrap w-full gap-2 justify-center mt-0 mb-0 pt-0">
                 <div
                   onClick={() => stickerImgInputRef.current.click()}
                   className="border-2 cursor-pointer border-white bg-[#0A1F3F] text-white px-3 py-2 rounded-lg flex justify-center items-center overflow-hidden relative group transition-all duration-300 ease-in-out transform hover:scale-105 w-[30%]"
@@ -1167,8 +1167,8 @@ function App() {
                 </div>
               </div>
               
-              {/* Stickers section with minimal spacing */}
-              <div className="mb-0 mt-1">
+              {/* Stickers section with zero spacing */}
+              <div className="mb-0 mt-0">
                 <ImageScroller
                   canvas={canvas}
                   categorizedImages={stickers}
@@ -1297,14 +1297,14 @@ function App() {
         )}
       </div>
       
-      {/* Mobile bottom preview over the footer logo - with reduced spacing */}
+      {/* Mobile bottom preview over the footer logo - with minimal frame */}
       {isMobile && (
         <div className="w-full relative mt-0 mb-0">
-          {/* Bottom preview container */}
+          {/* Bottom preview container - padding reduced, height increased */}
           <div className="absolute inset-0 flex items-center justify-center z-10">
-            <div className="p-2 rounded-2xl bg-black/50 w-[80%] max-w-[300px]">
-              <div className="preview-container relative rounded-xl" style={{ width: '100%', height: '80px', backgroundColor: 'rgba(1, 10, 30, 0.4)' }}>
-                {/* Bottom preview image */}
+            <div className="p-1 rounded-2xl bg-black/50 w-[90%] max-w-[320px]">
+              <div className="preview-container relative rounded-xl" style={{ width: '100%', height: '100px', backgroundColor: 'transparent' }}>
+                {/* Bottom preview image - optimized to fill frame */}
                 <img 
                   id="bottom-mobile-preview" 
                   alt="Bottom Preview" 
@@ -1319,8 +1319,8 @@ function App() {
             </div>
           </div>
           
-          {/* Footer logo for navigation - underneath the preview */}
-          <div className="w-full flex justify-center py-3 mt-5">
+          {/* Footer logo for navigation - reduced spacing */}
+          <div className="w-full flex justify-center py-2 mt-3">
             <img 
               onClick={() => window.open("https://fantomsonic.com/", "_blank")}
               src="/lovable-uploads/d3db5656-828a-47f4-b0b4-888cde78af09.png" 
