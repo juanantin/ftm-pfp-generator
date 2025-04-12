@@ -713,7 +713,7 @@ function App() {
       // Update all preview elements
       updatePreviewElement('mobile-preview');
       updatePreviewElement('bottom-mobile-preview');
-      updatePreviewElement('desktop-preview'); // Added desktop preview
+      // desktop preview removed
       
       // Make sure both previews work for compatibility with any code that expects them
       const resultPreview = document.getElementById('result-preview');
@@ -1211,23 +1211,7 @@ function App() {
                 )}
               </div>
               
-              {/* Small preview on desktop */}
-              <div className="mb-4">
-                <div className="p-1 rounded-3xl bg-black/20 w-[150px]">
-                  <div className="preview-container relative rounded-2xl" style={{ width: '100%', height: '120px', backgroundColor: 'transparent' }}>
-                    <img 
-                      id="desktop-preview" 
-                      alt="Preview" 
-                      className="z-10 object-contain w-full h-full rounded-2xl"
-                      style={{
-                        display: 'block', 
-                        margin: '0 auto',
-                        backgroundColor: 'transparent'
-                      }}
-                    />
-                  </div>
-                </div>
-              </div>
+              {/* Desktop preview removed */}
             </div>
           )}
           
