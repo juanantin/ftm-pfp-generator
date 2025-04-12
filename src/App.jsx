@@ -1117,7 +1117,7 @@ function App() {
               </div>
               
               {/* Stickers section with zero spacing (moved to top for mobile) */}
-              <div className="mb-0 mt-0">
+              <div className="mb-6 mt-0">
                 <ImageScroller
                   canvas={canvas}
                   categorizedImages={stickers}
@@ -1133,7 +1133,7 @@ function App() {
               </div>
               
               {/* Mobile control buttons - Adjusted spacing and smaller text (moved below stickers) */}
-              <div className="flex flex-wrap w-full gap-3 justify-center mt-0 mb-3 pt-0">
+              <div className="flex flex-wrap w-full gap-3 justify-center mt-4 mb-3 pt-2">
                 <div
                   onClick={() => stickerImgInputRef.current.click()}
                   className="border-1 cursor-pointer border-white bg-[#0A1F3F] text-white px-2 py-1 rounded-xl flex justify-center items-center overflow-hidden relative group transition-all duration-300 ease-in-out transform hover:scale-105 w-[30%]"
