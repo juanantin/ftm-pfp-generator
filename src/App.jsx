@@ -1115,53 +1115,53 @@ function App() {
                 )}
               </div>
               
-              {/* Mobile control buttons - Adjusted spacing */}
+              {/* Mobile control buttons - Adjusted spacing and smaller text */}
               <div className="flex flex-wrap w-full gap-3 justify-center mt-0 mb-3 pt-0">
                 <div
                   onClick={() => stickerImgInputRef.current.click()}
-                  className="border-2 cursor-pointer border-white bg-[#0A1F3F] text-white px-3 py-2 rounded-lg flex justify-center items-center overflow-hidden relative group transition-all duration-300 ease-in-out transform hover:scale-105 w-[30%]"
+                  className="border-1 cursor-pointer border-white bg-[#0A1F3F] text-white px-2 py-1 rounded-lg flex justify-center items-center overflow-hidden relative group transition-all duration-300 ease-in-out transform hover:scale-105 w-[30%]"
                 >
-                  <p className="text-white text-center text-sm tracking-wider relative" style={{ fontFamily: "'Finger Paint', cursive" }}>
+                  <p className="text-white text-center text-xs tracking-wider relative" style={{ fontFamily: "'Finger Paint', cursive" }}>
                     UPLOAD ELEMENT
                   </p>
                 </div>
                 <div
                   onClick={() => bgImgInputRef.current.click()}
-                  className="border-2 cursor-pointer border-white bg-[#0A1F3F] text-white px-3 py-2 rounded-lg flex justify-center items-center overflow-hidden relative group transition-all duration-300 ease-in-out transform hover:scale-105 w-[30%]"
+                  className="border-1 cursor-pointer border-white bg-[#0A1F3F] text-white px-2 py-1 rounded-lg flex justify-center items-center overflow-hidden relative group transition-all duration-300 ease-in-out transform hover:scale-105 w-[30%]"
                 >
-                  <p className="text-white text-center text-sm tracking-wider relative" style={{ fontFamily: "'Finger Paint', cursive" }}>
+                  <p className="text-white text-center text-xs tracking-wider relative" style={{ fontFamily: "'Finger Paint', cursive" }}>
                     UPLOAD BG
                   </p>
                 </div>
                 <div
                   onClick={handleAddText}
-                  className="border-2 cursor-pointer border-white bg-[#0A1F3F] text-white px-3 py-2 rounded-lg flex justify-center items-center overflow-hidden relative group transition-all duration-300 ease-in-out transform hover:scale-105 w-[30%]"
+                  className="border-1 cursor-pointer border-white bg-[#0A1F3F] text-white px-2 py-1 rounded-lg flex justify-center items-center overflow-hidden relative group transition-all duration-300 ease-in-out transform hover:scale-105 w-[30%]"
                 >
-                  <p className="text-white text-center text-sm tracking-wider relative" style={{ fontFamily: "'Finger Paint', cursive" }}>
+                  <p className="text-white text-center text-xs tracking-wider relative" style={{ fontFamily: "'Finger Paint', cursive" }}>
                     ADD TEXT
                   </p>
                 </div>
                 <div
                   onClick={handleCanvasClear}
-                  className="border-2 cursor-pointer border-white bg-[#0A1F3F] text-white px-3 py-2 rounded-lg flex justify-center items-center overflow-hidden relative group transition-all duration-300 ease-in-out transform hover:scale-105 w-[30%]"
+                  className="border-1 cursor-pointer border-white bg-[#0A1F3F] text-white px-2 py-1 rounded-lg flex justify-center items-center overflow-hidden relative group transition-all duration-300 ease-in-out transform hover:scale-105 w-[30%]"
                 >
-                  <p className="text-white text-center text-sm tracking-wider relative" style={{ fontFamily: "'Finger Paint', cursive" }}>
+                  <p className="text-white text-center text-xs tracking-wider relative" style={{ fontFamily: "'Finger Paint', cursive" }}>
                     RESET
                   </p>
                 </div>
                 <div
                   onClick={generateRandom}
-                  className="border-2 cursor-pointer border-white bg-[#0c46af] text-white px-3 py-2 rounded-lg flex justify-center items-center overflow-hidden relative group transition-all duration-300 ease-in-out transform hover:scale-105 w-[30%]"
+                  className="border-1 cursor-pointer border-white bg-[#0c46af] text-white px-2 py-1 rounded-lg flex justify-center items-center overflow-hidden relative group transition-all duration-300 ease-in-out transform hover:scale-105 w-[30%]"
                 >
-                  <p className="text-white text-center text-sm tracking-wider relative" style={{ fontFamily: "'Finger Paint', cursive" }}>
+                  <p className="text-white text-center text-xs tracking-wider relative" style={{ fontFamily: "'Finger Paint', cursive" }}>
                     RANDOM
                   </p>
                 </div>
                 <div
                   onClick={saveImageToLocal}
-                  className="border-2 cursor-pointer border-white bg-[#0c46af] text-white px-3 py-2 rounded-lg flex justify-center items-center overflow-hidden relative group transition-all duration-300 ease-in-out transform hover:scale-105 w-[30%]"
+                  className="border-1 cursor-pointer border-white bg-[#0c46af] text-white px-2 py-1 rounded-lg flex justify-center items-center overflow-hidden relative group transition-all duration-300 ease-in-out transform hover:scale-105 w-[30%]"
                 >
-                  <p className="text-white text-center text-sm tracking-wider relative" style={{ fontFamily: "'Finger Paint', cursive" }}>
+                  <p className="text-white text-center text-xs tracking-wider relative" style={{ fontFamily: "'Finger Paint', cursive" }}>
                     DOWNLOAD
                   </p>
                 </div>
@@ -1300,11 +1300,11 @@ function App() {
       {/* Mobile bottom preview over the footer logo - with minimal frame */}
       {isMobile && (
         <div className="w-full relative mt-0 mb-0">
-          {/* Bottom preview container - padding reduced, height increased */}
+          {/* Bottom preview container - almost no border, maximum image size */}
           <div className="absolute inset-0 flex items-center justify-center z-10">
-            <div className="p-1 rounded-2xl bg-black/50 w-[90%] max-w-[320px]">
-              <div className="preview-container relative rounded-xl" style={{ width: '100%', height: '100px', backgroundColor: 'transparent' }}>
-                {/* Bottom preview image - optimized to fill frame */}
+            <div className="p-[1px] rounded-2xl bg-black/20 w-[95%] max-w-[350px]">
+              <div className="preview-container relative rounded-xl" style={{ width: '100%', height: '120px', backgroundColor: 'transparent' }}>
+                {/* Bottom preview image - maximized to fill frame */}
                 <img 
                   id="bottom-mobile-preview" 
                   alt="Bottom Preview" 

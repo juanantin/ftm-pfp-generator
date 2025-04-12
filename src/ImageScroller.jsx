@@ -41,18 +41,18 @@ const ImageScroller = ({
     <div className="w-full mt-1">
       {Object.keys(categorizedImages).filter(category => category !== "paw accessories").map((category) => (
         <div key={category} className="mb-2">
-          <h2 className="text-2xl text-center text-white mb-2 capitalize" style={{ fontFamily: "'Finger Paint', cursive" }}>
+          <h2 className="text-xl text-center text-white mb-1 capitalize" style={{ fontFamily: "'Finger Paint', cursive" }}>
             {getCategoryDisplayName(category)}
           </h2>
           <div className="relative flex items-center">
             <button
-              className="absolute left-0 z-10 p-2 bg-[#0A1F3F] rounded-full hover:bg-blue-900"
+              className="absolute left-0 z-10 p-1 bg-[#0A1F3F] rounded-full hover:bg-blue-900"
               onClick={() => scrollLeft(category)}
             >
               <svg
                 xmlns="http://www.w3.org/2000/svg"
-                width="32"
-                height="32"
+                width="24"
+                height="24"
                 viewBox="0 0 24 24"
               >
                 <path
@@ -67,7 +67,7 @@ const ImageScroller = ({
             >
               <div className="flex-shrink-0 w-10"></div>
               <div
-                className="flex items-center justify-center border border-white rounded-md m-2 cursor-pointer transition-transform duration-0 ease-in-out transform hover:scale-125 bg-[#0A1F3F]"
+                className="flex items-center justify-center border border-white rounded-md m-1 cursor-pointer transition-transform duration-0 ease-in-out transform hover:scale-125 bg-[#0A1F3F]"
                 onClick={() => {
                   if (canvas != null) {
                     if (category === "headwear") {
@@ -144,7 +144,7 @@ const ImageScroller = ({
               >
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
-                  className="w-[60px] h-[60px] p-4"
+                  className="w-[48px] h-[48px] p-3"
                   viewBox="0 0 256 256"
                 >
                   <path
@@ -172,20 +172,20 @@ const ImageScroller = ({
                       changeBackgroundImage(img, canvas);
                     }
                   }}
-                  className="w-[80px] h-[80px] border border-[#0A1F3F] rounded-md m-2 cursor-pointer transition-transform duration-0 ease-in-out transform hover:scale-125"
+                  className="w-[60px] h-[60px] border border-[#0A1F3F] rounded-md m-1 cursor-pointer transition-transform duration-0 ease-in-out transform hover:scale-125"
                   alt={`img-${i}`}
                 />
               ))}
               <div className="flex-shrink-0 w-10"></div>
             </div>
             <button
-              className="absolute right-0 z-10 p-2 bg-[#0A1F3F] rounded-full hover:bg-blue-900"
+              className="absolute right-0 z-10 p-1 bg-[#0A1F3F] rounded-full hover:bg-blue-900"
               onClick={() => scrollRight(category)}
             >
               <svg
                 xmlns="http://www.w3.org/2000/svg"
-                width="32"
-                height="32"
+                width="24"
+                height="24"
                 viewBox="0 0 24 24"
               >
                 <path
