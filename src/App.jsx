@@ -1116,7 +1116,23 @@ function App() {
                 )}
               </div>
               
-              {/* Mobile control buttons - Adjusted spacing and smaller text */}
+              {/* Stickers section with zero spacing (moved to top for mobile) */}
+              <div className="mb-0 mt-0">
+                <ImageScroller
+                  canvas={canvas}
+                  categorizedImages={stickers}
+                  handleAddImage={handleAddImage}
+                  changeBackgroundImage={changeBackgroundImage}
+                  hats={headwear}
+                  kimonos={kimono}
+                  weapons={accessories}
+                  setHats={setHeadwear}
+                  setKimonos={setKimono}
+                  setWeapons={setAccessories}
+                />
+              </div>
+              
+              {/* Mobile control buttons - Adjusted spacing and smaller text (moved below stickers) */}
               <div className="flex flex-wrap w-full gap-3 justify-center mt-0 mb-3 pt-0">
                 <div
                   onClick={() => stickerImgInputRef.current.click()}
@@ -1166,22 +1182,6 @@ function App() {
                     DOWNLOAD
                   </p>
                 </div>
-              </div>
-              
-              {/* Stickers section with zero spacing */}
-              <div className="mb-0 mt-0">
-                <ImageScroller
-                  canvas={canvas}
-                  categorizedImages={stickers}
-                  handleAddImage={handleAddImage}
-                  changeBackgroundImage={changeBackgroundImage}
-                  hats={headwear}
-                  kimonos={kimono}
-                  weapons={accessories}
-                  setHats={setHeadwear}
-                  setKimonos={setKimono}
-                  setWeapons={setAccessories}
-                />
               </div>
             </>
           )}
