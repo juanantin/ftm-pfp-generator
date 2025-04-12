@@ -710,9 +710,10 @@ function App() {
         }
       };
       
-      // Update only the mobile preview element
-      // The result-preview still exists but is hidden for compatibility with existing code
+      // Update all preview elements
       updatePreviewElement('mobile-preview');
+      updatePreviewElement('bottom-mobile-preview');
+      
       // Make sure both previews work for compatibility with any code that expects them
       const resultPreview = document.getElementById('result-preview');
       if (resultPreview) resultPreview.src = dataURL;
@@ -1112,8 +1113,8 @@ function App() {
                 )}
               </div>
               
-              {/* Mobile control buttons - Moved up to be right after the preview */}
-              <div className="flex flex-wrap w-full gap-3 justify-center mt-2 mb-4">
+              {/* Mobile control buttons - Moved up even more to be right after the preview */}
+              <div className="flex flex-wrap w-full gap-3 justify-center mt-0 mb-2">
                 <div
                   onClick={() => stickerImgInputRef.current.click()}
                   className="border-2 cursor-pointer border-white bg-[#0A1F3F] text-white px-3 py-2 rounded-lg flex justify-center items-center overflow-hidden relative group transition-all duration-300 ease-in-out transform hover:scale-105 w-[30%]"
@@ -1164,8 +1165,8 @@ function App() {
                 </div>
               </div>
               
-              {/* Stickers - moved up to come right after the image */}
-              <div className="mb-0 mt-[-30px]">
+              {/* Stickers - moved up even more to come right after the image */}
+              <div className="mb-0 mt-[-50px]">
                 <ImageScroller
                   canvas={canvas}
                   categorizedImages={stickers}
@@ -1294,15 +1295,51 @@ function App() {
         )}
       </div>
       
-      {/* Footer logo for navigation */}
-      <div className="w-full flex justify-center py-6 mt-8">
-        <img 
-          onClick={() => window.open("https://fantomsonic.com/", "_blank")}
-          src="/lovable-uploads/d3db5656-828a-47f4-b0b4-888cde78af09.png" 
-          alt="Logo" 
-          className="h-12 w-12 cursor-pointer" 
-        />
-      </div>
+      {/* Mobile bottom preview over the footer logo */}
+      {isMobile && (
+        <div className="w-full relative mt-2 mb-0">
+          {/* Bottom preview container */}
+          <div className="absolute inset-0 flex items-center justify-center z-10">
+            <div className="p-2 rounded-2xl bg-black/50 w-[80%] max-w-[300px]">
+              <div className="preview-container relative rounded-xl" style={{ width: '100%', height: '120px', backgroundColor: 'rgba(1, 10, 30, 0.4)' }}>
+                {/* Bottom preview image */}
+                <img 
+                  id="bottom-mobile-preview" 
+                  alt="Bottom Preview" 
+                  className="z-10 object-contain w-full h-full rounded-xl"
+                  style={{
+                    display: 'block', 
+                    margin: '0 auto',
+                    backgroundColor: 'transparent'
+                  }}
+                />
+              </div>
+            </div>
+          </div>
+          
+          {/* Footer logo for navigation - underneath the preview */}
+          <div className="w-full flex justify-center py-6 mt-8">
+            <img 
+              onClick={() => window.open("https://fantomsonic.com/", "_blank")}
+              src="/lovable-uploads/d3db5656-828a-47f4-b0b4-888cde78af09.png" 
+              alt="Logo" 
+              className="h-12 w-12 cursor-pointer" 
+            />
+          </div>
+        </div>
+      )}
+      
+      {/* Desktop footer logo for navigation */}
+      {!isMobile && (
+        <div className="w-full flex justify-center py-6 mt-8">
+          <img 
+            onClick={() => window.open("https://fantomsonic.com/", "_blank")}
+            src="/lovable-uploads/d3db5656-828a-47f4-b0b4-888cde78af09.png" 
+            alt="Logo" 
+            className="h-12 w-12 cursor-pointer" 
+          />
+        </div>
+      )}
     </div>
   );
 }
