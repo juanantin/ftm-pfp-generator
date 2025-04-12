@@ -410,16 +410,16 @@ function App() {
         const imagePath = image.toLowerCase();
         
         if (imagePath.includes("kimono") || imagePath.includes("clothing")) {
-          // Move clothing down, but less than before (was 30)
-          yOffset = 15; 
+          // Move clothing only slightly down (was 15)
+          yOffset = 10; 
         } else if (imagePath.includes("accessories")) {
           // Move accessories down slightly
           yOffset = 15;
         } else if (imagePath.includes("mouth")) {
-          // Move mouth items slightly higher (was 10)
+          // Move mouth items slightly higher (was 5)
           yOffset = 5;
         } else if (imagePath.includes("eyewear")) {
-          // Move eyewear up more (was -5)
+          // Move eyewear up more (was -8)
           yOffset = -8;
         }
         
@@ -800,27 +800,135 @@ function App() {
   };
 
   const handleAddText = () => {
-    const text = prompt("Input text to add:");
-
-    if (text) {
-      const newText = new fabric.Text(text, {
-        fontFamily: "'Finger Paint', cursive",
-        fontSize: 20,
-        fill: "#fff",
-        stroke: "#0A1F3F", // Updated to darker blue
-        fontWeight: "bold",
-        left: 100,
-        top: 100,
-        charSpacing: 1,
-      });
-
-      canvas.add(newText);
-      
-      // Update the preview
-      setTimeout(() => {
-        saveImageToDataURL();
-      }, 100);
+    // Create custom modal dialog for text input
+    const existingModal = document.getElementById('text-input-modal');
+    if (existingModal) {
+      document.body.removeChild(existingModal);
     }
+    
+    // Create modal container
+    const modal = document.createElement('div');
+    modal.id = 'text-input-modal';
+    modal.style.position = 'fixed';
+    modal.style.top = '0';
+    modal.style.left = '0';
+    modal.style.width = '100%';
+    modal.style.height = '100%';
+    modal.style.backgroundColor = 'rgba(0, 0, 0, 0.7)';
+    modal.style.display = 'flex';
+    modal.style.justifyContent = 'center';
+    modal.style.alignItems = 'center';
+    modal.style.zIndex = '9999';
+    
+    // Create modal content
+    const modalContent = document.createElement('div');
+    modalContent.style.backgroundColor = '#0A1F3F';
+    modalContent.style.padding = '25px';
+    modalContent.style.borderRadius = '10px';
+    modalContent.style.boxShadow = '0 0 20px rgba(0, 0, 0, 0.5)';
+    modalContent.style.width = '80%';
+    modalContent.style.maxWidth = '400px';
+    modalContent.style.textAlign = 'center';
+    modalContent.style.border = '3px solid white';
+    
+    // Create heading
+    const heading = document.createElement('h2');
+    heading.innerText = 'ENTER TEXT TO ADD';
+    heading.style.color = 'white';
+    heading.style.marginBottom = '20px';
+    heading.style.fontFamily = "'Finger Paint', cursive";
+    heading.style.fontSize = '24px';
+    
+    // Create input field
+    const input = document.createElement('input');
+    input.type = 'text';
+    input.style.width = '100%';
+    input.style.padding = '10px';
+    input.style.marginBottom = '20px';
+    input.style.backgroundColor = 'white';
+    input.style.color = '#0A1F3F';
+    input.style.border = 'none';
+    input.style.borderRadius = '5px';
+    input.style.fontSize = '16px';
+    
+    // Create buttons container
+    const buttonsContainer = document.createElement('div');
+    buttonsContainer.style.display = 'flex';
+    buttonsContainer.style.justifyContent = 'space-between';
+    
+    // Create Add button
+    const addButton = document.createElement('button');
+    addButton.innerText = 'ADD';
+    addButton.style.backgroundColor = '#0c46af';
+    addButton.style.color = 'white';
+    addButton.style.border = '2px solid white';
+    addButton.style.padding = '10px 20px';
+    addButton.style.borderRadius = '5px';
+    addButton.style.cursor = 'pointer';
+    addButton.style.fontFamily = "'Finger Paint', cursive";
+    addButton.style.fontSize = '16px';
+    addButton.style.width = '48%';
+    
+    // Create Cancel button
+    const cancelButton = document.createElement('button');
+    cancelButton.innerText = 'CANCEL';
+    cancelButton.style.backgroundColor = 'transparent';
+    cancelButton.style.color = 'white';
+    cancelButton.style.border = '2px solid white';
+    cancelButton.style.padding = '10px 20px';
+    cancelButton.style.borderRadius = '5px';
+    cancelButton.style.cursor = 'pointer';
+    cancelButton.style.fontFamily = "'Finger Paint', cursive";
+    cancelButton.style.fontSize = '16px';
+    cancelButton.style.width = '48%';
+    
+    // Add event listeners
+    addButton.addEventListener('click', () => {
+      const text = input.value;
+      if (text) {
+        const newText = new fabric.Text(text.toUpperCase(), {
+          fontFamily: "'Finger Paint', cursive",
+          fontSize: 20,
+          fill: "#fff",
+          stroke: "#0A1F3F", // Dark blue outline
+          fontWeight: "bold",
+          left: 100,
+          top: 100,
+          charSpacing: 1,
+        });
+
+        canvas.add(newText);
+        
+        // Update the preview
+        setTimeout(() => {
+          saveImageToDataURL();
+        }, 100);
+      }
+      document.body.removeChild(modal);
+    });
+    
+    cancelButton.addEventListener('click', () => {
+      document.body.removeChild(modal);
+    });
+    
+    // Build modal
+    buttonsContainer.appendChild(addButton);
+    buttonsContainer.appendChild(cancelButton);
+    modalContent.appendChild(heading);
+    modalContent.appendChild(input);
+    modalContent.appendChild(buttonsContainer);
+    modal.appendChild(modalContent);
+    
+    // Add to document and focus input
+    document.body.appendChild(modal);
+    input.focus();
+    
+    // Allow closing by clicking outside
+    modal.addEventListener('click', (e) => {
+      if (e.target === modal) {
+        document.body.removeChild(modal);
+      }
+    });
   };
 
   return (
@@ -872,9 +980,9 @@ function App() {
           {isMobile && (
             <>
               {/* Mobile Preview directly after title */}
-              <div className="mt-0 mb-6 flex flex-col items-center justify-center">
+              <div className="mt-[-15px] mb-3 flex flex-col items-center justify-center">
                 <div className="border-4 border-[#0c46af] p-2 rounded-lg bg-black/50 max-w-[350px]">
-                  <div className="preview-container relative" style={{ width: '300px', height: '300px', backgroundColor: 'rgba(1, 10, 30, 0.4)' }}>
+                  <div className="preview-container relative" style={{ width: '350px', height: '350px', backgroundColor: 'rgba(1, 10, 30, 0.4)' }}>
                     {/* Fallback message if preview fails */}
                     <div className="absolute inset-0 flex items-center justify-center text-white opacity-50 z-0">
                       <p className="text-center" style={{ fontFamily: "'Finger Paint', cursive" }}>
@@ -929,7 +1037,7 @@ function App() {
               </div>
               
               {/* Stickers */}
-              <div className="mb-8">
+              <div className="mb-4">
                 <ImageScroller
                   canvas={canvas}
                   categorizedImages={stickers}
