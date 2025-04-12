@@ -1113,14 +1113,14 @@ function App() {
                 )}
               </div>
               
-              {/* Mobile control buttons - Moved up directly under the preview */}
-              <div className="flex flex-wrap w-full gap-3 justify-center mt-[-20px] mb-2">
+              {/* Mobile control buttons - Positioned directly under preview with better spacing */}
+              <div className="flex flex-wrap w-full gap-3 justify-center mt-1 mb-5">
                 <div
                   onClick={() => stickerImgInputRef.current.click()}
                   className="border-2 cursor-pointer border-white bg-[#0A1F3F] text-white px-3 py-2 rounded-lg flex justify-center items-center overflow-hidden relative group transition-all duration-300 ease-in-out transform hover:scale-105 w-[30%]"
                 >
                   <p className="text-white text-center text-sm tracking-wider relative" style={{ fontFamily: "'Finger Paint', cursive" }}>
-                    UPLOAD
+                    UPLOAD ELEMENT
                   </p>
                 </div>
                 <div
@@ -1128,7 +1128,7 @@ function App() {
                   className="border-2 cursor-pointer border-white bg-[#0A1F3F] text-white px-3 py-2 rounded-lg flex justify-center items-center overflow-hidden relative group transition-all duration-300 ease-in-out transform hover:scale-105 w-[30%]"
                 >
                   <p className="text-white text-center text-sm tracking-wider relative" style={{ fontFamily: "'Finger Paint', cursive" }}>
-                    BG
+                    UPLOAD BG
                   </p>
                 </div>
                 <div
@@ -1136,7 +1136,7 @@ function App() {
                   className="border-2 cursor-pointer border-white bg-[#0A1F3F] text-white px-3 py-2 rounded-lg flex justify-center items-center overflow-hidden relative group transition-all duration-300 ease-in-out transform hover:scale-105 w-[30%]"
                 >
                   <p className="text-white text-center text-sm tracking-wider relative" style={{ fontFamily: "'Finger Paint', cursive" }}>
-                    TEXT
+                    ADD TEXT
                   </p>
                 </div>
                 <div
@@ -1160,7 +1160,7 @@ function App() {
                   className="border-2 cursor-pointer border-white bg-[#0c46af] text-white px-3 py-2 rounded-lg flex justify-center items-center overflow-hidden relative group transition-all duration-300 ease-in-out transform hover:scale-105 w-[30%]"
                 >
                   <p className="text-white text-center text-sm tracking-wider relative" style={{ fontFamily: "'Finger Paint', cursive" }}>
-                    SAVE
+                    DOWNLOAD
                   </p>
                 </div>
               </div>
@@ -1216,7 +1216,7 @@ function App() {
                 className="border-2 cursor-pointer border-white bg-[#0A1F3F] text-white px-5 py-2 rounded-lg flex justify-center items-center overflow-hidden relative group transition-all duration-300 ease-in-out transform hover:scale-105 w-full sm:w-full md:w-1/3 lg:w-1/3"
               >
                 <p className="text-white text-center text-lg tracking-wider relative" style={{ fontFamily: "'Finger Paint', cursive" }}>
-                  UPLOAD
+                  UPLOAD ELEMENT
                 </p>
                 <div className="absolute top-0 left-0 w-full h-full bg-black opacity-0 z-0 transition duration-300 ease-in-out group-hover:opacity-50"></div>
               </div>
@@ -1225,7 +1225,7 @@ function App() {
                 className="border-2 cursor-pointer border-white bg-[#0A1F3F] text-white px-5 py-2 rounded-lg flex justify-center items-center overflow-hidden relative group transition-all duration-300 ease-in-out transform hover:scale-105 w-full sm:w-full md:w-1/3 lg:w-1/3"
               >
                 <p className="text-white text-center text-lg tracking-wider relative" style={{ fontFamily: "'Finger Paint', cursive" }}>
-                  BG
+                  UPLOAD BG
                 </p>
                 <div className="absolute top-0 left-0 w-full h-full bg-black opacity-0 z-0 transition duration-300 ease-in-out group-hover:opacity-50"></div>
               </div>
@@ -1234,7 +1234,7 @@ function App() {
                 className="border-2 cursor-pointer border-white bg-[#0A1F3F] text-white px-5 py-2 rounded-lg flex justify-center items-center overflow-hidden relative group transition-all duration-300 ease-in-out transform hover:scale-105 w-full sm:w-full md:w-1/3 lg:w-1/3"
               >
                 <p className="text-white text-center text-lg tracking-wider relative" style={{ fontFamily: "'Finger Paint', cursive" }}>
-                  TEXT
+                  ADD TEXT
                 </p>
                 <div className="absolute top-0 left-0 w-full h-full bg-black opacity-0 z-0 transition duration-300 ease-in-out group-hover:opacity-50"></div>
               </div>
@@ -1261,7 +1261,7 @@ function App() {
                 className="border-2 cursor-pointer border-white bg-[#0c46af] text-white px-5 py-2 rounded-lg flex justify-center items-center overflow-hidden relative group transition-all duration-300 ease-in-out transform hover:scale-105 w-full sm:w-full md:w-1/3 lg:w-1/3"
               >
                 <p className="text-white text-center text-lg tracking-wider relative" style={{ fontFamily: "'Finger Paint', cursive" }}>
-                  SAVE
+                  DOWNLOAD
                 </p>
                 <div className="absolute top-0 left-0 w-full h-full bg-black opacity-0 z-0 transition duration-300 ease-in-out group-hover:opacity-50"></div>
               </div>
