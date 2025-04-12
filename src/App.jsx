@@ -82,7 +82,7 @@ function App() {
       let newWidth = img.width;
       let newHeight = img.height;
 
-      let maxWidth = isMobile ? 400 : 400;
+      let maxWidth = isMobile ? 420 : 400;
 
       if (img.width > maxWidth) {
         newWidth = maxWidth;
@@ -90,7 +90,7 @@ function App() {
       }
 
       canvas.setWidth(newWidth);
-      canvas.setHeight(400);
+      canvas.setHeight(isMobile ? 420 : 400);
 
       canvas.renderAll();
 
@@ -145,8 +145,8 @@ function App() {
         
         // Create the Fabric.js canvas instance
         const newCanvas = new fabric.Canvas(canvasRef.current, {
-          width: window.innerWidth <= 768 ? 400 : 400,
-          height: window.innerWidth <= 768 ? 400 : 400,
+          width: window.innerWidth <= 768 ? 420 : 400,
+          height: window.innerWidth <= 768 ? 420 : 400,
           backgroundColor: "#000", // Black background
           preserveObjectStacking: true, // Maintain stacking order of objects
         });
@@ -410,8 +410,8 @@ function App() {
         const imagePath = image.toLowerCase();
         
         if (imagePath.includes("kimono") || imagePath.includes("clothing")) {
-          // Move clothing only slightly down (was 15)
-          yOffset = 10; 
+          // Move clothing slightly up from previous position
+          yOffset = 5; 
         } else if (imagePath.includes("accessories")) {
           // Move accessories down slightly
           yOffset = 15;
@@ -950,7 +950,7 @@ function App() {
         />
       </div>
 
-      <div className="w-full flex py-10 pt-20 flex-col lg:flex-row justify-center">
+      <div className="w-full flex py-6 pt-20 flex-col lg:flex-row justify-center">
         <input
           type="file"
           accept="image/*"
@@ -979,10 +979,10 @@ function App() {
           {/* Mobile layout - Preview right after title */}
           {isMobile && (
             <>
-              {/* Mobile Preview directly after title */}
-              <div className="mt-[-15px] mb-3 flex flex-col items-center justify-center">
-                <div className="border-4 border-[#0c46af] p-2 rounded-lg bg-black/50 max-w-[350px]">
-                  <div className="preview-container relative" style={{ width: '350px', height: '350px', backgroundColor: 'rgba(1, 10, 30, 0.4)' }}>
+              {/* Mobile Preview directly after title - LARGER */}
+              <div className="mt-1 mb-1 flex flex-col items-center justify-center">
+                <div className="border-4 border-[#0c46af] p-2 rounded-lg bg-black/50 w-[95%] max-w-[450px]">
+                  <div className="preview-container relative" style={{ width: '100%', height: '450px', backgroundColor: 'rgba(1, 10, 30, 0.4)' }}>
                     {/* Fallback message if preview fails */}
                     <div className="absolute inset-0 flex items-center justify-center text-white opacity-50 z-0">
                       <p className="text-center" style={{ fontFamily: "'Finger Paint', cursive" }}>
@@ -990,11 +990,11 @@ function App() {
                       </p>
                     </div>
                     
-                    {/* Mobile top preview image */}
+                    {/* Mobile top preview image - Made larger */}
                     <img 
                       id="mobile-preview" 
                       alt="Mobile Preview" 
-                      className="z-10 max-w-[300px] max-h-[300px] object-contain w-full h-full"
+                      className="z-10 object-contain w-full h-full"
                       style={{
                         display: 'block', 
                         margin: '0 auto',
@@ -1015,7 +1015,7 @@ function App() {
 
               {/* Canvas Preview - actual canvas element */}
               <div
-                className="mx-auto mb-7 bg-transparent rounded-xl relative canvas-mobile"
+                className="mx-auto mb-2 bg-transparent rounded-xl relative canvas-mobile"
               >
                 <canvas ref={canvasRef} />
                 {selectedObject && (
@@ -1036,8 +1036,8 @@ function App() {
                 )}
               </div>
               
-              {/* Stickers */}
-              <div className="mb-4">
+              {/* Stickers - moved up by reducing spacing */}
+              <div className="mb-2">
                 <ImageScroller
                   canvas={canvas}
                   categorizedImages={stickers}
