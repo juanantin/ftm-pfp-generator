@@ -12,6 +12,13 @@
   border-radius: 20px;
 }
 
+/* Ensure canvas is properly rounded on mobile */
+.canvas-mobile .canvas-container,
+.canvas-mobile canvas {
+  border-radius: 20px !important;
+  overflow: hidden;
+}
+
 /* Font styling */
 h1.title-font {
   font-family: 'Crypster', cursive !important;
@@ -50,6 +57,8 @@ p.content-font, h2.content-font {
   display: flex;
   align-items: center;
   justify-content: center;
+  border-radius: 20px;
+  overflow: hidden;
 }
 
 body {

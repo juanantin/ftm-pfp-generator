@@ -67,7 +67,7 @@ const ImageScroller = ({
             >
               <div className="flex-shrink-0 w-10"></div>
               <div
-                className="flex items-center justify-center border border-white rounded-md m-1 cursor-pointer transition-transform duration-0 ease-in-out transform hover:scale-125 bg-[#0A1F3F]"
+                className="flex items-center justify-center border border-white rounded-lg m-1 cursor-pointer transition-transform duration-0 ease-in-out transform hover:scale-125 bg-[#0A1F3F]"
                 onClick={() => {
                   if (canvas != null) {
                     if (category === "headwear") {
@@ -172,7 +172,7 @@ const ImageScroller = ({
                       changeBackgroundImage(img, canvas);
                     }
                   }}
-                  className="w-[60px] h-[60px] border border-[#0A1F3F] rounded-md m-1 cursor-pointer transition-transform duration-0 ease-in-out transform hover:scale-125"
+                  className="w-[60px] h-[60px] border border-[#0A1F3F] rounded-lg m-1 cursor-pointer transition-transform duration-0 ease-in-out transform hover:scale-125"
                   alt={`img-${i}`}
                 />
               ))}

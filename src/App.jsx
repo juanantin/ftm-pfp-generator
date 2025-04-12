@@ -1058,8 +1058,8 @@ function App() {
             <>
               {/* Mobile Preview directly after title - With balanced spacing */}
               <div className="mt-0 mb-3 flex flex-col items-center justify-center">
-                <div className="p-1 rounded-2xl bg-black/50 w-[95%] max-w-[470px]">
-                  <div className="preview-container relative rounded-xl" style={{ width: '100%', height: '240px', backgroundColor: 'rgba(1, 10, 30, 0.4)' }}>
+                <div className="p-1 rounded-3xl bg-black/50 w-[95%] max-w-[470px]">
+                  <div className="preview-container relative rounded-2xl" style={{ width: '100%', height: '240px', backgroundColor: 'rgba(1, 10, 30, 0.4)' }}
                     {/* Fallback message if preview fails */}
                     <div className="absolute inset-0 flex items-center justify-center text-white opacity-50 z-0">
                       <p className="text-center" style={{ fontFamily: "'Finger Paint', cursive" }}>
@@ -1119,7 +1119,7 @@ function App() {
               <div className="flex flex-wrap w-full gap-3 justify-center mt-0 mb-3 pt-0">
                 <div
                   onClick={() => stickerImgInputRef.current.click()}
-                  className="border-1 cursor-pointer border-white bg-[#0A1F3F] text-white px-2 py-1 rounded-lg flex justify-center items-center overflow-hidden relative group transition-all duration-300 ease-in-out transform hover:scale-105 w-[30%]"
+                  className="border-1 cursor-pointer border-white bg-[#0A1F3F] text-white px-2 py-1 rounded-xl flex justify-center items-center overflow-hidden relative group transition-all duration-300 ease-in-out transform hover:scale-105 w-[30%]"
                 >
                   <p className="text-white text-center text-xs tracking-wider relative" style={{ fontFamily: "'Finger Paint', cursive" }}>
                     UPLOAD ELEMENT
@@ -1302,13 +1302,13 @@ function App() {
         <div className="w-full relative mt-0 mb-0">
           {/* Bottom preview container - almost no border, maximum image size */}
           <div className="absolute inset-0 flex items-center justify-center z-10">
-            <div className="p-[1px] rounded-2xl bg-black/20 w-[95%] max-w-[350px]">
-              <div className="preview-container relative rounded-xl" style={{ width: '100%', height: '120px', backgroundColor: 'transparent' }}>
+            <div className="p-[1px] rounded-3xl bg-black/20 w-[95%] max-w-[350px]">
+              <div className="preview-container relative rounded-2xl" style={{ width: '100%', height: '120px', backgroundColor: 'transparent' }}
                 {/* Bottom preview image - maximized to fill frame */}
                 <img 
                   id="bottom-mobile-preview" 
                   alt="Bottom Preview" 
-                  className="z-10 object-contain w-full h-full rounded-xl"
+                  className="z-10 object-contain w-full h-full rounded-2xl"
                   style={{
                     display: 'block', 
                     margin: '0 auto',
