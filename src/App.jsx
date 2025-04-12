@@ -1056,8 +1056,8 @@ function App() {
           {/* Mobile layout - Preview right after title */}
           {isMobile && (
             <>
-              {/* Mobile Preview directly after title - Further reduced height */}
-              <div className="mt-0 mb-0 flex flex-col items-center justify-center">
+              {/* Mobile Preview directly after title - With balanced spacing */}
+              <div className="mt-0 mb-3 flex flex-col items-center justify-center">
                 <div className="p-1 rounded-2xl bg-black/50 w-[95%] max-w-[470px]">
                   <div className="preview-container relative rounded-xl" style={{ width: '100%', height: '240px', backgroundColor: 'rgba(1, 10, 30, 0.4)' }}>
                     {/* Fallback message if preview fails */}
@@ -1115,8 +1115,8 @@ function App() {
                 )}
               </div>
               
-              {/* Mobile control buttons - Zero margin to eliminate space */}
-              <div className="flex flex-wrap w-full gap-2 justify-center mt-0 mb-0 pt-0">
+              {/* Mobile control buttons - Adjusted spacing */}
+              <div className="flex flex-wrap w-full gap-3 justify-center mt-0 mb-3 pt-0">
                 <div
                   onClick={() => stickerImgInputRef.current.click()}
                   className="border-2 cursor-pointer border-white bg-[#0A1F3F] text-white px-3 py-2 rounded-lg flex justify-center items-center overflow-hidden relative group transition-all duration-300 ease-in-out transform hover:scale-105 w-[30%]"
