@@ -396,12 +396,11 @@ function App() {
         const canvasWidth = canvas.getWidth();
         const canvasHeight = canvas.getHeight();
         
-        // If the sticker is much larger than the canvas, scale it down proportionally
-        // to prevent it from being too large compared to the base model
-        if (img.width > canvasWidth * 0.8) {
-          const scaleFactor = (canvasWidth * 0.7) / img.width;
-          img.scale(scaleFactor);
-        }
+        // Make stickers larger - use a standard scale factor 
+        const scaleFactor = 3.0; // Increased scale factor to make stickers larger
+        
+        // Apply the scaling to make stickers larger
+        img.scale(scaleFactor);
         
         // Center the sticker on the canvas
         img.set({
@@ -419,12 +418,18 @@ function App() {
           hasBorders: false,
           hasControls: false
         });
+        
+        // If the sticker is now too large for the canvas after scaling, reduce it
+        if (img.getScaledWidth() > canvasWidth * 0.95) {
+          const adjustedScale = (canvasWidth * 0.95) / img.getScaledWidth();
+          img.scale(img.scaleX * adjustedScale);
+        }
 
         setState(img);
         canvas.add(img);
         canvas.renderAll();
         
-        console.log("Added sticker image at correct size, centered");
+        console.log("Added sticker image with larger size (3x scale), centered");
         
         // Update the preview after adding the image
         setTimeout(() => {
@@ -483,12 +488,11 @@ function App() {
           const canvasWidth = canvas.getWidth();
           const canvasHeight = canvas.getHeight();
           
-          // If the sticker is much larger than the canvas, scale it down proportionally
-          // to prevent it from being too large compared to the base model
-          if (img.width > canvasWidth * 0.8) {
-            const scaleFactor = (canvasWidth * 0.7) / img.width;
-            img.scale(scaleFactor);
-          }
+          // Make stickers larger - use a standard scale factor 
+          const scaleFactor = 3.0; // Increased scale factor to make stickers larger
+          
+          // Apply the scaling to make stickers larger
+          img.scale(scaleFactor);
           
           // Center the sticker on the canvas
           img.set({
@@ -506,6 +510,12 @@ function App() {
             hasBorders: false,
             hasControls: false
           });
+          
+          // If the sticker is now too large for the canvas after scaling, reduce it
+          if (img.getScaledWidth() > canvasWidth * 0.95) {
+            const adjustedScale = (canvasWidth * 0.95) / img.getScaledWidth();
+            img.scale(img.scaleX * adjustedScale);
+          }
           
           canvas.add(img);
           
