@@ -82,7 +82,7 @@ function App() {
       let newWidth = img.width;
       let newHeight = img.height;
 
-      let maxWidth = isMobile ? 500 : 400;
+      let maxWidth = isMobile ? 470 : 400;
 
       if (img.width > maxWidth) {
         newWidth = maxWidth;
@@ -90,7 +90,7 @@ function App() {
       }
 
       canvas.setWidth(newWidth);
-      canvas.setHeight(isMobile ? 500 : 400);
+      canvas.setHeight(isMobile ? 470 : 400);
 
       canvas.renderAll();
 
@@ -145,8 +145,8 @@ function App() {
         
         // Create the Fabric.js canvas instance
         const newCanvas = new fabric.Canvas(canvasRef.current, {
-          width: window.innerWidth <= 768 ? 500 : 400,
-          height: window.innerWidth <= 768 ? 500 : 400,
+          width: window.innerWidth <= 768 ? 470 : 400,
+          height: window.innerWidth <= 768 ? 470 : 400,
           backgroundColor: "#000", // Black background
           preserveObjectStacking: true, // Maintain stacking order of objects
         });
@@ -414,8 +414,8 @@ function App() {
           yOffset = -10; // Move up by 10px
           // We'll adjust the left position separately
         } else if (imagePath.includes("kimono") || imagePath.includes("clothing")) {
-          // Move clothing slightly up from previous position
-          yOffset = 5; 
+          // Move clothing down by 9 pixels as requested
+          yOffset = 14; // Changed from 5 (up) to 14 (down: 5+9=14) 
         } else if (imagePath.includes("accessories")) {
           // Move accessories down slightly
           yOffset = 15;
@@ -427,10 +427,10 @@ function App() {
           yOffset = -8;
         }
         
-        // Determine horizontal positioning (moving headwear to the right)
+        // Determine horizontal positioning (moving headwear to the right, adjusted 8px left)
         let xOffset = 0;
         if (imagePath.includes("headwear")) {
-          xOffset = 15; // Move headwear to the right by 15px
+          xOffset = 7; // Move headwear to the right by 7px (reduced from 15px)
         }
         
         // Center the sticker on the canvas with offset
@@ -989,10 +989,10 @@ function App() {
           {/* Mobile layout - Preview right after title */}
           {isMobile && (
             <>
-              {/* Mobile Preview directly after title - LARGER */}
-              <div className="mt-1 mb-1 flex flex-col items-center justify-center">
-                <div className="border-4 border-[#0c46af] p-2 rounded-lg bg-black/50 w-[98%] max-w-[500px]">
-                  <div className="preview-container relative" style={{ width: '100%', height: '500px', backgroundColor: 'rgba(1, 10, 30, 0.4)' }}>
+              {/* Mobile Preview directly after title - Contracted to fit image */}
+              <div className="mt-0 mb-0 flex flex-col items-center justify-center">
+                <div className="border-4 border-[#0c46af] p-2 rounded-lg bg-black/50 w-[95%] max-w-[470px]">
+                  <div className="preview-container relative" style={{ width: '100%', height: '470px', backgroundColor: 'rgba(1, 10, 30, 0.4)' }}>
                     {/* Fallback message if preview fails */}
                     <div className="absolute inset-0 flex items-center justify-center text-white opacity-50 z-0">
                       <p className="text-center" style={{ fontFamily: "'Finger Paint', cursive" }}>
@@ -1025,7 +1025,7 @@ function App() {
 
               {/* Canvas Preview - actual canvas element */}
               <div
-                className="mx-auto mb-2 bg-transparent rounded-xl relative canvas-mobile"
+                className="mx-auto mb-0 bg-transparent rounded-xl relative canvas-mobile"
               >
                 <canvas ref={canvasRef} />
                 {selectedObject && (
@@ -1046,8 +1046,8 @@ function App() {
                 )}
               </div>
               
-              {/* Stickers - moved up by reducing spacing */}
-              <div className="mb-2">
+              {/* Stickers - moved up by reducing spacing further */}
+              <div className="mb-0 mt-0">
                 <ImageScroller
                   canvas={canvas}
                   categorizedImages={stickers}
