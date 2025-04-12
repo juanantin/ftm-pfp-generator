@@ -1113,8 +1113,8 @@ function App() {
                 )}
               </div>
               
-              {/* Mobile control buttons - Moved up even more to be right after the preview */}
-              <div className="flex flex-wrap w-full gap-3 justify-center mt-0 mb-2">
+              {/* Mobile control buttons - Moved up directly under the preview */}
+              <div className="flex flex-wrap w-full gap-3 justify-center mt-[-20px] mb-2">
                 <div
                   onClick={() => stickerImgInputRef.current.click()}
                   className="border-2 cursor-pointer border-white bg-[#0A1F3F] text-white px-3 py-2 rounded-lg flex justify-center items-center overflow-hidden relative group transition-all duration-300 ease-in-out transform hover:scale-105 w-[30%]"

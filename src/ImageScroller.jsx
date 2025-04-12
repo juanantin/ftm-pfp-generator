@@ -144,7 +144,7 @@ const ImageScroller = ({
               >
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
-                  className="w-[80px] h-[80px] p-5"
+                  className="w-[60px] h-[60px] p-4"
                   viewBox="0 0 256 256"
                 >
                   <path
