@@ -1106,8 +1106,8 @@ function App() {
                       cursor: "pointer",
                     }}
                     src="https://cdn-icons-png.flaticon.com/512/5610/5610967.png"
-                    width={20}
-                    height={20}
+                    width={12}
+                    height={12}
                     alt=""
                   />
                 )}
@@ -1165,8 +1165,8 @@ function App() {
                 </div>
               </div>
               
-              {/* Stickers - moved up even more to come right after the image */}
-              <div className="mb-0 mt-[-50px]">
+              {/* Stickers section with proper spacing */}
+                                <div className="mb-0 mt-3">
                 <ImageScroller
                   canvas={canvas}
                   categorizedImages={stickers}
