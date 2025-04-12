@@ -423,8 +423,8 @@ function App() {
           // Move mouth items slightly higher (was 5)
           yOffset = 5;
         } else if (imagePath.includes("eyewear")) {
-          // Move eyewear up more (was -8)
-          yOffset = -8;
+          // Move eyewear down 9 pixels (changed from -8)
+          yOffset = 1; // Changed from -8 to 1 (moved 9px down)
         }
         
         // Determine horizontal positioning (moving headwear to the right, adjusted 8px left)
@@ -899,8 +899,8 @@ function App() {
         const newText = new fabric.Text(text.toUpperCase(), {
           fontFamily: "'Finger Paint', cursive",
           fontSize: 20,
-          fill: "#fff",
-          stroke: "#0A1F3F", // Dark blue outline
+          fill: "#fff", // White text
+          stroke: "", // No border/outline
           fontWeight: "bold",
           left: 100,
           top: 100,
@@ -989,10 +989,10 @@ function App() {
           {/* Mobile layout - Preview right after title */}
           {isMobile && (
             <>
-              {/* Mobile Preview directly after title - Contracted to fit image */}
+              {/* Mobile Preview directly after title - Height matches the preview itself */}
               <div className="mt-0 mb-0 flex flex-col items-center justify-center">
                 <div className="border-4 border-[#0c46af] p-2 rounded-lg bg-black/50 w-[95%] max-w-[470px]">
-                  <div className="preview-container relative" style={{ width: '100%', height: '470px', backgroundColor: 'rgba(1, 10, 30, 0.4)' }}>
+                  <div className="preview-container relative" style={{ width: '100%', height: '400px', backgroundColor: 'rgba(1, 10, 30, 0.4)' }}>
                     {/* Fallback message if preview fails */}
                     <div className="absolute inset-0 flex items-center justify-center text-white opacity-50 z-0">
                       <p className="text-center" style={{ fontFamily: "'Finger Paint', cursive" }}>
@@ -1046,8 +1046,8 @@ function App() {
                 )}
               </div>
               
-              {/* Stickers - moved up by reducing spacing further */}
-              <div className="mb-0 mt-0">
+              {/* Stickers - moved up to 50px away from preview */}
+              <div className="mb-0 mt-[-50px]">
                 <ImageScroller
                   canvas={canvas}
                   categorizedImages={stickers}

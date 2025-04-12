@@ -38,10 +38,10 @@ const ImageScroller = ({
   };
 
   return (
-    <div className="w-full mt-3">
+    <div className="w-full mt-1">
       {Object.keys(categorizedImages).filter(category => category !== "paw accessories").map((category) => (
-        <div key={category} className="mb-4">
-          <h2 className="text-2xl text-center text-white mb-4 capitalize" style={{ fontFamily: "'Finger Paint', cursive" }}>
+        <div key={category} className="mb-2">
+          <h2 className="text-2xl text-center text-white mb-2 capitalize" style={{ fontFamily: "'Finger Paint', cursive" }}>
             {getCategoryDisplayName(category)}
           </h2>
           <div className="relative flex items-center">
