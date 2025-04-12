@@ -53,7 +53,7 @@ p.content-font, h2.content-font {
   position: relative;
   width: 300px;
   height: 220px;
-  background-color: rgba(10, 31, 63, 0.3);
+  background-color: transparent;
   display: flex;
   align-items: center;
   justify-content: center;

@@ -670,7 +670,7 @@ function App() {
         return '';
       }
       
-      // Update the mobile preview element only
+      // Update the preview element
       const updatePreviewElement = (elementId) => {
         const previewElement = document.getElementById(elementId);
         if (previewElement) {
@@ -713,6 +713,7 @@ function App() {
       // Update all preview elements
       updatePreviewElement('mobile-preview');
       updatePreviewElement('bottom-mobile-preview');
+      updatePreviewElement('desktop-preview'); // Added desktop preview
       
       // Make sure both previews work for compatibility with any code that expects them
       const resultPreview = document.getElementById('result-preview');
@@ -1056,10 +1057,10 @@ function App() {
           {/* Mobile layout - Preview right after title */}
           {isMobile && (
             <>
-              {/* Mobile Preview directly after title - With balanced spacing */}
+              {/* Mobile Preview directly after title - With minimal frame */}
               <div className="mt-0 mb-3 flex flex-col items-center justify-center">
-                <div className="p-1 rounded-3xl bg-black/50 w-[95%] max-w-[470px]">
-                  <div className="preview-container relative rounded-2xl" style={{ width: '100%', height: '240px', backgroundColor: 'rgba(1, 10, 30, 0.4)' }}
+                <div className="p-[1px] rounded-3xl bg-black/20 w-[95%] max-w-[470px]">
+                  <div className="preview-container relative rounded-2xl" style={{ width: '100%', height: '240px', backgroundColor: 'transparent' }}>
                     {/* Fallback message if preview fails */}
                     <div className="absolute inset-0 flex items-center justify-center text-white opacity-50 z-0">
                       <p className="text-center" style={{ fontFamily: "'Finger Paint', cursive" }}>
@@ -1067,11 +1068,11 @@ function App() {
                       </p>
                     </div>
                     
-                    {/* Mobile top preview image - Made larger */}
+                    {/* Mobile top preview image - Made larger, with no borders/frame */}
                     <img 
                       id="mobile-preview" 
                       alt="Mobile Preview" 
-                      className="z-10 object-contain w-full h-full"
+                      className="z-10 object-contain w-full h-full rounded-2xl"
                       style={{
                         display: 'block', 
                         margin: '0 auto',
@@ -1185,28 +1186,48 @@ function App() {
             </>
           )}
 
-          {/* Desktop layout - Canvas Preview */}
+          {/* Desktop layout - Canvas Preview with small preview */}
           {!isMobile && (
-            <div
-              className="mx-auto mb-7 bg-transparent rounded-2xl relative w-[400px]"
-            >
-              <canvas ref={canvasRef} />
-              {selectedObject && (
-                <img
-                  onClick={handleDelete}
-                  id="selected-img"
-                  style={{
-                    position: "absolute",
-                    top: selectedObject.top - 30,
-                    left: selectedObject.left,
-                    cursor: "pointer",
-                  }}
-                  src="https://cdn-icons-png.flaticon.com/512/5610/5610967.png"
-                  width={20}
-                  height={20}
-                  alt=""
-                />
-              )}
+            <div className="flex flex-col items-center">
+              <div
+                className="mx-auto mb-3 bg-transparent rounded-2xl relative w-[400px]"
+              >
+                <canvas ref={canvasRef} />
+                {selectedObject && (
+                  <img
+                    onClick={handleDelete}
+                    id="selected-img"
+                    style={{
+                      position: "absolute",
+                      top: selectedObject.top - 30,
+                      left: selectedObject.left,
+                      cursor: "pointer",
+                    }}
+                    src="https://cdn-icons-png.flaticon.com/512/5610/5610967.png"
+                    width={20}
+                    height={20}
+                    alt=""
+                  />
+                )}
+              </div>
+              
+              {/* Small preview on desktop */}
+              <div className="mb-4">
+                <div className="p-1 rounded-3xl bg-black/20 w-[150px]">
+                  <div className="preview-container relative rounded-2xl" style={{ width: '100%', height: '120px', backgroundColor: 'transparent' }}>
+                    <img 
+                      id="desktop-preview" 
+                      alt="Preview" 
+                      className="z-10 object-contain w-full h-full rounded-2xl"
+                      style={{
+                        display: 'block', 
+                        margin: '0 auto',
+                        backgroundColor: 'transparent'
+                      }}
+                    />
+                  </div>
+                </div>
+              </div>
             </div>
           )}
           
@@ -1297,13 +1318,13 @@ function App() {
         )}
       </div>
       
-      {/* Mobile bottom preview over the footer logo - with minimal frame */}
+      {/* Mobile bottom preview over the footer logo - with no frame at all */}
       {isMobile && (
         <div className="w-full relative mt-0 mb-0">
-          {/* Bottom preview container - almost no border, maximum image size */}
+          {/* Bottom preview container - no border, maximum image size */}
           <div className="absolute inset-0 flex items-center justify-center z-10">
-            <div className="p-[1px] rounded-3xl bg-black/20 w-[95%] max-w-[350px]">
-              <div className="preview-container relative rounded-2xl" style={{ width: '100%', height: '120px', backgroundColor: 'transparent' }}
+            <div className="p-0 rounded-3xl w-[95%] max-w-[350px]">
+              <div className="preview-container relative rounded-2xl" style={{ width: '100%', height: '120px', backgroundColor: 'transparent' }}>
                 {/* Bottom preview image - maximized to fill frame */}
                 <img 
                   id="bottom-mobile-preview" 
