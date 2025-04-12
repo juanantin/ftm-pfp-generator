@@ -90,7 +90,7 @@ function App() {
       }
 
       canvas.setWidth(newWidth);
-      canvas.setHeight(isMobile ? 470 : 400);
+      canvas.setHeight(isMobile ? 500 : 400); // Increased height for mobile
 
       canvas.renderAll();
 
@@ -146,7 +146,7 @@ function App() {
         // Create the Fabric.js canvas instance
         const newCanvas = new fabric.Canvas(canvasRef.current, {
           width: window.innerWidth <= 768 ? 470 : 400,
-          height: window.innerWidth <= 768 ? 470 : 400,
+          height: window.innerWidth <= 768 ? 500 : 400, // Increased height for mobile
           backgroundColor: "#000", // Black background
           preserveObjectStacking: true, // Maintain stacking order of objects
         });
@@ -189,8 +189,27 @@ function App() {
         function handleImageLoad(img) {
           try {
             const canvasWidth = newCanvas.getWidth();
-            img.scaleToWidth(canvasWidth);
-            img.scaleToHeight(img.height * (canvasWidth / img.width));
+            const canvasHeight = newCanvas.getHeight();
+            const isMobileView = window.innerWidth <= 768;
+            
+            if (isMobileView) {
+              // For mobile: Make image larger and position at bottom
+              // Use a larger scale factor for mobile
+              const mobileScaleFactor = 1.3;
+              img.scaleToWidth(canvasWidth * mobileScaleFactor);
+              
+              // Position the image at the bottom of canvas
+              img.set({
+                top: canvasHeight - (img.height * img.scaleY * 0.75), // Anchor to bottom
+                left: canvasWidth / 2,
+                originX: 'center',
+                originY: 'bottom',
+              });
+            } else {
+              // Desktop scaling (keep original)
+              img.scaleToWidth(canvasWidth);
+              img.scaleToHeight(img.height * (canvasWidth / img.width));
+            }
             
             // Store the base model's scaling factors for reference
             newCanvas.baseModelScaleFactor = {
@@ -336,10 +355,28 @@ function App() {
       
       try {
         const canvasWidth = canvas.getWidth();
+        const canvasHeight = canvas.getHeight();
+        const isMobileView = window.innerWidth <= 768;
 
-        // Scale base image to fit the canvas width
-        img.scaleToWidth(canvasWidth);
-        img.scaleToHeight(img.height * (canvasWidth / img.width));
+        // Scale base image differently on mobile vs desktop
+        if (isMobileView) {
+          // For mobile: Make image larger and position at bottom
+          // Use a larger scale factor for mobile to make image bigger
+          const mobileScaleFactor = 1.3;
+          img.scaleToWidth(canvasWidth * mobileScaleFactor);
+          
+          // Position the image at the bottom of canvas
+          img.set({
+            top: canvasHeight - (img.height * img.scaleY * 0.75), // Anchor to bottom, show 75% of height
+            left: canvasWidth / 2,
+            originX: 'center',
+            originY: 'bottom',
+          });
+        } else {
+          // Desktop scaling (keep original)
+          img.scaleToWidth(canvasWidth);
+          img.scaleToHeight(img.height * (canvasWidth / img.width));
+        }
         
         // Store the base model's scaling factors for reference
         canvas.baseModelScaleFactor = {
@@ -756,8 +793,26 @@ function App() {
             return;
           }
           
-          img.scaleToWidth(canvasWidth);
-          img.scaleToHeight(img.height * (canvasWidth / img.width));
+          const isMobileView = window.innerWidth <= 768;
+          
+          if (isMobileView) {
+            // For mobile: Make image larger and position at bottom
+            const mobileScaleFactor = 1.3;
+            img.scaleToWidth(canvasWidth * mobileScaleFactor);
+            
+            // Position the image at the bottom of canvas
+            img.set({
+              top: canvasHeight - (img.height * img.scaleY * 0.75), // Anchor to bottom
+              left: canvasWidth / 2,
+              originX: 'center',
+              originY: 'bottom',
+            });
+          } else {
+            // Desktop scaling (original behavior)
+            img.scaleToWidth(canvasWidth);
+            img.scaleToHeight(img.height * (canvasWidth / img.width));
+          }
+          
           img.set({
             selectable: false,
             evented: false,
