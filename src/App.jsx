@@ -458,7 +458,8 @@ function App() {
           yOffset = 25; // Increased from 15 to 25
         } else if (imagePath.includes("mouth")) {
           // Adjust mouth position for larger character
-          yOffset = 10; // Increased from 5 to 10
+          yOffset = 3; // Moved 7px up from previous value of 10
+          xOffset = -3; // Moved 3px left
         } else if (imagePath.includes("eyewear")) {
           // Adjust eyewear position for larger character
           yOffset = 5; // Increased from 1 to 5
@@ -1104,7 +1105,7 @@ function App() {
           <div className="flex item-center justify-center gap-5 md:gap-10 mb-3">
             <img
               src="/lovable-uploads/13dd479a-7c88-43de-94c7-701c74fae6c8.png"
-              className="w-full max-w-[300px] h-auto mx-auto lg:mt-0"
+              className="w-full max-w-[260px] h-auto mx-auto lg:mt-0"
               alt="FANTOM PFP GENERATOR"
               style={{ margin: '0 auto' }}
             />
