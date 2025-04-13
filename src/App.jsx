@@ -88,15 +88,25 @@ function App() {
     
     // Store main cat position and scale if it exists
     let mainCatProps = null;
+    const isMobileView = window.innerWidth <= 768;
+    
     if (mainCatImage) {
       mainCatProps = {
         scaleX: mainCatImage.scaleX,
         scaleY: mainCatImage.scaleY,
         left: mainCatImage.left,
         top: mainCatImage.top,
-        originX: mainCatImage.originX,
-        originY: mainCatImage.originY
+        originX: mainCatImage.originX || 'center',
+        originY: mainCatImage.originY || 'bottom'
       };
+      
+      // On mobile, ensure we're using consistent scaling and positioning
+      if (isMobileView) {
+        // Save reference to initial canvas dimensions
+        mainCatProps.originalCanvasWidth = canvas.width;
+        mainCatProps.originalCanvasHeight = canvas.height;
+      }
+      
       console.log("Stored main cat properties before background change", mainCatProps);
     }
     
@@ -143,14 +153,36 @@ function App() {
           
           if (mainCat) {
             console.log("Restoring main cat properties after background change");
-            mainCat.set({
-              scaleX: mainCatProps.scaleX,
-              scaleY: mainCatProps.scaleY,
-              left: mainCatProps.left,
-              top: mainCatProps.top,
-              originX: mainCatProps.originX,
-              originY: mainCatProps.originY
-            });
+            
+            const isMobileView = window.innerWidth <= 768;
+            
+            // On mobile, we need to be more careful with the restoration
+            if (isMobileView) {
+              // If canvas dimensions changed, adjust accordingly
+              const scaleRatioX = canvas.width / (mainCatProps.originalCanvasWidth || canvas.width);
+              const scaleRatioY = canvas.height / (mainCatProps.originalCanvasHeight || canvas.height);
+              
+              // Apply stored properties but maintain consistent scaling for mobile
+              mainCat.set({
+                scaleX: mainCatProps.scaleX,
+                scaleY: mainCatProps.scaleY,
+                left: mainCatProps.left,
+                // Ensure it stays aligned with bottom
+                top: canvas.height - (mainCat.height * mainCat.scaleY * 0.35),
+                originX: 'center',
+                originY: 'bottom'
+              });
+            } else {
+              // For desktop, simply restore previous properties
+              mainCat.set({
+                scaleX: mainCatProps.scaleX,
+                scaleY: mainCatProps.scaleY,
+                left: mainCatProps.left,
+                top: mainCatProps.top,
+                originX: mainCatProps.originX,
+                originY: mainCatProps.originY
+              });
+            }
             
             canvas.renderAll();
             console.log("Main cat properties restored successfully");
@@ -539,8 +571,8 @@ function App() {
           yOffset = isMobileView ? 40 : 25; // Lower on mobile to match reference
           xOffset = isMobileView ? 30 : 0; // Offset to right on mobile (like microphone in reference)
         } else if (imagePath.includes("mouth")) {
-          // Position mouth based on reference image
-          yOffset = isMobileView ? 15 : 20; // Precise placement for mouth element
+          // Position mouth based on reference image - moved 20px up as requested
+          yOffset = isMobileView ? -5 : 0; // Precise placement for mouth element (reduced by 20px)
           xOffset = 0; // Centered horizontally
         } else if (imagePath.includes("eyewear")) {
           // Position eyewear based on reference image
