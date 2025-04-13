@@ -1168,66 +1168,30 @@ function App() {
             />
           </div>
 
-          {/* Mobile layout - Preview right after title */}
+          {/* Mobile layout - Use the desktop preview style instead */}
           {isMobile && (
             <>
-              {/* Mobile Preview directly after title - With minimal frame */}
-              <div className="mt-0 mb-3 flex flex-col items-center justify-center">
-                <div className="p-[1px] rounded-3xl bg-black/20 w-[95%] max-w-[470px]">
-                  <div className="preview-container relative rounded-2xl" style={{ width: '100%', height: '240px', backgroundColor: 'transparent' }}>
-                    {/* Fallback message if preview fails */}
-                    <div className="absolute inset-0 flex items-center justify-center text-white opacity-50 z-0">
-                      <p className="text-center" style={{ fontFamily: "'Finger Paint', cursive" }}>
-                        Preview
-                      </p>
-                    </div>
-                    
-                    {/* Mobile top preview image - Made larger, with no borders/frame */}
-                    <img 
-                      id="mobile-preview" 
-                      alt="Mobile Preview" 
-                      className="z-10 object-contain w-full h-full rounded-2xl"
+              {/* Desktop-style canvas preview for mobile */}
+              <div className="flex flex-col items-center">
+                <div className="mx-auto mb-3 bg-transparent rounded-2xl relative w-[400px]">
+                  <canvas ref={canvasRef} />
+                  {selectedObject && (
+                    <img
+                      onClick={handleDelete}
+                      id="selected-img"
                       style={{
-                        display: 'block', 
-                        margin: '0 auto',
-                        backgroundColor: 'transparent',
-                        objectFit: 'contain' 
+                        position: "absolute",
+                        top: selectedObject.top - 30,
+                        left: selectedObject.left,
+                        cursor: "pointer",
                       }}
-                      onError={(e) => {
-                        console.log("Mobile preview image loading error");
-                        e.target.style.display = 'none'; // Hide broken image
-                      }}
-                      onLoad={(e) => {
-                        console.log("Mobile preview image loaded successfully");
-                        e.target.style.display = 'block';
-                      }}
+                      src="https://cdn-icons-png.flaticon.com/512/5610/5610967.png"
+                      width={20}
+                      height={20}
+                      alt=""
                     />
-                  </div>
+                  )}
                 </div>
-              </div>
-
-              {/* Canvas Preview - hidden completely */}
-              <div
-                className="mx-auto mb-0 bg-transparent rounded-xl relative canvas-mobile"
-                style={{ height: 0, overflow: 'hidden', display: 'none' }}
-              >
-                <canvas ref={canvasRef} />
-                {selectedObject && (
-                  <img
-                    onClick={handleDelete}
-                    id="selected-img"
-                    style={{
-                      position: "absolute",
-                      top: selectedObject.top - 30,
-                      left: selectedObject.left,
-                      cursor: "pointer",
-                    }}
-                    src="https://cdn-icons-png.flaticon.com/512/5610/5610967.png"
-                    width={12}
-                    height={12}
-                    alt=""
-                  />
-                )}
               </div>
               
               {/* Stickers section with zero spacing (moved to top for mobile) */}
@@ -1416,28 +1380,9 @@ function App() {
         )}
       </div>
       
-      {/* Mobile bottom preview and footer logo - proper spacing */}
+      {/* Mobile footer logo only - bottom preview removed completely */}
       {isMobile && (
         <div className="w-full relative mt-4 mb-16 pt-4">
-          {/* Bottom preview container - no border, maximum image size */}
-          <div className="flex items-center justify-center my-6">
-            <div className="p-0 rounded-3xl w-[95%] max-w-[350px]">
-              <div className="preview-container relative rounded-2xl" style={{ width: '100%', height: '120px', backgroundColor: 'transparent' }}>
-                {/* Bottom preview image - maximized to fill frame */}
-                <img 
-                  id="bottom-mobile-preview" 
-                  alt="Bottom Preview" 
-                  className="z-10 object-contain w-full h-full rounded-2xl"
-                  style={{
-                    display: 'block', 
-                    margin: '0 auto',
-                    backgroundColor: 'transparent'
-                  }}
-                />
-              </div>
-            </div>
-          </div>
-          
           {/* Footer logo with proper spacing and caption */}
           <div className="w-full flex flex-col items-center justify-center py-6 mt-4 mb-10">
             <img 
