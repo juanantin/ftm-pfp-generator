@@ -126,9 +126,13 @@ function App() {
       const oldWidth = canvas.width;
       const oldHeight = canvas.height;
 
-      // Update canvas dimensions
-      canvas.setWidth(newWidth);
-      canvas.setHeight(isMobile ? 550 : 400);
+      // Keep canvas dimensions consistent to avoid scaling issues on mobile
+      const canvasWidth = isMobile ? 290 : 400;
+      const canvasHeight = isMobile ? 290 : 400;
+      
+      // Update canvas dimensions - use consistent dimensions
+      canvas.setWidth(canvasWidth);
+      canvas.setHeight(canvasHeight);
 
       // Set the background image
       canvas.setBackgroundImage(
@@ -163,12 +167,15 @@ function App() {
               const scaleRatioY = canvas.height / (mainCatProps.originalCanvasHeight || canvas.height);
               
               // Apply stored properties but maintain consistent scaling for mobile
+              // Use a fixed scale factor to prevent inconsistent sizing when changing backgrounds
+              const mobileScaleFactor = 1.8; // Use the same scale factor as in addMainImg function
+              
               mainCat.set({
-                scaleX: mainCatProps.scaleX,
-                scaleY: mainCatProps.scaleY,
-                left: mainCatProps.left,
-                // Ensure it stays aligned with bottom
-                top: canvas.height - (mainCat.height * mainCat.scaleY * 0.35),
+                scaleX: mainCatProps.originalCanvasWidth ? (canvas.width / mainCatProps.originalCanvasWidth) * mainCatProps.scaleX : mainCatProps.scaleX,
+                scaleY: mainCatProps.originalCanvasHeight ? (canvas.height / mainCatProps.originalCanvasHeight) * mainCatProps.scaleY : mainCatProps.scaleY,
+                left: canvas.width / 2, // Center horizontally
+                // Ensure it stays aligned with bottom with consistent positioning
+                top: canvas.height - (mainCat.height * mainCat.scaleY * 0.65), // Match positioning from addMainImg
                 originX: 'center',
                 originY: 'bottom'
               });
@@ -562,7 +569,7 @@ function App() {
         if (imagePath.includes("headwear")) {
           // Position headwear based on reference image
           yOffset = isMobileView ? -15 : -10; // Higher on mobile
-          xOffset = isMobileView ? 0 : 7; // Centered on mobile
+          xOffset = isMobileView ? -7 : 0; // Moved 7 pixels left on mobile, centered on desktop
         } else if (imagePath.includes("kimono") || imagePath.includes("clothing")) {
           // Position clothing based on reference image
           yOffset = isMobileView ? 15 : 20; // Adjusted for pixel art alignment
@@ -571,8 +578,8 @@ function App() {
           yOffset = isMobileView ? 40 : 25; // Lower on mobile to match reference
           xOffset = isMobileView ? 30 : 0; // Offset to right on mobile (like microphone in reference)
         } else if (imagePath.includes("mouth")) {
-          // Position mouth based on reference image - moved 20px up as requested
-          yOffset = isMobileView ? -5 : 0; // Precise placement for mouth element (reduced by 20px)
+          // Position mouth based on reference image - adjusted as requested
+          yOffset = isMobileView ? -1 : 4; // Moved 4 pixels down from previous position
           xOffset = 0; // Centered horizontally
         } else if (imagePath.includes("eyewear")) {
           // Position eyewear based on reference image
