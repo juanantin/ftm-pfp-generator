@@ -524,8 +524,7 @@ function App() {
         let yOffset = 0;
         let xOffset = 0;
         
-        // Check the image path to determine the category
-        const imagePath = image.toLowerCase();
+        // Check if we're in mobile view
         const isMobileView = window.innerWidth <= 768;
         
         if (imagePath.includes("headwear")) {
