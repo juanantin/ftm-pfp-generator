@@ -67,7 +67,7 @@ const ImageScroller = ({
             >
               <div className="flex-shrink-0 w-10"></div>
               <div
-                className="flex items-center justify-center border border-white rounded-lg m-1 cursor-pointer transition-transform duration-0 ease-in-out transform hover:scale-125 bg-[#0A1F3F]"
+                className="flex items-center justify-center border-2 border-red-500 rounded-lg m-1 cursor-pointer transition-transform duration-0 ease-in-out transform hover:scale-125 bg-[#0A1F3F]"
                 onClick={() => {
                   if (canvas != null) {
                     if (category === "headwear") {
@@ -96,8 +96,8 @@ const ImageScroller = ({
                         // Try removing based on position and other attributes
                         objects.forEach(obj => {
                           // Look for objects added recently that are positioned in the upper third of the canvas
-                          // and are not the main image (selectable is false for main image)
-                          if (obj.top < canvas.height * 0.4 && !obj.selectable === false) {
+                          // and are not the main image (selectable is true for added stickers)
+                          if (obj.top < canvas.height * 0.4 && obj.selectable !== false) {
                             canvas.remove(obj);
                           }
                         });
@@ -122,15 +122,16 @@ const ImageScroller = ({
                         // Try removing based on position and other attributes
                         objects.forEach(obj => {
                           // Look for objects positioned in the middle area of the canvas
-                          // and are not the main image (selectable is false for main image)
+                          // and are not the main image (selectable is true for added stickers)
                           if (obj.top > canvas.height * 0.4 && 
                               obj.top < canvas.height * 0.6 && 
-                              !obj.selectable === false) {
+                              obj.selectable !== false) {
                             canvas.remove(obj);
                           }
                         });
                       }
                     }
+                    console.log(`Removed ${category} sticker`);
                     canvas.renderAll();
                     
                     // Update the preview after deletion
