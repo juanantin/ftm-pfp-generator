@@ -77,8 +77,26 @@ function App() {
   }, [canvas, selectedObject, isMobile]);
 
   const changeBackgroundImage = (backgroundImage, canvas) => {
+    // First store the current objects to restore them later
+    const currentObjects = canvas.getObjects();
+    const mainCatImage = currentObjects.find(obj => obj.selectable === false);
+    
+    // Store main cat position and scale if it exists
+    let mainCatProps = null;
+    if (mainCatImage) {
+      mainCatProps = {
+        scaleX: mainCatImage.scaleX,
+        scaleY: mainCatImage.scaleY,
+        left: mainCatImage.left,
+        top: mainCatImage.top,
+        originX: mainCatImage.originX,
+        originY: mainCatImage.originY
+      };
+      console.log("Stored main cat properties before background change", mainCatProps);
+    }
+    
     fabric.Image.fromURL(backgroundImage, (img) => {
-      // Calculate the new dimensions respecting the maximum width of 550px
+      // Calculate the new dimensions respecting the maximum width
       let newWidth = img.width;
       let newHeight = img.height;
 
@@ -89,11 +107,15 @@ function App() {
         newHeight = (maxWidth / img.width) * img.height;
       }
 
+      // Store current canvas width and height
+      const oldWidth = canvas.width;
+      const oldHeight = canvas.height;
+
+      // Update canvas dimensions
       canvas.setWidth(newWidth);
-      canvas.setHeight(isMobile ? 550 : 400); // Further increased height for mobile to better fit larger character
+      canvas.setHeight(isMobile ? 550 : 400);
 
-      canvas.renderAll();
-
+      // Set the background image
       canvas.setBackgroundImage(
         backgroundImage,
         canvas.renderAll.bind(canvas),
@@ -103,10 +125,45 @@ function App() {
         }
       );
       
-      // Update preview after changing background
-      setTimeout(() => {
-        saveImageToDataURL();
-      }, 300);
+      // If main character was found, restore its properties
+      if (mainCatProps) {
+        // Wait for background to load, then restore main cat position and scale
+        setTimeout(() => {
+          const objects = canvas.getObjects();
+          const mainCat = objects.find(obj => obj.selectable === false);
+          
+          if (mainCat) {
+            console.log("Restoring main cat properties after background change");
+            mainCat.set({
+              scaleX: mainCatProps.scaleX,
+              scaleY: mainCatProps.scaleY,
+              left: mainCatProps.left,
+              top: mainCatProps.top,
+              originX: mainCatProps.originX,
+              originY: mainCatProps.originY
+            });
+            
+            canvas.renderAll();
+            console.log("Main cat properties restored successfully");
+          } else {
+            console.log("Main cat not found after background change, re-adding it");
+            addMainImg(canvas, main_cat);
+          }
+          
+          // Update preview after adjustments
+          setTimeout(() => {
+            saveImageToDataURL();
+          }, 300);
+        }, 200);
+      } else {
+        // If main cat wasn't found, make sure to add it
+        addMainImg(canvas, main_cat);
+        
+        // Update preview after adding main cat
+        setTimeout(() => {
+          saveImageToDataURL();
+        }, 500);
+      }
     });
   };
 
@@ -458,8 +515,8 @@ function App() {
           yOffset = 25; // Increased from 15 to 25
         } else if (imagePath.includes("mouth")) {
           // Adjust mouth position for larger character
-          yOffset = 3; // Moved 7px up from previous value of 10
-          xOffset = -3; // Moved 3px left
+          yOffset = -4; // Moved up by 7 pixels
+          xOffset = -6; // Moved left by 3 more pixels (total 6px left)
         } else if (imagePath.includes("eyewear")) {
           // Adjust eyewear position for larger character
           yOffset = 5; // Increased from 1 to 5
@@ -1105,7 +1162,7 @@ function App() {
           <div className="flex item-center justify-center gap-5 md:gap-10 mb-3">
             <img
               src="/lovable-uploads/13dd479a-7c88-43de-94c7-701c74fae6c8.png"
-              className="w-full max-w-[260px] h-auto mx-auto lg:mt-0"
+              className="w-full max-w-[230px] h-auto mx-auto lg:mt-0"
               alt="FANTOM PFP GENERATOR"
               style={{ margin: '0 auto' }}
             />

@@ -41,7 +41,7 @@ const ImageScroller = ({
     <div className="w-full mt-1">
       {Object.keys(categorizedImages).filter(category => category !== "paw accessories").map((category) => (
         <div key={category} className="mb-2">
-          <h2 className="text-lg text-center text-white mb-1 capitalize" style={{ fontFamily: "'Finger Paint', cursive" }}>
+          <h2 className="text-sm text-center text-white mb-1 capitalize" style={{ fontFamily: "'Finger Paint', cursive" }}>
             {getCategoryDisplayName(category)}
           </h2>
           <div className="relative flex items-center">
@@ -68,64 +68,79 @@ const ImageScroller = ({
               <div className="flex-shrink-0 w-10"></div>
               <div
                 className="flex items-center justify-center border-3 border-red-600 rounded-lg m-1 cursor-pointer transition-transform duration-0 ease-in-out transform hover:scale-125 bg-[#0A1F3F]"
-                style={{ boxShadow: "0 0 5px #ff0000" }}
+                style={{ boxShadow: "0 0 8px #ff0000", animation: "pulse 1.5s infinite" }}
                 onClick={() => {
                   if (canvas != null) {
+                    // Force raw rendering to ensure object detection
+                    canvas.renderAll();
+                    
+                    console.log(`Attempting to remove ${category} sticker`);
+                    let removed = false;
+                    
                     if (category === "headwear") {
                       if (hats) {
                         canvas.remove(hats);
-                        console.log("Removed headwear sticker");
-                      } else {
-                        // Try to find and remove by category
-                        const objects = canvas.getObjects();
-                        objects.forEach(obj => {
-                          if (obj._element && obj._element.src && typeof obj._element.src === 'string') {
-                            const src = obj._element.src.toLowerCase();
-                            if (src.includes("headwear") || src.includes("/01 headwear/")) {
-                              canvas.remove(obj);
-                              console.log("Removed headwear by src");
-                            }
-                          }
-                        });
+                        removed = true;
+                        console.log("Removed headwear sticker from state variable");
                       }
+                      
+                      // Always try to find and remove by category (more reliable)
+                      const objects = canvas.getObjects();
+                      objects.forEach(obj => {
+                        if (obj._element && obj._element.src && typeof obj._element.src === 'string') {
+                          const src = obj._element.src.toLowerCase();
+                          if (src.includes("headwear") || src.includes("/01 headwear/")) {
+                            canvas.remove(obj);
+                            removed = true;
+                            console.log("Removed headwear by src");
+                          }
+                        }
+                      });
+                      
                     } else if (category === "kimono") {
                       if (kimonos) {
                         canvas.remove(kimonos);
-                        console.log("Removed kimono sticker");
-                      } else {
-                        // Try to find and remove by category
-                        const objects = canvas.getObjects();
-                        objects.forEach(obj => {
-                          if (obj._element && obj._element.src && typeof obj._element.src === 'string') {
-                            const src = obj._element.src.toLowerCase();
-                            if (src.includes("kimono") || src.includes("/04 kimono/") || src.includes("clothing")) {
-                              canvas.remove(obj);
-                              console.log("Removed kimono by src");
-                            }
-                          }
-                        });
+                        removed = true;
+                        console.log("Removed kimono sticker from state variable");
                       }
+                      
+                      // Always try to find and remove by category (more reliable)
+                      const objects = canvas.getObjects();
+                      objects.forEach(obj => {
+                        if (obj._element && obj._element.src && typeof obj._element.src === 'string') {
+                          const src = obj._element.src.toLowerCase();
+                          if (src.includes("kimono") || src.includes("/04 kimono/") || src.includes("clothing")) {
+                            canvas.remove(obj);
+                            removed = true;
+                            console.log("Removed kimono by src");
+                          }
+                        }
+                      });
+                      
                     } else if (category === "accessories") {
                       if (weapons) {
                         canvas.remove(weapons);
-                        console.log("Removed accessories sticker");
-                      } else {
-                        // Try to find and remove by category
-                        const objects = canvas.getObjects();
-                        objects.forEach(obj => {
-                          if (obj._element && obj._element.src && typeof obj._element.src === 'string') {
-                            const src = obj._element.src.toLowerCase();
-                            if (src.includes("accessories") || src.includes("/06 accessories/")) {
-                              canvas.remove(obj);
-                              console.log("Removed accessories by src");
-                            }
-                          }
-                        });
+                        removed = true;
+                        console.log("Removed accessories sticker from state variable");
                       }
+                      
+                      // Always try to find and remove by category (more reliable)
+                      const objects = canvas.getObjects();
+                      objects.forEach(obj => {
+                        if (obj._element && obj._element.src && typeof obj._element.src === 'string') {
+                          const src = obj._element.src.toLowerCase();
+                          if (src.includes("accessories") || src.includes("/06 accessories/")) {
+                            canvas.remove(obj);
+                            removed = true;
+                            console.log("Removed accessories by src");
+                          }
+                        }
+                      });
+                      
                     } else if (category === "eyewear") {
                       // Find and remove all eyewear objects
                       const objects = canvas.getObjects();
-                      let removed = false;
+                      
                       objects.forEach(obj => {
                         // First try with direct image src url check
                         if (obj._element && obj._element.src && typeof obj._element.src === 'string') {
@@ -143,17 +158,18 @@ const ImageScroller = ({
                         // Try removing based on position and other attributes
                         objects.forEach(obj => {
                           // Look for objects that aren't the main cat (which has selectable=false)
-                          if (obj.top < canvas.height * 0.4 && (!obj.hasOwnProperty('selectable') || obj.selectable !== false)) {
+                          if (!obj.evented && obj.top < canvas.height * 0.4) {
                             canvas.remove(obj);
                             console.log("Removed object in eyewear position");
                             removed = true;
                           }
                         });
                       }
+                      
                     } else if (category === "mouth") {
                       // Find and remove all mouth objects
                       const objects = canvas.getObjects();
-                      let removed = false;
+                      
                       objects.forEach(obj => {
                         // First try with direct image src url check
                         if (obj._element && obj._element.src && typeof obj._element.src === 'string') {
@@ -170,24 +186,41 @@ const ImageScroller = ({
                       if (!removed) {
                         // Try removing based on position and other attributes
                         objects.forEach(obj => {
-                          // Look for objects in the middle area that aren't the main cat (selectable=false)
-                          if (obj.top > canvas.height * 0.4 && 
-                              obj.top < canvas.height * 0.6 && 
-                              (!obj.hasOwnProperty('selectable') || obj.selectable !== false)) {
+                          // Look for objects in the middle area that aren't the main cat
+                          if (!obj.evented && 
+                              obj.top > canvas.height * 0.3 && 
+                              obj.top < canvas.height * 0.7) {
                             canvas.remove(obj);
                             console.log("Removed object in mouth position");
                             removed = true;
                           }
                         });
                       }
+                      
+                    } else if (category === "background") {
+                      // Remove background
+                      canvas.setBackgroundImage(null, canvas.renderAll.bind(canvas));
+                      removed = true;
+                      console.log("Removed background sticker");
                     }
-                    console.log(`Removed ${category} sticker`);
+                    
+                    if (removed) {
+                      console.log(`Successfully removed ${category} sticker`);
+                    } else {
+                      console.log(`No ${category} sticker found to remove`);
+                    }
+                    
                     canvas.renderAll();
                     
-                    // Update the preview after deletion
+                    // Update the preview after deletion with multiple attempts to ensure it works
                     setTimeout(() => {
                       if (canvas && typeof canvas.renderAll === 'function') {
                         canvas.renderAll();
+                      }
+                      
+                      // Try to trigger any preview update functions the parent might have
+                      if (canvas && canvas.fire) {
+                        canvas.fire('object:modified');
                       }
                     }, 100);
                   }
