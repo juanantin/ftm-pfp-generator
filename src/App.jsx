@@ -202,8 +202,8 @@ function App() {
         
         // Create the Fabric.js canvas instance
         const newCanvas = new fabric.Canvas(canvasRef.current, {
-          width: window.innerWidth <= 768 ? 470 : 400,
-          height: window.innerWidth <= 768 ? 550 : 400, // Further increased height for mobile to better fit larger character
+          width: window.innerWidth <= 768 ? 290 : 400,
+          height: window.innerWidth <= 768 ? 290 : 400, // Reduced for a 1:1 aspect ratio on mobile
           backgroundColor: "#000", // Black background
           preserveObjectStacking: true, // Maintain stacking order of objects
         });
@@ -250,14 +250,13 @@ function App() {
             const isMobileView = window.innerWidth <= 768;
             
             if (isMobileView) {
-              // For mobile: Make image larger to fill more of the frame
-              // Increased scale factor for better proportions
-              const mobileScaleFactor = 1.8; // Increased from 1.3 to 1.8
+              // For mobile: Make image more appropriately sized for smaller canvas
+              const mobileScaleFactor = 1.2; // Reduced from 1.8 to 1.2 for better fit
               img.scaleToWidth(canvasWidth * mobileScaleFactor);
               
-              // Position the image further down - almost at bottom of canvas
+              // Position the image to be fully visible in the canvas
               img.set({
-                top: canvasHeight - (img.height * img.scaleY * 0.65), // Adjusted from 0.75 to 0.65 to show more of character
+                top: canvasHeight - (img.height * img.scaleY * 0.2), // Show more of the character
                 left: canvasWidth / 2,
                 originX: 'center',
                 originY: 'bottom',
@@ -515,8 +514,8 @@ function App() {
           yOffset = 25; // Increased from 15 to 25
         } else if (imagePath.includes("mouth")) {
           // Adjust mouth position for larger character
-          yOffset = -4; // Moved up by 7 pixels
-          xOffset = -6; // Moved left by 3 more pixels (total 6px left)
+          yOffset = 8; // Adjusted for better positioning
+          xOffset = 0; // Centered horizontally
         } else if (imagePath.includes("eyewear")) {
           // Adjust eyewear position for larger character
           yOffset = 5; // Increased from 1 to 5
@@ -1173,8 +1172,12 @@ function App() {
             <>
               {/* Desktop-style canvas preview for mobile */}
               <div className="flex flex-col items-center">
-                <div className="mx-auto mb-3 bg-transparent rounded-2xl relative w-[400px]">
-                  <canvas ref={canvasRef} />
+                <div className="mx-auto mb-3 bg-transparent rounded-2xl relative w-[290px]">
+                  <canvas ref={canvasRef} style={{ 
+                    width: '100%', 
+                    height: 'auto',
+                    maxWidth: '290px'
+                  }} />
                   {selectedObject && (
                     <img
                       onClick={handleDelete}
