@@ -77,9 +77,14 @@ function App() {
   }, [canvas, selectedObject, isMobile]);
 
   const changeBackgroundImage = (backgroundImage, canvas) => {
-    // First store the current objects to restore them later
+    // Store current objects
     const currentObjects = canvas.getObjects();
-    const mainCatImage = currentObjects.find(obj => obj.selectable === false);
+    
+    // Find the main cat image specifically (the base character)
+    const mainCatImage = currentObjects.find(obj => 
+      obj.selectable === false && 
+      (!obj._element || !obj._element.src || !obj._element.src.includes("stickers"))
+    );
     
     // Store main cat position and scale if it exists
     let mainCatProps = null;
@@ -130,7 +135,11 @@ function App() {
         // Wait for background to load, then restore main cat position and scale
         setTimeout(() => {
           const objects = canvas.getObjects();
-          const mainCat = objects.find(obj => obj.selectable === false);
+          // Find the main cat by checking if it's non-selectable and not a sticker
+          const mainCat = objects.find(obj => 
+            obj.selectable === false && 
+            (!obj._element || !obj._element.src || !obj._element.src.includes("stickers"))
+          );
           
           if (mainCat) {
             console.log("Restoring main cat properties after background change");
@@ -251,12 +260,12 @@ function App() {
             
             if (isMobileView) {
               // For mobile: Make image more appropriately sized for smaller canvas
-              const mobileScaleFactor = 1.2; // Reduced from 1.8 to 1.2 for better fit
+              const mobileScaleFactor = 1.5; // Adjusted for better visibility
               img.scaleToWidth(canvasWidth * mobileScaleFactor);
               
-              // Position the image to be fully visible in the canvas
+              // Position the image to be fully aligned with the bottom of the canvas
               img.set({
-                top: canvasHeight - (img.height * img.scaleY * 0.2), // Show more of the character
+                top: canvasHeight, // Align completely with bottom
                 left: canvasWidth / 2,
                 originX: 'center',
                 originY: 'bottom',
@@ -514,7 +523,7 @@ function App() {
           yOffset = 25; // Increased from 15 to 25
         } else if (imagePath.includes("mouth")) {
           // Adjust mouth position for larger character
-          yOffset = 8; // Adjusted for better positioning
+          yOffset = 50; // Significantly increased to position mouth correctly on face
           xOffset = 0; // Centered horizontally
         } else if (imagePath.includes("eyewear")) {
           // Adjust eyewear position for larger character
@@ -853,14 +862,13 @@ function App() {
           const isMobileView = window.innerWidth <= 768;
           
           if (isMobileView) {
-            // For mobile: Make image larger to fill more of the frame
-            // Increased scale factor for better proportions
-            const mobileScaleFactor = 1.8; // Increased from 1.3 to 1.8
+            // For mobile: Make image appropriately sized and positioned at the bottom
+            const mobileScaleFactor = 1.5; // Adjusted for better visibility and fit
             img.scaleToWidth(canvasWidth * mobileScaleFactor);
             
-            // Position the image further down - almost at bottom of canvas
+            // Position the image at the bottom of canvas
             img.set({
-              top: canvasHeight - (img.height * img.scaleY * 0.65), // Adjusted from 0.75 to 0.65 to show more of character
+              top: canvasHeight, // Align completely with the bottom
               left: canvasWidth / 2,
               originX: 'center',
               originY: 'bottom',
