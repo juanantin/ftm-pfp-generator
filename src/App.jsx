@@ -90,7 +90,7 @@ function App() {
       }
 
       canvas.setWidth(newWidth);
-      canvas.setHeight(isMobile ? 500 : 400); // Increased height for mobile
+      canvas.setHeight(isMobile ? 550 : 400); // Further increased height for mobile to better fit larger character
 
       canvas.renderAll();
 
@@ -146,7 +146,7 @@ function App() {
         // Create the Fabric.js canvas instance
         const newCanvas = new fabric.Canvas(canvasRef.current, {
           width: window.innerWidth <= 768 ? 470 : 400,
-          height: window.innerWidth <= 768 ? 500 : 400, // Increased height for mobile
+          height: window.innerWidth <= 768 ? 550 : 400, // Further increased height for mobile to better fit larger character
           backgroundColor: "#000", // Black background
           preserveObjectStacking: true, // Maintain stacking order of objects
         });
@@ -193,14 +193,14 @@ function App() {
             const isMobileView = window.innerWidth <= 768;
             
             if (isMobileView) {
-              // For mobile: Make image larger and position at bottom
-              // Use a larger scale factor for mobile
-              const mobileScaleFactor = 1.3;
+              // For mobile: Make image larger to fill more of the frame
+              // Increased scale factor for better proportions
+              const mobileScaleFactor = 1.8; // Increased from 1.3 to 1.8
               img.scaleToWidth(canvasWidth * mobileScaleFactor);
               
-              // Position the image at the bottom of canvas
+              // Position the image further down - almost at bottom of canvas
               img.set({
-                top: canvasHeight - (img.height * img.scaleY * 0.75), // Anchor to bottom
+                top: canvasHeight - (img.height * img.scaleY * 0.65), // Adjusted from 0.75 to 0.65 to show more of character
                 left: canvasWidth / 2,
                 originX: 'center',
                 originY: 'bottom',
@@ -360,14 +360,14 @@ function App() {
 
         // Scale base image differently on mobile vs desktop
         if (isMobileView) {
-          // For mobile: Make image larger and position at bottom
-          // Use a larger scale factor for mobile to make image bigger
-          const mobileScaleFactor = 1.3;
+          // For mobile: Make image larger to fill more of the frame
+          // Increased scale factor for better proportions
+          const mobileScaleFactor = 1.8; // Increased from 1.3 to 1.8
           img.scaleToWidth(canvasWidth * mobileScaleFactor);
           
-          // Position the image at the bottom of canvas
+          // Position the image further down - almost at bottom of canvas
           img.set({
-            top: canvasHeight - (img.height * img.scaleY * 0.75), // Anchor to bottom, show 75% of height
+            top: canvasHeight - (img.height * img.scaleY * 0.65), // Adjusted from 0.75 to 0.65 to show more of character
             left: canvasWidth / 2,
             originX: 'center',
             originY: 'bottom',
@@ -451,17 +451,17 @@ function App() {
           yOffset = -10; // Move up by 10px
           // We'll adjust the left position separately
         } else if (imagePath.includes("kimono") || imagePath.includes("clothing")) {
-          // Move clothing down by 9 pixels as requested
-          yOffset = 14; // Changed from 5 (up) to 14 (down: 5+9=14) 
+          // Move clothing down a bit more to align with larger character
+          yOffset = 20; // Increased from 14 to 20 for better positioning with larger character
         } else if (imagePath.includes("accessories")) {
-          // Move accessories down slightly
-          yOffset = 15;
+          // Move accessories down to align with larger character
+          yOffset = 25; // Increased from 15 to 25
         } else if (imagePath.includes("mouth")) {
-          // Move mouth items slightly higher (was 5)
-          yOffset = 5;
+          // Adjust mouth position for larger character
+          yOffset = 10; // Increased from 5 to 10
         } else if (imagePath.includes("eyewear")) {
-          // Move eyewear down 9 pixels (changed from -8)
-          yOffset = 1; // Changed from -8 to 1 (moved 9px down)
+          // Adjust eyewear position for larger character
+          yOffset = 5; // Increased from 1 to 5
         }
         
         // Determine horizontal positioning (moving headwear to the right, adjusted 8px left)
@@ -796,13 +796,14 @@ function App() {
           const isMobileView = window.innerWidth <= 768;
           
           if (isMobileView) {
-            // For mobile: Make image larger and position at bottom
-            const mobileScaleFactor = 1.3;
+            // For mobile: Make image larger to fill more of the frame
+            // Increased scale factor for better proportions
+            const mobileScaleFactor = 1.8; // Increased from 1.3 to 1.8
             img.scaleToWidth(canvasWidth * mobileScaleFactor);
             
-            // Position the image at the bottom of canvas
+            // Position the image further down - almost at bottom of canvas
             img.set({
-              top: canvasHeight - (img.height * img.scaleY * 0.75), // Anchor to bottom
+              top: canvasHeight - (img.height * img.scaleY * 0.65), // Adjusted from 0.75 to 0.65 to show more of character
               left: canvasWidth / 2,
               originX: 'center',
               originY: 'bottom',
