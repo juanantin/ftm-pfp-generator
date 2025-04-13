@@ -501,39 +501,52 @@ function App() {
         // Make stickers larger - use a standard scale factor 
         const scaleFactor = 3.2; // Increased scale factor to make stickers slightly bigger
         
-        // Apply the scaling to make stickers slightly bigger (3.0 → 3.2)
-        const updatedScaleFactor = 3.2;
+        // Scale stickers based on category for better alignment with reference image
+        let updatedScaleFactor = 3.0; // Base scale factor
+        const imagePath = image.toLowerCase();
+        
+        // Adjust scale factor based on sticker type
+        if (imagePath.includes("headwear")) {
+          updatedScaleFactor = 2.8; // Slightly smaller for headwear
+        } else if (imagePath.includes("mouth")) {
+          updatedScaleFactor = 2.0; // Smaller for mouth elements
+        } else if (imagePath.includes("eyewear")) {
+          updatedScaleFactor = 2.5; // Adjusted for eyewear
+        } else if (imagePath.includes("accessories")) {
+          updatedScaleFactor = 3.2; // Larger for accessories
+        } else {
+          updatedScaleFactor = 3.0; // Default size
+        }
+        
         img.scale(updatedScaleFactor);
         
-        // Determine which type of sticker this is and apply vertical offset
+        // Determine which type of sticker this is and apply precise offsets
         let yOffset = 0;
+        let xOffset = 0;
         
         // Check the image path to determine the category
         const imagePath = image.toLowerCase();
+        const isMobileView = window.innerWidth <= 768;
         
         if (imagePath.includes("headwear")) {
-          // Move headwear slightly up and to the right
-          yOffset = -10; // Move up by 10px
-          // We'll adjust the left position separately
+          // Position headwear based on reference image
+          yOffset = isMobileView ? -15 : -10; // Higher on mobile
+          xOffset = isMobileView ? 0 : 7; // Centered on mobile
         } else if (imagePath.includes("kimono") || imagePath.includes("clothing")) {
-          // Move clothing down a bit more to align with larger character
-          yOffset = 20; // Increased from 14 to 20 for better positioning with larger character
+          // Position clothing based on reference image
+          yOffset = isMobileView ? 15 : 20; // Adjusted for pixel art alignment
         } else if (imagePath.includes("accessories")) {
-          // Move accessories down to align with larger character
-          yOffset = 25; // Increased from 15 to 25
+          // Position accessories based on reference image
+          yOffset = isMobileView ? 40 : 25; // Lower on mobile to match reference
+          xOffset = isMobileView ? 30 : 0; // Offset to right on mobile (like microphone in reference)
         } else if (imagePath.includes("mouth")) {
-          // Adjust mouth position for larger character
-          yOffset = 50; // Significantly increased to position mouth correctly on face
+          // Position mouth based on reference image
+          yOffset = isMobileView ? 15 : 20; // Precise placement for mouth element
           xOffset = 0; // Centered horizontally
         } else if (imagePath.includes("eyewear")) {
-          // Adjust eyewear position for larger character
-          yOffset = 5; // Increased from 1 to 5
-        }
-        
-        // Determine horizontal positioning (moving headwear to the right, adjusted 8px left)
-        let xOffset = 0;
-        if (imagePath.includes("headwear")) {
-          xOffset = 7; // Move headwear to the right by 7px (reduced from 15px)
+          // Position eyewear based on reference image
+          yOffset = isMobileView ? 0 : 5; // Aligned with eyes in pixel art
+          xOffset = 0; // Centered horizontally
         }
         
         // Center the sticker on the canvas with offset
@@ -745,6 +758,9 @@ function App() {
         return '';
       }
       
+      // Force immediate rendering to ensure all elements are in the correct position
+      canvas.renderAll();
+      
       // Make sure canvas has the main image
       if (canvas.getObjects().length === 0) {
         console.log("Canvas is empty during preview update, adding base image");
@@ -862,13 +878,13 @@ function App() {
           const isMobileView = window.innerWidth <= 768;
           
           if (isMobileView) {
-            // For mobile: Make image appropriately sized and positioned at the bottom
-            const mobileScaleFactor = 1.5; // Adjusted for better visibility and fit
+            // For mobile: Scale and position according to reference image
+            const mobileScaleFactor = 1.2; // Adjusted based on reference image
             img.scaleToWidth(canvasWidth * mobileScaleFactor);
             
-            // Position the image at the bottom of canvas
+            // Position the image centered horizontally and with some space at bottom
             img.set({
-              top: canvasHeight, // Align completely with the bottom
+              top: canvasHeight - 10, // Small space at bottom for better appearance
               left: canvasWidth / 2,
               originX: 'center',
               originY: 'bottom',
@@ -1202,6 +1218,18 @@ function App() {
                       alt=""
                     />
                   )}
+                </div>
+              </div>
+              
+              {/* New mobile pixel-perfect preview */}
+              <div className="w-full mt-4 mb-4 flex justify-center">
+                <div className="w-[290px] h-[290px] relative bg-transparent rounded-xl overflow-hidden border-2 border-[#0A1F3F]" 
+                     id="mobile-pixel-preview">
+                  <img 
+                    id="mobile-preview" 
+                    alt="Mobile Preview" 
+                    className="absolute top-0 left-0 w-full h-full object-contain"
+                  />
                 </div>
               </div>
               
