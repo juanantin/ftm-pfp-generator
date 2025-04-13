@@ -24,7 +24,7 @@ function App() {
   const [isMobile, setIsMobile] = useState(false);
   const [headwear, setHeadwear] = useState(null);
   const [eyewear, setEyewear] = useState(null);
-  const [mouth, setMouth] = useState(null);
+    const [mouth, setMouth] = useState(null);
   const [kimono, setKimono] = useState(null);
   const [jewelry, setJewelry] = useState(null);
   const [accessories, setAccessories] = useState(null);
@@ -1194,7 +1194,7 @@ function App() {
                 </div>
               </div>
               
-              {/* Stickers section with zero spacing (moved to top for mobile) */}
+              {/* Stickers section with zero spacing */}
               <div className="mb-6 mt-0">
                 <ImageScroller
                   canvas={canvas}
@@ -1204,9 +1204,13 @@ function App() {
                   hats={headwear}
                   kimonos={kimono}
                   weapons={accessories}
+                  eyewear={eyewear}
+                  mouth={mouth}
                   setHats={setHeadwear}
                   setKimonos={setKimono}
                   setWeapons={setAccessories}
+                  setEyewear={setEyewear}
+                  setMouth={setMouth}
                 />
               </div>
               
@@ -1313,9 +1317,13 @@ function App() {
                 hats={headwear}
                 kimonos={kimono}
                 weapons={accessories}
+                eyewear={eyewear}
+                mouth={mouth}
                 setHats={setHeadwear}
                 setKimonos={setKimono}
                 setWeapons={setAccessories}
+                setEyewear={setEyewear}
+                setMouth={setMouth}
               />
               
               {/* Control buttons moved under sticker controls for desktop */}

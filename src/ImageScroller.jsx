@@ -9,9 +9,13 @@ const ImageScroller = ({
   hats,
   kimonos,
   weapons,
+  eyewear,
+  mouth,
   setHats,
   setKimonos,
   setWeapons,
+  setEyewear,
+  setMouth,
 }) => {
   const refs = useRef({});
 
@@ -92,15 +96,21 @@ const ImageScroller = ({
                       if (hats) {
                         setHats(null);
                       }
-                      
                     } else if (category === "kimono") {
                       if (kimonos) {
                         setKimonos(null);
                       }
-                      
                     } else if (category === "accessories") {
                       if (weapons) {
                         setWeapons(null);
+                      }
+                    } else if (category === "eyewear") {
+                      if (setEyewear) {
+                        setEyewear(null);
+                      }
+                    } else if (category === "mouth") {
+                      if (setMouth) {
+                        setMouth(null);
                       }
                     }
                     
@@ -117,6 +127,14 @@ const ImageScroller = ({
                       canvas.remove(weapons);
                       removed = true;
                       console.log("Removed accessories using state variable");
+                    } else if (category === "eyewear" && eyewear) {
+                      canvas.remove(eyewear);
+                      removed = true;
+                      console.log("Removed eyewear using state variable");
+                    } else if (category === "mouth" && mouth) {
+                      canvas.remove(mouth);
+                      removed = true;
+                      console.log("Removed mouth using state variable");
                     }
                     
                     // Second try: Remove objects by category
@@ -288,9 +306,11 @@ const ImageScroller = ({
                     } else if (category === "accessories") {
                       handleAddImage(weapons, setWeapons, img);
                     } else if (category === "eyewear") {
-                      handleAddImage(null, null, img);
+                      // For eyewear, use state management like the other categories
+                      handleAddImage(eyewear, setEyewear, img);
                     } else if (category === "mouth") {
-                      handleAddImage(null, null, img);
+                      // For mouth, use state management like the other categories
+                      handleAddImage(mouth, setMouth, img);
                     } else if (category === "background") {
                       changeBackgroundImage(img, canvas);
                     }
