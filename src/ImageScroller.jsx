@@ -24,18 +24,51 @@ function ImageScroller({
     setSelectedCategory(category);
   };
 
+  // Handle sticker removal for the selected category
+  const handleRemoveSticker = (category) => {
+    if (category === "headwear" && setHats) {
+      canvas.remove(hats);
+      setHats(null);
+    } else if (category === "Clothing" && setKimonos) {
+      canvas.remove(kimonos);
+      setKimonos(null);
+    } else if (category === "accessories" && setWeapons) {
+      canvas.remove(weapons);
+      setWeapons(null);
+    } else if (category === "eyewear" && setEyewear) {
+      canvas.remove(eyewear);
+      setEyewear(null);
+    } else if (category === "mouth" && setMouth) {
+      canvas.remove(mouth);
+      setMouth(null);
+    }
+  };
+
   const renderStickers = () => {
     const stickers = categorizedImages[selectedCategory] || [];
     
     return (
       <div className="flex flex-wrap gap-2 justify-center">
+        {/* Delete card at the beginning of each category */}
+        <div
+          className="w-[100px] h-[100px] bg-red-500 rounded-md overflow-hidden cursor-pointer shadow-md transform hover:scale-105 transition-transform flex items-center justify-center"
+          onClick={() => handleRemoveSticker(selectedCategory)}
+        >
+          <div className="text-white text-center font-bold">
+            <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8 mx-auto mb-1" viewBox="0 0 20 20" fill="currentColor">
+              <path fillRule="evenodd" d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z" clipRule="evenodd" />
+            </svg>
+            Delete
+          </div>
+        </div>
+        
         {stickers.map((sticker, index) => {
           // Handle background images differently
           if (selectedCategory === "background") {
             return (
               <div
                 key={index}
-                className="w-[120px] h-[85px] bg-white rounded-md overflow-hidden cursor-pointer shadow-md transform hover:scale-105 transition-transform"
+                className="w-[120px] h-[85px] bg-[#F1F1F1] rounded-md overflow-hidden cursor-pointer shadow-md transform hover:scale-105 transition-transform"
                 onClick={() => changeBackgroundImage(sticker, canvas)}
               >
                 <img
@@ -70,7 +103,7 @@ function ImageScroller({
           return (
             <div
               key={index}
-              className="w-[100px] h-[100px] bg-white rounded-md overflow-hidden cursor-pointer shadow-md transform hover:scale-105 transition-transform"
+              className="w-[100px] h-[100px] bg-[#F1F1F1] rounded-md overflow-hidden cursor-pointer shadow-md transform hover:scale-105 transition-transform"
               onClick={() => handleAddImage(stateVarToUpdate, setStateVarToUpdate, sticker)}
             >
               <img
