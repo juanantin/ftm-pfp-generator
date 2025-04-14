@@ -1,3 +1,4 @@
+
 import { useState, useEffect, useRef } from "react";
 import { fabric } from "fabric";
 import logo from "./assets/logo.png";
@@ -21,8 +22,6 @@ function App() {
   const [kimonos, setKimonos] = useState(null);
   // const [pants, Pants] = useState(null);
   const [weapons, setWeapons] = useState(null);
-  const [eyewear, setEyewear] = useState(null);
-  const [mouth, setMouth] = useState(null);
 
   // const [isAtFront, setIsAtFront] = useState(false);
   // const [isAtBack, setIsAtBack] = useState(false);
@@ -147,7 +146,7 @@ function App() {
     const newCanvas = new fabric.Canvas(canvasRef.current, {
       width: window.innerWidth <= 768 ? 400 : 400,
       height: window.innerWidth <= 768 ? 400 : 400,
-      backgroundColor: "#fff",
+      backgroundColor: "#000", // Set to black background
     });
 
     setCanvas(newCanvas);
@@ -166,16 +165,7 @@ function App() {
       setSelectedObject(null);
     });
 
-    // fabric.Image.fromURL(bgImg, (img) => {
-    //   newCanvas.setBackgroundImage(img, newCanvas.renderAll.bind(newCanvas), {
-    //     scaleX: newCanvas.width / img.width,
-    //     scaleY: newCanvas.height / img.height,
-    //   });
-    // });
-
-    // changeBackgroundImage(bg, newCanvas);
-    // handleAddImage(null, null, logo);
-
+    // Add the main image to the canvas
     addMainImg(newCanvas, main_cat);
 
     return () => {
@@ -186,12 +176,9 @@ function App() {
   const addMainImg = (canvas, image) => {
     fabric.Image.fromURL(image, (img) => {
       const canvasWidth = canvas.getWidth();
-      
-      // Set a larger width for the base character (adjusted from the original)
-      const targetWidth = canvasWidth * 0.8; // 80% of canvas width
-      
-      img.scaleToWidth(targetWidth);
-      img.scaleToHeight(img.height * (targetWidth / img.width));
+
+      img.scaleToWidth(canvasWidth);
+      img.scaleToHeight(img.height * (canvasWidth / img.width));
       img.set({
         selectable: false, // Disable selection
       });
@@ -312,19 +299,11 @@ function App() {
     const newCanvas = new fabric.Canvas(canvasRef.current, {
       width: window.innerWidth <= 768 ? 400 : 400,
       height: window.innerWidth <= 768 ? 400 : 400,
-      backgroundColor: "#fff",
+      backgroundColor: "#000", // Set to black background
     });
-
-    // const newCanvas = new fabric.Canvas(canvasRef.current, {
-    //   width: 300,
-    //   height: 300,
-    //   backgroundColor: "#fff",
-    // });
 
     setCanvas(newCanvas);
     addMainImg(newCanvas, main_cat);
-
-    // changeBackgroundImage(bg, newCanvas);
   };
 
   const handleDelete = () => {
@@ -358,55 +337,8 @@ function App() {
     }
   };
 
-  // useEffect(() => {
-  //   if (selectedObject && canvas) {
-  //     const isObjectInFront =
-  //       selectedObject === canvas.getObjects()[canvas.getObjects().length - 1];
-  //     const isObjectInBack = selectedObject === canvas.getObjects()[0];
-  //     setIsAtFront(isObjectInFront);
-  //     setIsAtBack(isObjectInBack);
-  //   } else {
-  //     setIsAtFront(false);
-  //     setIsAtBack(false);
-  //   }
-  // }, [selectedObject, canvas]);
-
-  // const bringForward = () => {
-  //   if (selectedObject) {
-  //     canvas.bringForward(selectedObject);
-  //     canvas.renderAll();
-  //   }
-  // };
-
-  // const bringToFront = () => {
-  //   if (selectedObject) {
-  //     canvas.bringToFront(selectedObject);
-  //     canvas.renderAll();
-  //   }
-  // };
-
-  // const sendBackward = () => {
-  //   if (selectedObject) {
-  //     canvas.sendBackwards(selectedObject);
-  //     canvas.renderAll();
-  //   }
-  // };
-
-  // const sendToBack = (object) => {
-  //   if (object) {
-  //     canvas.sendToBack(selectedObject);
-  //     canvas.renderAll();
-  //   }
-  // };
-
   return (
-    <div className=" min-h-screen overflow-y-auto bg-gradient-to-r from-mainRed to-darkRed">
-      {/* <img
-        className="w-full h-full absolute top-0 left-0 opacity-[0.4] object-cover md:object-cover"
-        src={isMobile ? all_bg_mobile : all_bg}
-        alt=""
-      /> */}
-
+    <div className="min-h-screen overflow-y-auto bg-gradient-to-r from-mainRed to-darkRed">
       <div
         onClick={() => (window.location.href = "https://catownkimono.com")}
         className="flex cursor-pointer absolute top-5 left-10"
@@ -443,12 +375,11 @@ function App() {
         />
         <div className="flex-1 px-5">
           <div className="flex item-center justify-center gap-5 md:gap-10 mb-5">
-            {/* <img
-              // onClick={() => window.open("https://madcatcoin.com/", "_blank")}
+            <img
               src={logo}
               className="w-[100px] lg:w-[150px] h-auto cursor-pointer"
               alt=""
-            /> */}
+            />
             <h1 className="text-white mt-5 lg:mt-0 text-5xl md:text-7xl text-center font-black ">
               Cok <br />
               Meme Generator
@@ -537,50 +468,6 @@ function App() {
               <div className="absolute top-0 left-0 w-full h-full bg-black opacity-0 z-0 transition duration-300 ease-in-out group-hover:opacity-50"></div>
             </div>
           </div>
-
-          {/* <div className="flex flex-wrap w-full mt-5 gap-5 justify-center">
-            <div
-              onClick={bringForward}
-              // disabled={isAtFront}
-              className="border-4 cursor-pointer border-black bg-white text-black px-5 py-2   rounded-lg flex justify-center items-center overflow-hidden relative group transition-all duration-300 ease-in-out transform hover:scale-105"
-            >
-              <p className="text-black text-center text-2xl tracking-wider font-medium relative">
-                BRING FORWARD
-              </p>
-              <div className="absolute top-0 left-0 w-full h-full bg-black opacity-0 z-0 transition duration-300 ease-in-out group-hover:opacity-50"></div>
-            </div>
-            <div
-              onClick={bringToFront}
-              // disabled={isAtFront}
-              className="border-4 cursor-pointer border-black bg-white text-black px-5 py-2   rounded-lg flex justify-center items-center overflow-hidden relative group transition-all duration-300 ease-in-out transform hover:scale-105"
-            >
-              <p className="text-black text-center text-2xl tracking-wider font-medium relative">
-                BRING TO FRONT
-              </p>
-              <div className="absolute top-0 left-0 w-full h-full bg-black opacity-0 z-0 transition duration-300 ease-in-out group-hover:opacity-50"></div>
-            </div>
-
-            <div
-              onClick={sendBackward}
-              // disabled={isAtBack}
-              className="border-4 cursor-pointer border-black bg-white text-black px-5 py-2   rounded-lg flex justify-center items-center overflow-hidden relative group transition-all duration-300 ease-in-out transform hover:scale-105"
-            >
-              <p className="text-black text-center text-2xl tracking-wider font-medium relative">
-                SEND BACKWARD
-              </p>
-              <div className="absolute top-0 left-0 w-full h-full bg-black opacity-0 z-0 transition duration-300 ease-in-out group-hover:opacity-50"></div>
-            </div>
-            <div
-              onClick={sendToBack}
-              // disabled={isAtBack}
-              className="border-4 cursor-pointer border-black  bg-white text-black px-5 py-2 rounded-lg flex justify-center items-center overflow-hidden relative group transition-all duration-300 ease-in-out transform hover:scale-105"
-            >
-              <p className="text-black text-center text-2xl tracking-wider font-medium relative">
-                SEND TO BACK
-              </p>
-              <div className="absolute top-0 left-0 w-full h-full bg-black opacity-0 z-0 transition duration-300 ease-in-out group-hover:opacity-50"></div>
-            </div>
-          </div> */}
         </div>
 
         <div className="mt-5 w-full lg:w-[60%] px-5 lg:pl-0 ">
@@ -596,13 +483,9 @@ function App() {
               hats={hats}
               kimonos={kimonos}
               weapons={weapons}
-              eyewear={eyewear}
-              mouth={mouth}
               setHats={setHats}
               setKimonos={setKimonos}
               setWeapons={setWeapons}
-              setEyewear={setEyewear}
-              setMouth={setMouth}
             />
           </div>
         </div>
