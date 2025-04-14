@@ -26,28 +26,55 @@ function ImageScroller({
 
   // Handle sticker removal for the selected category
   const handleRemoveSticker = (category) => {
-    if (category === "headwear" && setHats) {
-      canvas.remove(hats);
-      setHats(null);
-    } else if (category === "kimono" && setKimonos) {
-      // Fixed: changed from "Clothing" to "kimono" to match App.jsx state handling
-      canvas.remove(kimonos);
-      setKimonos(null);
-    } else if (category === "accessories" && setWeapons) {
-      canvas.remove(weapons);
-      setWeapons(null);
-    } else if (category === "eyewear" && setEyewear) {
-      canvas.remove(eyewear);
-      setEyewear(null);
-    } else if (category === "mouth" && setMouth) {
-      canvas.remove(mouth);
-      setMouth(null);
-    } else if (category === "background") {
-      // Add background removal functionality
-      if (canvas) {
-        canvas.setBackgroundImage(null, canvas.renderAll.bind(canvas));
-        canvas.setBackgroundColor("#000", canvas.renderAll.bind(canvas));
+    // Ensure the canvas object is valid before attempting to remove items
+    if (!canvas) {
+      console.error("Canvas is not available for removing stickers");
+      return;
+    }
+    
+    try {
+      if (category === "headwear" && setHats) {
+        canvas.remove(hats);
+        setHats(null);
+      } else if (category === "kimono" && setKimonos) {
+        // Fixed: changed from "Clothing" to "kimono" to match App.jsx state handling
+        canvas.remove(kimonos);
+        setKimonos(null);
+      } else if (category === "accessories" && setWeapons) {
+        canvas.remove(weapons);
+        setWeapons(null);
+      } else if (category === "eyewear" && setEyewear) {
+        canvas.remove(eyewear);
+        setEyewear(null);
+      } else if (category === "mouth" && setMouth) {
+        canvas.remove(mouth);
+        setMouth(null);
+      } else if (category === "background") {
+        // Add background removal functionality
+        if (canvas) {
+          canvas.setBackgroundImage(null, canvas.renderAll.bind(canvas));
+          canvas.setBackgroundColor("#000", canvas.renderAll.bind(canvas));
+          
+          // Force canvas to render after background removal
+          setTimeout(() => {
+            canvas.renderAll();
+          }, 100);
+        }
       }
+      
+      // Force canvas to render after any deletion
+      canvas.renderAll();
+      
+      // Force an additional update after a slight delay to ensure UI is updated
+      setTimeout(() => {
+        if (canvas && canvas.renderAll) {
+          canvas.renderAll();
+        }
+      }, 200);
+      
+      console.log(`Removed sticker from category: ${category}`);
+    } catch (error) {
+      console.error("Error removing sticker:", error);
     }
   };
 
