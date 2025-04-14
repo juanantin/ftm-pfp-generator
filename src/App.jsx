@@ -1,34 +1,31 @@
-
 import { useState, useEffect, useRef } from "react";
-// Import Fabric.js properly to prevent "Canvas is not a constructor" error
 import { fabric } from "fabric";
 import logo from "./assets/logo.png";
-import ImageScroller from "./ImageScroller";
+import AssetTabs from "./components/AssetTabs";
 import bg from "./assets/bg.png";
-// Instead of importing directly, we'll reference the image by its URL
-const main_cat = "/lovable-uploads/b9485130-b21f-4a80-84a1-7fffa1f3e4fe.png";
+import main_cat from "./assets/main_cat.png";
 
 function App() {
-  console.log("App is running!"); // Add console log to verify app is running
   const [stickers, setStickers] = useState({});
 
-  // Ensure the canvas ref is properly initialized and persists across renders
   const canvasRef = useRef(null);
   const bgImgInputRef = useRef(null);
   const stickerImgInputRef = useRef(null);
-  const fabricInitialized = useRef(false);
 
   const [canvas, setCanvas] = useState(null);
   const [selectedObject, setSelectedObject] = useState(null);
   const [backgroundImage, setBackgroundImage] = useState(null);
   const [isMobile, setIsMobile] = useState(false);
-  const [headwear, setHeadwear] = useState(null);
+  const [hats, setHats] = useState(null);
+  // const [faces, setFaces] = useState(null);
+  const [kimonos, setKimonos] = useState(null);
+  // const [pants, Pants] = useState(null);
+  const [weapons, setWeapons] = useState(null);
   const [eyewear, setEyewear] = useState(null);
   const [mouth, setMouth] = useState(null);
-  const [kimono, setKimono] = useState(null);
-  const [jewelry, setJewelry] = useState(null);
-  const [accessories, setAccessories] = useState(null);
-  // Removed pawAccessories state
+
+  // const [isAtFront, setIsAtFront] = useState(false);
+  // const [isAtBack, setIsAtBack] = useState(false);
 
   useEffect(() => {
     const handleResize = () => {
@@ -61,11 +58,6 @@ function App() {
       // Also, listen for object modification and update the image position accordingly
       const objectModifiedHandler = () => {
         updateImagePosition();
-        
-        // Update preview when object is modified
-        setTimeout(() => {
-          saveImageToDataURL();
-        }, 100);
       };
 
       canvas.on("object:modified", objectModifiedHandler);
@@ -102,11 +94,6 @@ function App() {
           scaleY: canvas.height / img.height,
         }
       );
-      
-      // Update preview after changing background
-      setTimeout(() => {
-        saveImageToDataURL();
-      }, 300);
     });
   };
 
@@ -118,329 +105,136 @@ function App() {
     } else {
       canvas.setBackgroundImage("", canvas.renderAll.bind(canvas));
     }
-    
-    // Update preview whenever canvas changes
-    setTimeout(() => {
-      console.log("Updating preview from background change effect");
-      saveImageToDataURL();
-    }, 500);
   }, [canvas, backgroundImage, isMobile]);
 
-  // Initialize canvas function
-  const initializeCanvas = () => {
-    // Only initialize fabric once to prevent errors
-    if (!fabricInitialized.current) {
-      try {
-        console.log("Starting canvas initialization");
-        
-        // Make sure we have a canvas element to work with
-        if (!canvasRef.current) {
-          console.error("Canvas reference element is not available!");
-          // Try again after a short delay
-          setTimeout(() => initializeCanvas(), 500);
-          return;
-        }
-        
-        console.log("Canvas element found:", canvasRef.current);
-        
-        // Create the Fabric.js canvas instance
-        const newCanvas = new fabric.Canvas(canvasRef.current, {
-          width: window.innerWidth <= 768 ? 400 : 400,
-          height: window.innerWidth <= 768 ? 400 : 400,
-          backgroundColor: "#000", // Black background
-          preserveObjectStacking: true, // Maintain stacking order of objects
-        });
-        
-        console.log("Canvas created successfully:", newCanvas);
-        setCanvas(newCanvas);
-        fabricInitialized.current = true;
-
-        // Set up event listeners
-        newCanvas.on("selection:created", (e) => {
-          setSelectedObject(e.selected[0]);
-        });
-
-        newCanvas.on("object:modified", (e) => {
-          setSelectedObject(e.target);
-          // Update preview after modifying object
-          setTimeout(() => {
-            saveImageToDataURL();
-          }, 500);
-        });
-
-        newCanvas.on("selection:cleared", () => {
-          setSelectedObject(null);
-        });
-
-        // Add the main cat image and wait for it to fully load
-        fabric.Image.fromURL(main_cat, (img) => {
-          if (!img) {
-            console.error("Failed to load main image");
-            // Try loading a backup image or retry
-            setTimeout(() => {
-              fabric.Image.fromURL(main_cat, handleImageLoad);
-            }, 1000);
-            return;
-          }
-          
-          handleImageLoad(img);
-        });
-        
-        function handleImageLoad(img) {
-          try {
-            const canvasWidth = newCanvas.getWidth();
-            img.scaleToWidth(canvasWidth);
-            img.scaleToHeight(img.height * (canvasWidth / img.width));
-            img.set({ 
-              selectable: false,
-              evented: false,
-              lockMovementX: true,
-              lockMovementY: true,
-              lockScalingX: true,
-              lockScalingY: true,
-              lockRotation: true,
-              hasBorders: false,
-              hasControls: false
-            });
-            
-            newCanvas.add(img);
-            newCanvas.renderAll();
-            
-            // Wait for image to be fully rendered before updating preview
-            setTimeout(() => {
-              console.log("Updating preview after adding main image");
-              newCanvas.renderAll(); // Force another render
-              
-              // Multiple attempts to update preview with increasing delays
-              setTimeout(() => {
-                saveImageToDataURL();
-                
-                // Force an additional update attempt after a longer delay
-                setTimeout(() => {
-                  console.log("Final fallback preview update");
-                  saveImageToDataURL();
-                }, 2000);
-              }, 1200);
-            }, 1000);
-          } catch (err) {
-            console.error("Error handling main image:", err);
-          }
-        }
-        
-      } catch (error) {
-        console.error("Error initializing Fabric.js canvas:", error);
-        fabricInitialized.current = false;
-        // Try again after a delay
-        setTimeout(() => {
-          fabricInitialized.current = false;
-          initializeCanvas();
-        }, 2000);
-      }
-    }
-  };
-
   useEffect(() => {
-    // Import stickers from asset folders
     const importStickers = async () => {
       // Import images from all subfolders in the 'assets/stickers' directory
       const imageContext = import.meta.glob(
-        "./assets/stickers/*/*.(png|jpg|jpeg|svg)",
-        { eager: true } // Using eager loading to avoid dynamic imports which can fail with spaces in filenames
+        "./assets/stickers/*/*.(png|jpg|jpeg|svg)"
       );
 
       // Object to store categorized images
       const categorizedImages = {};
 
-      // Process each import (now using eager loading)
-      Object.entries(imageContext).forEach(([path, module]) => {
-        const imagePath = module.default;
+      // Process each import promise
+      await Promise.all(
+        Object.entries(imageContext).map(async ([path, importPromise]) => {
+          const imageModule = await importPromise();
+          const imagePath = imageModule.default;
 
-        // Extract the category (subfolder name) from the path
-        const pathParts = path.split("/");
-        const folderName = pathParts[pathParts.length - 2];
-        const category = folderName.split(" ").slice(1).join(" ");
+          // Extract the category (subfolder name) from the path
+          const pathParts = path.split("/");
+          const folderName = pathParts[pathParts.length - 2];
+          const category = folderName.split(" ").slice(1).join(" ");
 
-        // Initialize the array for the category if it doesn't exist
-        if (!categorizedImages[category]) {
-          categorizedImages[category] = [];
-        }
+          // Initialize the array for the category if it doesn't exist
+          if (!categorizedImages[category]) {
+            categorizedImages[category] = [];
+          }
 
-        // Add the image path to the appropriate category
-        categorizedImages[category].push(imagePath);
-      });
+          // Add the image path to the appropriate category
+          categorizedImages[category].push(imagePath);
+        })
+      );
 
       // Use the categorized images as needed
       setStickers(categorizedImages);
-      
-      // After loading stickers, try to initialize the canvas
-      setTimeout(() => {
-        initializeCanvas();
-        
-        // Force an initial preview update after everything is loaded with longer delay
-        setTimeout(() => {
-          console.log("Initial preview update");
-          saveImageToDataURL();
-          
-          // Ensure preview is visible by forcing another update
-          setTimeout(() => {
-            const resultPreview = document.getElementById('result-preview');
-            if (resultPreview && (!resultPreview.src || resultPreview.src === '')) {
-              console.log("Forcing additional preview update");
-              saveImageToDataURL();
-            }
-          }, 1500);
-        }, 2000);
-      }, 500);
     };
 
-    // Start importing stickers
     importStickers();
 
-    console.log("Fabric object:", fabric);
-    
-    // Clean up function
+    const newCanvas = new fabric.Canvas(canvasRef.current, {
+      width: window.innerWidth <= 768 ? 400 : 400,
+      height: window.innerWidth <= 768 ? 400 : 400,
+      backgroundColor: "#fff",
+    });
+
+    setCanvas(newCanvas);
+
+    // Event listener for object selection
+    newCanvas.on("selection:created", (e) => {
+      setSelectedObject(e.selected[0]);
+    });
+
+    newCanvas.on("object:modified", (e) => {
+      setSelectedObject(e.target);
+    });
+
+    // Event listener for object deselection
+    newCanvas.on("selection:cleared", () => {
+      setSelectedObject(null);
+    });
+
+    // fabric.Image.fromURL(bgImg, (img) => {
+    //   newCanvas.setBackgroundImage(img, newCanvas.renderAll.bind(newCanvas), {
+    //     scaleX: newCanvas.width / img.width,
+    //     scaleY: newCanvas.height / img.height,
+    //   });
+    // });
+
+    // changeBackgroundImage(bg, newCanvas);
+    // handleAddImage(null, null, logo);
+
+    addMainImg(newCanvas, main_cat);
+
     return () => {
-      if (canvas) {
-        console.log("Disposing canvas");
-        canvas.dispose();
-        fabricInitialized.current = false;
-      }
+      newCanvas.dispose();
     };
   }, []);
 
   const addMainImg = (canvas, image) => {
-    if (!canvas) {
-      console.error("Canvas is not available for adding main image");
-      return;
-    }
-    
-    // Clear any existing objects first
-    if (canvas.getObjects().length > 0) {
-      const mainImages = canvas.getObjects().filter(obj => !obj.selectable);
-      mainImages.forEach(obj => canvas.remove(obj));
-    }
-    
-    // Load the new image
     fabric.Image.fromURL(image, (img) => {
-      if (!img) {
-        console.error("Failed to load main image in addMainImg");
-        return;
-      }
-      
-      try {
-        const canvasWidth = canvas.getWidth();
+      const canvasWidth = canvas.getWidth();
 
-        img.scaleToWidth(canvasWidth);
-        img.scaleToHeight(img.height * (canvasWidth / img.width));
-        img.set({
-          selectable: false,     // Disable selection
-          evented: false,        // Prevent events
-          lockMovementX: true,
-          lockMovementY: true,
-          lockScalingX: true,
-          lockScalingY: true,
-          lockRotation: true,
-          hasBorders: false,
-          hasControls: false,
-          zIndex: -1            // Put it at the bottom layer
-        });
+      img.scaleToWidth(canvasWidth);
+      img.scaleToHeight(img.height * (canvasWidth / img.width));
+      img.set({
+        selectable: false, // Disable selection
+      });
 
-        // Insert at index 0 to ensure it's at the bottom
-        canvas.insertAt(img, 0);
-        canvas.renderAll();
-        
-        console.log("Main image added successfully");
-        
-        // Update preview after adding main image with multiple attempts
-        setTimeout(() => {
-          saveImageToDataURL();
-          
-          // One more attempt after a longer delay
-          setTimeout(() => {
-            saveImageToDataURL();
-          }, 1200);
-        }, 800);
-      } catch (error) {
-        console.error("Error setting up main image:", error);
-      }
-    }, { crossOrigin: 'anonymous' });
+      canvas.add(img);
+    });
   };
 
   const handleAddImage = (state, setState, image) => {
     if (state != null) {
       canvas.remove(state);
     }
-    
     fabric.Image.fromURL(image, (img) => {
-      if (!img) {
-        console.error("Failed to load sticker image:", image);
-        return;
-      }
-      
-      try {
-        const canvasWidth = canvas.getWidth();
-        const canvasHeight = canvas.getHeight();
+      const canvasWidth = canvas.getWidth();
 
-        // Set reasonable maximum dimensions for stickers
-        const maxWidth = canvasWidth * 0.8;
-        const maxHeight = canvasHeight * 0.8;
-        
-        // Scale image appropriately
-        if (img.width > maxWidth) {
-          const scale = maxWidth / img.width;
-          img.scaleX = scale;
-          img.scaleY = scale;
-        } else {
-          img.scaleToWidth(canvasWidth);
-          img.scaleToHeight(canvasHeight);
-        }
-        
-        img.set({
-          selectable: true, // Enable selection
-          evented: true     // Allow events for interaction
-        });
+      img.scaleToWidth(canvasWidth);
+      img.scaleToHeight(img.height * (canvasWidth / img.width));
+      img.set({
+        selectable: false, // Disable selection
+      });
 
-        setState(img);
-        canvas.add(img);
-        canvas.renderAll();
-        
-        console.log("Added sticker image successfully");
-        
-        // Update the preview after adding the image
-        setTimeout(() => {
-          saveImageToDataURL();
-        }, 300);
-      } catch (error) {
-        console.error("Error adding sticker image:", error);
-      }
-    }, { crossOrigin: 'anonymous' });
+      setState(img);
+
+      canvas.add(img);
+    });
   };
 
   const getRandomImage = (category) => {
     const categoryItems = stickers[category];
-    if (!categoryItems || categoryItems.length === 0) return null;
+    if (categoryItems.length === 0) return null;
     const randomIndex = Math.floor(Math.random() * categoryItems.length);
     return categoryItems[randomIndex];
   };
 
   const generateRandom = () => {
-    const randomHeadwear = getRandomImage("headwear");
-    if (randomHeadwear) handleAddImage(headwear, setHeadwear, randomHeadwear);
-
-    const randomKimono = getRandomImage("kimono");
-    if (randomKimono) handleAddImage(kimono, setKimono, randomKimono);
-
-    const randomAccessories = getRandomImage("accessories");
-    if (randomAccessories)
-      handleAddImage(accessories, setAccessories, randomAccessories);
-
+    const randomHats = getRandomImage("headwear");
+    const randomKimonos = getRandomImage("kimono");
+    const randomWeapons = getRandomImage("accessory");
     const randomBackground = getRandomImage("background");
+
+    if (randomHats) handleAddImage(hats, setHats, randomHats);
+    if (randomKimonos) handleAddImage(kimonos, setKimonos, randomKimonos);
+    // if (randomPants) handleAddImage(pants, setPants, randomPants);
+    if (randomWeapons) handleAddImage(weapons, setWeapons, randomWeapons);
+
     if (randomBackground) changeBackgroundImage(randomBackground, canvas);
-    
-    // Update the preview after a longer delay to ensure canvas renders completely
-    setTimeout(() => {
-      saveImageToDataURL();
-    }, 1000);
   };
 
   const handleBackgroundImageChange = (e) => {
@@ -463,11 +257,6 @@ function App() {
           img.scaleToWidth(100);
           img.scaleToHeight(img.height * (100 / img.width));
           canvas.add(img);
-          
-          // Update preview after adding sticker
-          setTimeout(() => {
-            saveImageToDataURL();
-          }, 100);
         });
       };
       reader.readAsDataURL(file);
@@ -477,16 +266,11 @@ function App() {
   const saveImageToLocal = () => {
     if (canvas) {
       const dataURL = saveImageToDataURL();
-      if (!dataURL) {
-        console.error("No image data available");
-        return;
-      }
-      
       const blob = dataURLToBlob(dataURL);
       const url = URL.createObjectURL(blob);
 
       const link = document.createElement("a");
-      link.download = "pixel_meme.png";
+      link.download = "cok_meme.png";
       link.href = url;
       document.body.appendChild(link);
       link.click();
@@ -513,183 +297,31 @@ function App() {
   };
 
   const saveImageToDataURL = () => {
-    if (!canvas) {
-      console.error("Canvas not available for preview");
-      return '';
-    }
-    
-    try {
-      // Ensure the canvas has content before exporting
-      if (canvas.getObjects().length === 0) {
-        console.log("Canvas has no objects, adding main cat image");
-        addMainImg(canvas, main_cat);
-        
-        // Give it more time to render before exporting
-        setTimeout(() => {
-          updatePreviewImage();
-        }, 1200);
-        return '';
-      } else {
-        return updatePreviewImage();
-      }
-    } catch (error) {
-      console.error("Error saving image to data URL:", error);
-      return '';
-    }
-  };
-  
-  const updatePreviewImage = () => {
-    try {
-      if (!canvas || !canvas.lowerCanvasEl) {
-        console.error("Canvas element not fully initialized");
-        // Retry after a delay
-        setTimeout(() => {
-          if (canvas && canvas.lowerCanvasEl) {
-            console.log("Retrying preview update");
-            updatePreviewImage();
-          }
-        }, 1000);
-        return '';
-      }
-      
-      // Make sure canvas has the main image
-      if (canvas.getObjects().length === 0) {
-        console.log("Canvas is empty during preview update, adding base image");
-        addMainImg(canvas, main_cat);
-        
-        // Try again after image is added
-        setTimeout(() => {
-          updatePreviewImage();
-        }, 1000);
-        return '';
-      }
-      
-      // Use a try/catch for toDataURL to handle potential errors
-      let dataURL;
-      try {
-        // Force a render before generating the data URL
-        canvas.renderAll();
-        
-        dataURL = canvas.toDataURL({
-          format: "png",
-          multiplier: 3, // Lower multiplier for better performance
-          quality: 1,
-        });
-      } catch (e) {
-        console.error("Error generating dataURL:", e);
-        return '';
-      }
-      
-      // Display the image preview to the user
-      const resultPreview = document.getElementById('result-preview');
-      if (resultPreview) {
-        // Create a new Image object to verify the data URL is valid
-        const img = new Image();
-        img.onload = () => {
-          // Image loaded successfully, update the preview
-          resultPreview.src = dataURL;
-          resultPreview.style.display = 'block';
-          console.log("Preview updated successfully");
-        };
-        
-        img.onerror = () => {
-          console.error("Generated image data is invalid");
-          // Try again with a fallback with simpler options
-          setTimeout(() => {
-            if (canvas && canvas.lowerCanvasEl) {
-              try {
-                canvas.renderAll();
-                const fallbackURL = canvas.toDataURL({
-                  format: "png",
-                  multiplier: 1
-                });
-                resultPreview.src = fallbackURL;
-                console.log("Used fallback preview generation");
-              } catch (e) {
-                console.error("Fallback preview generation failed:", e);
-              }
-            }
-          }, 800);
-        };
-        
-        // Set source to load the image
-        img.src = dataURL;
-      } else {
-        console.error("Cannot find preview element with ID 'result-preview'");
-      }
-      return dataURL;
-    } catch (error) {
-      console.error("Error in updatePreviewImage:", error);
-      return '';
-    }
+    return canvas.toDataURL({
+      format: "jpeg",
+      multiplier: 8,
+      quality: 1,
+    });
   };
 
   const handleCanvasClear = () => {
-    try {
-      // First clear all objects on the current canvas
-      if (canvas) {
-        // Save the canvas dimensions before clearing
-        const canvasWidth = canvas.getWidth();
-        const canvasHeight = canvas.getHeight();
-        
-        // Clear all objects
-        canvas.clear();
-        
-        // Reset the background color
-        canvas.setBackgroundColor("#000", canvas.renderAll.bind(canvas));
-        
-        // Reset all state variables for stickers
-        setHeadwear(null);
-        setEyewear(null);
-        setMouth(null);
-        setKimono(null);
-        setJewelry(null);
-        setAccessories(null);
-        setBackgroundImage(null);
-        
-        // Add main cat image with proper callback
-        fabric.Image.fromURL(main_cat, (img) => {
-          if (!img) {
-            console.error("Failed to load main image in reset");
-            return;
-          }
-          
-          img.scaleToWidth(canvasWidth);
-          img.scaleToHeight(img.height * (canvasWidth / img.width));
-          img.set({
-            selectable: false,
-            evented: false,
-            lockMovementX: true,
-            lockMovementY: true,
-            lockScalingX: true,
-            lockScalingY: true,
-            lockRotation: true,
-            hasBorders: false,
-            hasControls: false
-          });
-          
-          canvas.add(img);
-          canvas.renderAll();
-          
-          console.log("Canvas reset completed successfully");
-          
-          // Update the preview after a delay to ensure canvas renders
-          setTimeout(() => {
-            console.log("Updating preview after reset");
-            saveImageToDataURL();
-          }, 1000);
-        }, { crossOrigin: 'anonymous' });
-      } else {
-        // If canvas doesn't exist, initialize it
-        console.log("Canvas not available during reset, initializing new canvas");
-        initializeCanvas();
-      }
-    } catch (error) {
-      console.error("Error during canvas clear:", error);
-      // Try to recover by reinitializing
-      fabricInitialized.current = false;
-      setTimeout(() => initializeCanvas(), 1000);
-    }
+    // canvas.clear();
+    const newCanvas = new fabric.Canvas(canvasRef.current, {
+      width: window.innerWidth <= 768 ? 400 : 400,
+      height: window.innerWidth <= 768 ? 400 : 400,
+      backgroundColor: "#fff",
+    });
+
+    // const newCanvas = new fabric.Canvas(canvasRef.current, {
+    //   width: 300,
+    //   height: 300,
+    //   backgroundColor: "#fff",
+    // });
+
+    setCanvas(newCanvas);
+    addMainImg(newCanvas, main_cat);
+
+    // changeBackgroundImage(bg, newCanvas);
   };
 
   const handleDelete = () => {
@@ -701,23 +333,18 @@ function App() {
         }
       });
       canvas.discardActiveObject().renderAll();
-      
-      // Update the preview after deletion
-      setTimeout(() => {
-        saveImageToDataURL();
-      }, 100);
     }
   };
 
   const handleAddText = () => {
-    const text = prompt("Input text to add:");
+    const text = prompt("Enter your text:");
 
     if (text) {
       const newText = new fabric.Text(text, {
-        fontFamily: "'Finger Paint', cursive",
+        fontFamily: "Tahoma",
         fontSize: 20,
         fill: "#fff",
-        stroke: "#0A1F3F", // Updated to darker blue
+        stroke: "#000",
         fontWeight: "bold",
         left: 100,
         top: 100,
@@ -725,31 +352,71 @@ function App() {
       });
 
       canvas.add(newText);
-      
-      // Update the preview
-      setTimeout(() => {
-        saveImageToDataURL();
-      }, 100);
     }
   };
 
+  // useEffect(() => {
+  //   if (selectedObject && canvas) {
+  //     const isObjectInFront =
+  //       selectedObject === canvas.getObjects()[canvas.getObjects().length - 1];
+  //     const isObjectInBack = selectedObject === canvas.getObjects()[0];
+  //     setIsAtFront(isObjectInFront);
+  //     setIsAtBack(isObjectInBack);
+  //   } else {
+  //     setIsAtFront(false);
+  //     setIsAtBack(false);
+  //   }
+  // }, [selectedObject, canvas]);
+
+  // const bringForward = () => {
+  //   if (selectedObject) {
+  //     canvas.bringForward(selectedObject);
+  //     canvas.renderAll();
+  //   }
+  // };
+
+  // const bringToFront = () => {
+  //   if (selectedObject) {
+  //     canvas.bringToFront(selectedObject);
+  //     canvas.renderAll();
+  //   }
+  // };
+
+  // const sendBackward = () => {
+  //   if (selectedObject) {
+  //     canvas.sendBackwards(selectedObject);
+  //     canvas.renderAll();
+  //   }
+  // };
+
+  // const sendToBack = (object) => {
+  //   if (object) {
+  //     canvas.sendToBack(selectedObject);
+  //     canvas.renderAll();
+  //   }
+  // };
+
   return (
-    <div className="min-h-screen overflow-y-auto night-sky-bg" style={{ 
-      backgroundImage: `url('/lovable-uploads/501c37e0-441b-4827-b6a8-f3a8064316f6.png')` 
-    }}>
-      {/* Top Logo */}
+    <div className="min-h-screen overflow-y-auto bg-gradient-to-r from-mainRed to-darkRed">
       <div
-        onClick={() => window.open("https://fantomsonic.com/", "_blank")}
-        className="flex cursor-pointer absolute top-5 left-10 mb-16"
+        onClick={() => (window.location.href = "https://catownkimono.com")}
+        className="flex cursor-pointer absolute top-5 left-10"
       >
-        <img 
-          src="/lovable-uploads/d3db5656-828a-47f4-b0b4-888cde78af09.png" 
-          alt="Logo" 
-          className="h-10 w-10" 
-        />
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          width="32"
+          height="32"
+          viewBox="0 0 24 24"
+        >
+          <path
+            fill="#000"
+            d="m6.921 12.5l5.793 5.792L12 19l-7-7l7-7l.714.708L6.92 11.5H19v1z"
+          />
+        </svg>
+        <h1 className="text-3xl">Home</h1>
       </div>
 
-      <div className="w-full flex py-10 pt-20 flex-col lg:flex-row justify-center">
+      <div className="w-full flex py-10 flex-col lg:flex-row justify-center">
         <input
           type="file"
           accept="image/*"
@@ -766,208 +433,170 @@ function App() {
           onChange={handleAddSticker}
         />
         <div className="flex-1 px-5">
-          <div className="flex item-center justify-center gap-5 md:gap-10 mb-10">
-            <img
-              src="/lovable-uploads/13dd479a-7c88-43de-94c7-701c74fae6c8.png"
-              className="w-full max-w-[400px] h-auto mx-auto lg:mt-0"
-              alt="FANTOM PFP GENERATOR"
-              style={{ margin: '0 auto' }}
-            />
+          <div className="flex item-center justify-center gap-5 md:gap-10 mb-5">
+            {/* <img
+              // onClick={() => window.open("https://madcatcoin.com/", "_blank")}
+              src={logo}
+              className="w-[100px] lg:w-[150px] h-auto cursor-pointer"
+              alt=""
+            /> */}
+            <h1 className="text-white mt-5 lg:mt-0 text-5xl md:text-7xl text-center font-black ">
+              Cok <br />
+              Meme Generator
+            </h1>
           </div>
 
-          {/* Mobile layout - Preview first, then stickers */}
-          {isMobile && (
-            <>
-              {/* Canvas Preview */}
-              <div
-                className="mx-auto mb-7 bg-transparent rounded-xl relative canvas-mobile"
-              >
-                <canvas ref={canvasRef} />
-                {selectedObject && (
-                  <img
-                    onClick={handleDelete}
-                    id="selected-img"
-                    style={{
-                      position: "absolute",
-                      top: selectedObject.top - 30,
-                      left: selectedObject.left,
-                      cursor: "pointer",
-                    }}
-                    src="https://cdn-icons-png.flaticon.com/512/5610/5610967.png"
-                    width={20}
-                    height={20}
-                    alt=""
-                  />
-                )}
-              </div>
-              
-              {/* Stickers */}
-              <div className="mb-8">
-                <ImageScroller
-                  canvas={canvas}
-                  categorizedImages={stickers}
-                  handleAddImage={handleAddImage}
-                  changeBackgroundImage={changeBackgroundImage}
-                  hats={headwear}
-                  kimonos={kimono}
-                  weapons={accessories}
-                  setHats={setHeadwear}
-                  setKimonos={setKimono}
-                  setWeapons={setAccessories}
-                />
-              </div>
-            </>
-          )}
-
-          {/* Desktop layout - Canvas Preview */}
-          {!isMobile && (
-            <div
-              className="mx-auto mb-7 bg-transparent rounded-xl relative w-[400px]"
-            >
-              <canvas ref={canvasRef} />
-              {selectedObject && (
-                <img
-                  onClick={handleDelete}
-                  id="selected-img"
-                  style={{
-                    position: "absolute",
-                    top: selectedObject.top - 30,
-                    left: selectedObject.left,
-                    cursor: "pointer",
-                  }}
-                  src="https://cdn-icons-png.flaticon.com/512/5610/5610967.png"
-                  width={20}
-                  height={20}
-                  alt=""
-                />
-              )}
-            </div>
-          )}
-          
-          {/* Control buttons - displayed after stickers on mobile */}
+          <div
+            className={`mx-auto mb-7 bg-transparent rounded-xl relative
+          ${isMobile ? "canvas-mobile" : "w-[400px]"}
+          `}
+          >
+            <canvas
+              ref={canvasRef}
+              // style={{ width: "550px", height: "550px" }}
+            />
+            {selectedObject && (
+              <img
+                onClick={handleDelete}
+                id="selected-img"
+                style={{
+                  position: "absolute",
+                  top: selectedObject.top - 30,
+                  left: selectedObject.left,
+                  cursor: "pointer",
+                }}
+                src="https://cdn-icons-png.flaticon.com/512/5610/5610967.png"
+                width={20}
+                height={20}
+                alt=""
+              />
+            )}
+          </div>
           <div className="flex flex-wrap w-full gap-5 justify-center">
             <div
               onClick={() => stickerImgInputRef.current.click()}
-              className="border-2 cursor-pointer border-white bg-[#0A1F3F] text-white px-5 py-2 rounded-lg flex justify-center items-center overflow-hidden relative group transition-all duration-300 ease-in-out transform hover:scale-105 w-full sm:w-full md:w-1/3 lg:w-1/3"
+              className="border-4 cursor-pointer border-black bg-white text-black px-5 py-2 rounded-lg flex justify-center items-center overflow-hidden relative group transition-all duration-300 ease-in-out transform hover:scale-105 w-full sm:w-full md:w-1/3 lg:w-1/3"
             >
-              <p className="text-white text-center text-lg tracking-wider relative" style={{ fontFamily: "'Finger Paint', cursive" }}>
-                UPLOAD
+              <p className="text-black text-center text-2xl tracking-wider font-medium relative">
+                UPLOAD STICKER
               </p>
               <div className="absolute top-0 left-0 w-full h-full bg-black opacity-0 z-0 transition duration-300 ease-in-out group-hover:opacity-50"></div>
             </div>
             <div
               onClick={() => bgImgInputRef.current.click()}
-              className="border-2 cursor-pointer border-white bg-[#0A1F3F] text-white px-5 py-2 rounded-lg flex justify-center items-center overflow-hidden relative group transition-all duration-300 ease-in-out transform hover:scale-105 w-full sm:w-full md:w-1/3 lg:w-1/3"
+              className="border-4 cursor-pointer border-black bg-white text-black px-5 py-2 rounded-lg flex justify-center items-center overflow-hidden relative group transition-all duration-300 ease-in-out transform hover:scale-105 w-full sm:w-full md:w-1/3 lg:w-1/3"
             >
-              <p className="text-white text-center text-lg tracking-wider relative" style={{ fontFamily: "'Finger Paint', cursive" }}>
-                BG
+              <p className="text-black text-center text-2xl tracking-wider font-medium relative">
+                UPLOAD BACKGROUND
               </p>
               <div className="absolute top-0 left-0 w-full h-full bg-black opacity-0 z-0 transition duration-300 ease-in-out group-hover:opacity-50"></div>
             </div>
             <div
               onClick={handleAddText}
-              className="border-2 cursor-pointer border-white bg-[#0A1F3F] text-white px-5 py-2 rounded-lg flex justify-center items-center overflow-hidden relative group transition-all duration-300 ease-in-out transform hover:scale-105 w-full sm:w-full md:w-1/3 lg:w-1/3"
+              className="border-4 cursor-pointer border-black bg-white text-black px-5 py-2 rounded-lg flex justify-center items-center overflow-hidden relative group transition-all duration-300 ease-in-out transform hover:scale-105 w-full sm:w-full md:w-1/3 lg:w-1/3"
             >
-              <p className="text-white text-center text-lg tracking-wider relative" style={{ fontFamily: "'Finger Paint', cursive" }}>
-                TEXT
+              <p className="text-black text-center text-2xl tracking-wider font-medium relative">
+                ADD TEXT
               </p>
               <div className="absolute top-0 left-0 w-full h-full bg-black opacity-0 z-0 transition duration-300 ease-in-out group-hover:opacity-50"></div>
             </div>
             <div
               onClick={handleCanvasClear}
-              className="border-2 cursor-pointer border-white bg-[#0A1F3F] text-white px-5 py-2 rounded-lg flex justify-center items-center overflow-hidden relative group transition-all duration-300 ease-in-out transform hover:scale-105 w-full sm:w-full md:w-1/3 lg:w-1/3"
+              className="border-4 cursor-pointer border-black bg-white text-black px-5 py-2 rounded-lg flex justify-center items-center overflow-hidden relative group transition-all duration-300 ease-in-out transform hover:scale-105 w-full sm:w-full md:w-1/3 lg:w-1/3"
             >
-              <p className="text-white text-center text-lg tracking-wider relative" style={{ fontFamily: "'Finger Paint', cursive" }}>
+              <p className="text-black text-center text-2xl tracking-wider font-medium relative">
                 RESET
               </p>
               <div className="absolute top-0 left-0 w-full h-full bg-black opacity-0 z-0 transition duration-300 ease-in-out group-hover:opacity-50"></div>
             </div>
             <div
               onClick={generateRandom}
-              className="border-2 cursor-pointer border-white bg-[#0c46af] text-white px-5 py-2 rounded-lg flex justify-center items-center overflow-hidden relative group transition-all duration-300 ease-in-out transform hover:scale-105 w-full sm:w-full md:w-1/3 lg:w-1/3"
+              className="border-4 cursor-pointer border-black bg-white text-black px-5 py-2 rounded-lg flex justify-center items-center overflow-hidden relative group transition-all duration-300 ease-in-out transform hover:scale-105 w-full sm:w-full md:w-1/3 lg:w-1/3"
             >
-              <p className="text-white text-center text-lg tracking-wider relative" style={{ fontFamily: "'Finger Paint', cursive" }}>
-                RANDOM
+              <p className="text-black text-center text-2xl tracking-wider font-medium relative">
+                GENERATE RANDOM
               </p>
               <div className="absolute top-0 left-0 w-full h-full bg-black opacity-0 z-0 transition duration-300 ease-in-out group-hover:opacity-50"></div>
             </div>
             <div
               onClick={saveImageToLocal}
-              className="border-2 cursor-pointer border-white bg-[#0c46af] text-white px-5 py-2 rounded-lg flex justify-center items-center overflow-hidden relative group transition-all duration-300 ease-in-out transform hover:scale-105 w-full sm:w-full md:w-1/3 lg:w-1/3"
+              className="border-4 cursor-pointer border-black bg-white text-black px-5 py-2 rounded-lg flex justify-center items-center overflow-hidden relative group transition-all duration-300 ease-in-out transform hover:scale-105 w-full sm:w-full md:w-1/3 lg:w-1/3"
             >
-              <p className="text-white text-center text-lg tracking-wider relative" style={{ fontFamily: "'Finger Paint', cursive" }}>
-                SAVE
+              <p className="text-black text-center text-2xl tracking-wider font-medium relative">
+                SAVE MEME
               </p>
               <div className="absolute top-0 left-0 w-full h-full bg-black opacity-0 z-0 transition duration-300 ease-in-out group-hover:opacity-50"></div>
             </div>
           </div>
-          
-          {/* Result Preview Container - After upload buttons on mobile */}
-          <div className="mt-10 flex flex-col items-center justify-center">
-            <div className="border-4 border-[#0c46af] p-2 rounded-lg bg-black/50">
-              <div className="preview-container relative" style={{ width: '300px', height: '300px', backgroundColor: 'rgba(10, 31, 63, 0.3)' }}>
-                {/* Fallback message if preview fails */}
-                <div className="absolute inset-0 flex items-center justify-center text-white opacity-50 z-0">
-                  <p className="text-center" style={{ fontFamily: "'Finger Paint', cursive" }}>
-                    Preview will appear here
-                  </p>
-                </div>
-                
-                {/* The actual preview image */}
-                <img 
-                  id="result-preview" 
-                  alt="Result Preview" 
-                  className="z-10 max-w-[300px] max-h-[300px] object-contain w-full h-full"
-                  style={{
-                    display: 'block', 
-                    margin: '0 auto',
-                    backgroundColor: 'transparent'
-                  }}
-                  onError={(e) => {
-                    console.log("Preview image loading error:", e);
-                    e.target.style.display = 'none'; // Hide broken image
-                    // Try updating the preview again after a delay
-                    setTimeout(() => saveImageToDataURL(), 1000);
-                  }}
-                  onLoad={(e) => {
-                    console.log("Preview image loaded successfully");
-                    e.target.style.display = 'block';
-                  }}
-                />
-              </div>
+
+          {/* <div className="flex flex-wrap w-full mt-5 gap-5 justify-center">
+            <div
+              onClick={bringForward}
+              // disabled={isAtFront}
+              className="border-4 cursor-pointer border-black bg-white text-black px-5 py-2   rounded-lg flex justify-center items-center overflow-hidden relative group transition-all duration-300 ease-in-out transform hover:scale-105"
+            >
+              <p className="text-black text-center text-2xl tracking-wider font-medium relative">
+                BRING FORWARD
+              </p>
+              <div className="absolute top-0 left-0 w-full h-full bg-black opacity-0 z-0 transition duration-300 ease-in-out group-hover:opacity-50"></div>
             </div>
-          </div>
+            <div
+              onClick={bringToFront}
+              // disabled={isAtFront}
+              className="border-4 cursor-pointer border-black bg-white text-black px-5 py-2   rounded-lg flex justify-center items-center overflow-hidden relative group transition-all duration-300 ease-in-out transform hover:scale-105"
+            >
+              <p className="text-black text-center text-2xl tracking-wider font-medium relative">
+                BRING TO FRONT
+              </p>
+              <div className="absolute top-0 left-0 w-full h-full bg-black opacity-0 z-0 transition duration-300 ease-in-out group-hover:opacity-50"></div>
+            </div>
+
+            <div
+              onClick={sendBackward}
+              // disabled={isAtBack}
+              className="border-4 cursor-pointer border-black bg-white text-black px-5 py-2   rounded-lg flex justify-center items-center overflow-hidden relative group transition-all duration-300 ease-in-out transform hover:scale-105"
+            >
+              <p className="text-black text-center text-2xl tracking-wider font-medium relative">
+                SEND BACKWARD
+              </p>
+              <div className="absolute top-0 left-0 w-full h-full bg-black opacity-0 z-0 transition duration-300 ease-in-out group-hover:opacity-50"></div>
+            </div>
+            <div
+              onClick={sendToBack}
+              // disabled={isAtBack}
+              className="border-4 cursor-pointer border-black  bg-white text-black px-5 py-2 rounded-lg flex justify-center items-center overflow-hidden relative group transition-all duration-300 ease-in-out transform hover:scale-105"
+            >
+              <p className="text-black text-center text-2xl tracking-wider font-medium relative">
+                SEND TO BACK
+              </p>
+              <div className="absolute top-0 left-0 w-full h-full bg-black opacity-0 z-0 transition duration-300 ease-in-out group-hover:opacity-50"></div>
+            </div>
+          </div> */}
         </div>
 
-        {/* Desktop layout - Show stickers on side aligned with preview */}
-        {!isMobile && (
-          <div className="w-full lg:w-[60%] px-5 lg:pl-0">
-            <div className="flex-1">
-              <ImageScroller
-                canvas={canvas}
-                categorizedImages={stickers}
-                handleAddImage={handleAddImage}
-                changeBackgroundImage={changeBackgroundImage}
-                hats={headwear}
-                kimonos={kimono}
-                weapons={accessories}
-                setHats={setHeadwear}
-                setKimonos={setKimono}
-                setWeapons={setAccessories}
-              />
-            </div>
+        <div className="mt-5 w-full lg:w-[60%] px-5 lg:pl-0">
+          <div className="flex-1">
+            <h1 className="text-4xl text-center text-white mt-10 mb-6">
+              CLICK TO ADD STICKER
+            </h1>
+            <AssetTabs
+              canvas={canvas}
+              categorizedImages={stickers}
+              handleAddImage={handleAddImage}
+              changeBackgroundImage={changeBackgroundImage}
+              hats={hats}
+              kimonos={kimonos}
+              weapons={weapons}
+              eyewear={eyewear}
+              mouth={mouth}
+              setHats={setHats}
+              setKimonos={setKimonos}
+              setWeapons={setWeapons}
+              setEyewear={setEyewear}
+              setMouth={setMouth}
+            />
           </div>
-        )}
-      </div>
-      
-      {/* Footer logo for navigation */}
-      <div className="w-full flex justify-center py-6 mt-8">
-        <img 
-          onClick={() => window.open("https://fantomsonic.com/", "_blank")}
-          src="/lovable-uploads/d3db5656-828a-47f4-b0b4-888cde78af09.png" 
-          alt="Logo" 
-          className="h-12 w-12 cursor-pointer" 
-        />
+        </div>
       </div>
     </div>
   );

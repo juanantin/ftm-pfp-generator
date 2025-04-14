@@ -54,11 +54,17 @@ body {
   border-radius: 20px;
 }
 
+.preview-container img {
+  border-radius: 20px;
+}
+
 .canvas-mobile,
 .canvas-mobile .canvas-container,
 .canvas-mobile canvas {
   width: 300px !important;
   height: 300px !important;
+  border-radius: 20px !important;
+  overflow: hidden;
 }
 
 .hero-gradient-Text {
