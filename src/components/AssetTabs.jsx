@@ -1,5 +1,5 @@
 
-import { useState } from "react";
+import { useState } from 'react';
 import { Trash2 } from "lucide-react";
 
 const AssetTabs = ({
@@ -23,15 +23,16 @@ const AssetTabs = ({
   const handleDeleteCategory = (category) => {
     if (!canvas) return;
 
-    // Add button press animation
+    // Create visual feedback for deletion button
     const deleteBtn = document.getElementById(`delete-btn-${category}`);
     if (deleteBtn) {
-      deleteBtn.style.transform = 'scale(0.9)';
+      deleteBtn.style.transform = "scale(0.9)";
       setTimeout(() => {
-        deleteBtn.style.transform = 'scale(1)';
+        deleteBtn.style.transform = "scale(1)";
       }, 150);
     }
 
+    // Reset state variables when removing items
     switch (category) {
       case "headwear":
         if (hats) setHats(null);
@@ -50,9 +51,9 @@ const AssetTabs = ({
         break;
     }
 
-    // Remove all objects of the selected category from canvas
+    // Remove objects by category
     const objects = canvas.getObjects();
-    objects.forEach((obj) => {
+    objects.forEach(obj => {
       if (obj._element && obj._element.src && typeof obj._element.src === 'string') {
         const src = obj._element.src.toLowerCase();
         if (
@@ -67,6 +68,7 @@ const AssetTabs = ({
       }
     });
 
+    // Handle background separately
     if (category === "background") {
       canvas.setBackgroundImage(null, canvas.renderAll.bind(canvas));
     }
@@ -74,6 +76,7 @@ const AssetTabs = ({
     canvas.renderAll();
   };
 
+  // Change "kimono" display name to "clothing"
   const getCategoryDisplayName = (category) => {
     if (category === "kimono") return "Clothing";
     return category.charAt(0).toUpperCase() + category.slice(1);
@@ -83,7 +86,7 @@ const AssetTabs = ({
     <div className="w-full px-4">
       <div className="flex overflow-x-auto no-scrollbar mb-4 bg-[#0A1F3F] rounded-lg p-2">
         {Object.keys(categorizedImages)
-          .filter((category) => category !== "paw accessories")
+          .filter(category => category !== "paw accessories")
           .map((category) => (
             <button
               key={category}
