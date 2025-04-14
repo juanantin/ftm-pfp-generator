@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { Trash2 } from 'lucide-react';
 
 function ImageScroller({
   canvas,
@@ -66,21 +67,21 @@ function ImageScroller({
     
     return (
       <div className="flex flex-col w-full">
-        {/* Category header with delete button */}
-        <div className="flex justify-between items-center mb-4 px-2">
-          <h3 className="text-2xl text-white">
+        {/* Category header */}
+        <div className="flex items-center mb-6 px-2">
+          <h3 className="text-3xl text-white font-bold">
             {selectedCategory === "kimono" ? "Clothing" : selectedCategory.charAt(0).toUpperCase() + selectedCategory.slice(1)}
           </h3>
-          <button
-            onClick={() => handleRemoveSticker(selectedCategory)}
-            className="bg-red-500 hover:bg-red-600 text-white px-3 py-1 rounded-lg transition-colors"
-          >
-            Remove {selectedCategory === "kimono" ? "Clothing" : selectedCategory}
-          </button>
         </div>
 
-        {/* Stickers grid */}
+        {/* Stickers grid with delete button as first item */}
         <div className="flex flex-wrap gap-2 justify-center">
+          <div
+            className="w-[100px] h-[100px] bg-red-500 rounded-md overflow-hidden cursor-pointer shadow-md transform hover:scale-105 transition-transform flex items-center justify-center"
+            onClick={() => handleRemoveSticker(selectedCategory)}
+          >
+            <Trash2 size={48} color="white" />
+          </div>
           {stickers.map((sticker, index) => {
             // Handle background images differently
             if (selectedCategory === "background") {
