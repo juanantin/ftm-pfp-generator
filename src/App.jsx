@@ -222,7 +222,7 @@ function App() {
     const newCanvas = new fabric.Canvas(canvasRef.current, {
       width: window.innerWidth <= 768 ? 400 : 400,
       height: window.innerWidth <= 768 ? 400 : 400,
-      backgroundColor: "#000", // Set the background to black
+      backgroundColor: "#fff",
     });
 
     setCanvas(newCanvas);
@@ -314,7 +314,7 @@ function App() {
 
   const getRandomImage = (category) => {
     const categoryItems = stickers[category];
-    if (!categoryItems || categoryItems.length === 0) return null;
+    if (categoryItems.length === 0) return null;
     const randomIndex = Math.floor(Math.random() * categoryItems.length);
     return categoryItems[randomIndex];
   };
@@ -404,7 +404,7 @@ function App() {
     const newCanvas = new fabric.Canvas(canvasRef.current, {
       width: window.innerWidth <= 768 ? 400 : 400,
       height: window.innerWidth <= 768 ? 400 : 400,
-      backgroundColor: "#000", // Set the background to black
+      backgroundColor: "#fff",
     });
 
     setCanvas(newCanvas);
@@ -464,8 +464,55 @@ function App() {
     }
   };
 
+  // useEffect(() => {
+  //   if (selectedObject && canvas) {
+  //     const isObjectInFront =
+  //       selectedObject === canvas.getObjects()[canvas.getObjects().length - 1];
+  //     const isObjectInBack = selectedObject === canvas.getObjects()[0];
+  //     setIsAtFront(isObjectInFront);
+  //     setIsAtBack(isObjectInBack);
+  //   } else {
+  //     setIsAtFront(false);
+  //     setIsAtBack(false);
+  //   }
+  // }, [selectedObject, canvas]);
+
+  // const bringForward = () => {
+  //   if (selectedObject) {
+  //     canvas.bringForward(selectedObject);
+  //     canvas.renderAll();
+  //   }
+  // };
+
+  // const bringToFront = () => {
+  //   if (selectedObject) {
+  //     canvas.bringToFront(selectedObject);
+  //     canvas.renderAll();
+  //   }
+  // };
+
+  // const sendBackward = () => {
+  //   if (selectedObject) {
+  //     canvas.sendBackwards(selectedObject);
+  //     canvas.renderAll();
+  //   }
+  // };
+
+  // const sendToBack = (object) => {
+  //   if (object) {
+  //     canvas.sendToBack(selectedObject);
+  //     canvas.renderAll();
+  //   }
+  // };
+
   return (
-    <div className="min-h-screen overflow-y-auto" style={{ backgroundColor: "#000" }}>
+    <div className="min-h-screen overflow-y-auto bg-gradient-to-r from-mainRed to-darkRed">
+      {/* <img
+        className="w-full h-full absolute top-0 left-0 opacity-[0.4] object-cover md:object-cover"
+        src={isMobile ? all_bg_mobile : all_bg}
+        alt=""
+      /> */}
+
       <div
         onClick={() => (window.location.href = "https://catownkimono.com")}
         className="flex cursor-pointer absolute top-5 left-10"
@@ -502,11 +549,16 @@ function App() {
         />
         <div className="flex-1 px-5">
           <div className="flex item-center justify-center gap-5 md:gap-10 mb-5">
-            <img
+            {/* <img
+              // onClick={() => window.open("https://madcatcoin.com/", "_blank")}
               src={logo}
-              className="w-[150px] lg:w-[200px] h-auto cursor-pointer"
-              alt="Logo"
-            />
+              className="w-[100px] lg:w-[150px] h-auto cursor-pointer"
+              alt=""
+            /> */}
+            <h1 className="text-white mt-5 lg:mt-0 text-5xl md:text-7xl text-center font-black ">
+              Cok <br />
+              Meme Generator
+            </h1>
           </div>
 
           <div
