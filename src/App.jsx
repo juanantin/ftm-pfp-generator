@@ -1,4 +1,3 @@
-
 import { useState, useEffect, useRef } from "react";
 // Import Fabric.js properly to prevent "Canvas is not a constructor" error
 import { fabric } from "fabric";
@@ -24,7 +23,7 @@ function App() {
   const [isMobile, setIsMobile] = useState(false);
   const [headwear, setHeadwear] = useState(null);
   const [eyewear, setEyewear] = useState(null);
-    const [mouth, setMouth] = useState(null);
+  const [mouth, setMouth] = useState(null);
   const [kimono, setKimono] = useState(null);
   const [jewelry, setJewelry] = useState(null);
   const [accessories, setAccessories] = useState(null);
