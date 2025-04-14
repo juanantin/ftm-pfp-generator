@@ -176,11 +176,11 @@ function App() {
               
               // Apply stored properties but maintain consistent scaling for mobile
               // Use a lower scale factor to make the character smaller
-              const mobileScaleFactor = 1.2; // Reduced from 1.8 to 1.2
+              const mobileScaleFactor = 0.8; // Reduced from 1.2 to 0.8 for smaller character
               
               mainCat.set({
-                scaleX: mainCatProps.originalCanvasWidth ? (canvas.width / mainCatProps.originalCanvasWidth) * mainCatProps.scaleX : mainCatProps.scaleX,
-                scaleY: mainCatProps.originalCanvasHeight ? (canvas.height / mainCatProps.originalCanvasHeight) * mainCatProps.scaleY : mainCatProps.scaleY,
+                scaleX: mainCatProps.originalCanvasWidth ? (canvas.width / mainCatProps.originalCanvasWidth) * mainCatProps.scaleX * mobileScaleFactor : mainCatProps.scaleX * mobileScaleFactor,
+                scaleY: mainCatProps.originalCanvasHeight ? (canvas.height / mainCatProps.originalCanvasHeight) * mainCatProps.scaleY * mobileScaleFactor : mainCatProps.scaleY * mobileScaleFactor,
                 left: canvas.width / 2, // Center horizontally
                 // Ensure it stays aligned with bottom with consistent positioning
                 top: canvas.height - (mainCat.height * mainCat.scaleY * 0.65), // Match positioning from addMainImg
@@ -188,10 +188,11 @@ function App() {
                 originY: 'bottom'
               });
             } else {
-              // For desktop, simply restore previous properties
+              // For desktop, also apply the smaller scale
+              const desktopScaleFactor = 0.8; // Reduced for smaller character on desktop too
               mainCat.set({
-                scaleX: mainCatProps.scaleX,
-                scaleY: mainCatProps.scaleY,
+                scaleX: mainCatProps.scaleX * desktopScaleFactor,
+                scaleY: mainCatProps.scaleY * desktopScaleFactor,
                 left: mainCatProps.left,
                 top: mainCatProps.top,
                 originX: mainCatProps.originX,
@@ -308,7 +309,7 @@ function App() {
             if (isMobileView) {
               // For mobile: Make image more appropriately sized for smaller canvas
               // Reduced scale factor to make character smaller
-              const mobileScaleFactor = 1.2; // Reduced from 1.5 to 1.2
+              const mobileScaleFactor = 0.8; // Further reduced from 1.2 to 0.8 for smaller character
               img.scaleToWidth(canvasWidth * mobileScaleFactor);
               
               // Position the image to be fully aligned with the bottom of the canvas
@@ -319,9 +320,10 @@ function App() {
                 originY: 'bottom',
               });
             } else {
-              // Desktop scaling (keep original)
-              img.scaleToWidth(canvasWidth);
-              img.scaleToHeight(img.height * (canvasWidth / img.width));
+              // Desktop scaling - also make character smaller
+              const desktopScaleFactor = 0.8; // Added scale factor for desktop too
+              img.scaleToWidth(canvasWidth * desktopScaleFactor);
+              img.scaleToHeight(img.height * (canvasWidth / img.width) * desktopScaleFactor);
             }
             
             // Store the base model's scaling factors for reference
@@ -466,7 +468,7 @@ function App() {
         if (isMobileView) {
           // For mobile: Make image smaller for better visibility
           // Reduced scale factor
-          const mobileScaleFactor = 1.2; // Reduced from 1.8 to 1.2
+          const mobileScaleFactor = 0.8; // Reduced from 1.2 to 0.8 for smaller character
           img.scaleToWidth(canvasWidth * mobileScaleFactor);
           
           // Position the image at bottom of canvas
@@ -477,9 +479,10 @@ function App() {
             originY: 'bottom',
           });
         } else {
-          // Desktop scaling (keep original)
-          img.scaleToWidth(canvasWidth);
-          img.scaleToHeight(img.height * (canvasWidth / img.width));
+          // Desktop scaling - also make character smaller
+          const desktopScaleFactor = 0.8; // Added scale factor for desktop
+          img.scaleToWidth(canvasWidth * desktopScaleFactor);
+          img.scaleToHeight(img.height * (canvasWidth / img.width) * desktopScaleFactor);
         }
         
         // Store the base model's scaling factors for reference
@@ -891,7 +894,7 @@ function App() {
         return '';
       }
       
-      // Update the preview element (mobile only - removed duplicates)
+      // Update the preview element (mobile only)
       const updatePreviewElement = (elementId) => {
         const previewElement = document.getElementById(elementId);
         if (previewElement) {
@@ -1301,10 +1304,10 @@ function App() {
             />
           </div>
 
-          {/* Mobile layout - Use the desktop preview style instead */}
+          {/* Mobile layout */}
           {isMobile && (
             <>
-              {/* Desktop-style canvas preview for mobile */}
+              {/* Main canvas */}
               <div className="flex flex-col items-center">
                 <div className="mx-auto mb-3 bg-transparent rounded-2xl relative w-[290px]">
                   <canvas ref={canvasRef} style={{ 
@@ -1537,7 +1540,7 @@ function App() {
         )}
       </div>
       
-      {/* Mobile footer logo only - bottom preview removed completely */}
+      {/* Mobile footer logo only */}
       {isMobile && (
         <div className="w-full relative mt-4 mb-16 pt-4">
           {/* Footer logo with proper spacing and caption */}
