@@ -9,13 +9,9 @@ function ImageScroller({
   hats,
   kimonos,
   weapons,
-  eyewear,
-  mouth,
   setHats,
   setKimonos,
   setWeapons,
-  setEyewear,
-  setMouth,
 }) {
   const [selectedCategory, setSelectedCategory] = useState("headwear");
 
@@ -34,18 +30,11 @@ function ImageScroller({
       canvas.remove(hats);
       setHats(null);
     } else if (category === "kimono" && setKimonos) {
-      // Fixed: changed from "Clothing" to "kimono" to match App.jsx state handling
       canvas.remove(kimonos);
       setKimonos(null);
-    } else if (category === "accessories" && setWeapons) {
+    } else if (category === "accessory" && setWeapons) {
       canvas.remove(weapons);
       setWeapons(null);
-    } else if (category === "eyewear" && setEyewear) {
-      canvas.remove(eyewear);
-      setEyewear(null);
-    } else if (category === "mouth" && setMouth) {
-      canvas.remove(mouth);
-      setMouth(null);
     } else if (category === "background") {
       // Add background removal functionality
       if (canvas) {
@@ -114,18 +103,11 @@ function ImageScroller({
             stateVarToUpdate = hats;
             setStateVarToUpdate = setHats;
           } else if (selectedCategory === "kimono") {
-            // Fixed: changed from "Clothing" to "kimono" to match the state handling in App.jsx
             stateVarToUpdate = kimonos;
             setStateVarToUpdate = setKimonos;
-          } else if (selectedCategory === "accessories") {
+          } else if (selectedCategory === "accessory") {
             stateVarToUpdate = weapons;
             setStateVarToUpdate = setWeapons;
-          } else if (selectedCategory === "eyewear") {
-            stateVarToUpdate = eyewear;
-            setStateVarToUpdate = setEyewear; 
-          } else if (selectedCategory === "mouth") {
-            stateVarToUpdate = mouth;
-            setStateVarToUpdate = setMouth;
           }
           
           return (
@@ -165,7 +147,7 @@ function ImageScroller({
             } transition-colors`}
             style={{ fontFamily: "'Finger Paint', cursive" }}
           >
-            {category === "kimono" ? "Clothing" : category.charAt(0).toUpperCase() + category.slice(1)}
+            {category.charAt(0).toUpperCase() + category.slice(1)}
           </div>
         ))}
       </div>
