@@ -29,7 +29,8 @@ function ImageScroller({
     if (category === "headwear" && setHats) {
       canvas.remove(hats);
       setHats(null);
-    } else if (category === "Clothing" && setKimonos) {
+    } else if (category === "kimono" && setKimonos) {
+      // Fixed: changed from "Clothing" to "kimono" to match App.jsx state handling
       canvas.remove(kimonos);
       setKimonos(null);
     } else if (category === "accessories" && setWeapons) {
@@ -41,6 +42,12 @@ function ImageScroller({
     } else if (category === "mouth" && setMouth) {
       canvas.remove(mouth);
       setMouth(null);
+    } else if (category === "background") {
+      // Add background removal functionality
+      if (canvas) {
+        canvas.setBackgroundImage(null, canvas.renderAll.bind(canvas));
+        canvas.setBackgroundColor("#000", canvas.renderAll.bind(canvas));
+      }
     }
   };
 
@@ -49,9 +56,9 @@ function ImageScroller({
     
     return (
       <div className="flex flex-wrap gap-2 justify-center">
-        {/* Delete card at the beginning of each category */}
+        {/* Delete card at the beginning of each category - changed to dark red */}
         <div
-          className="w-[100px] h-[100px] bg-red-500 rounded-md overflow-hidden cursor-pointer shadow-md transform hover:scale-105 transition-transform flex items-center justify-center"
+          className="w-[100px] h-[100px] bg-[#8B0000] rounded-md overflow-hidden cursor-pointer shadow-md transform hover:scale-105 transition-transform flex items-center justify-center"
           onClick={() => handleRemoveSticker(selectedCategory)}
         >
           <div className="text-white text-center font-bold">
@@ -86,7 +93,8 @@ function ImageScroller({
           if (selectedCategory === "headwear") {
             stateVarToUpdate = hats;
             setStateVarToUpdate = setHats;
-          } else if (selectedCategory === "Clothing") {
+          } else if (selectedCategory === "kimono") {
+            // Fixed: changed from "Clothing" to "kimono" to match the state handling in App.jsx
             stateVarToUpdate = kimonos;
             setStateVarToUpdate = setKimonos;
           } else if (selectedCategory === "accessories") {
