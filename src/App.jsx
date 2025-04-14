@@ -1,4 +1,3 @@
-
 import { useState, useEffect, useRef } from "react";
 import { fabric } from "fabric";
 import logo from "./assets/logo.png";
@@ -20,10 +19,12 @@ function App() {
   const [hats, setHats] = useState(null);
   const [kimonos, setKimonos] = useState(null);
   const [weapons, setWeapons] = useState(null);
+  const [eyewear, setEyewear] = useState(null);
+  const [mouth, setMouth] = useState(null);
 
   useEffect(() => {
     const handleResize = () => {
-      setIsMobile(window.innerWidth <= 768); // You can adjust this threshold as needed
+      setIsMobile(window.innerWidth <= 768);
     };
 
     // Initial check
@@ -54,17 +55,49 @@ function App() {
         updateImagePosition();
       };
 
-      canvas.on("object:modified", objectModifiedHandler);
-
-      return () => {
-        canvas.off("object:modified", objectModifiedHandler);
-      };
+      if (canvas) {
+        canvas.on("object:modified", objectModifiedHandler);
+  
+        return () => {
+          canvas.off("object:modified", objectModifiedHandler);
+        };
+      }
     }
   }, [canvas, selectedObject, isMobile]);
 
   const changeBackgroundImage = (backgroundImage, canvas) => {
+    if (!canvas) {
+      console.error("Canvas is not available");
+      return;
+    }
+    
+    console.log("Changing background image");
+    
+    // Store current objects to restore after background change
+    const currentObjects = [...canvas.getObjects()]; 
+    
+    // Find the main cat image specifically (the base character)
+    const mainCatImage = currentObjects.find(obj => 
+      obj.selectable === false && 
+      (!obj._element || !obj._element.src || !obj._element.src.includes("stickers"))
+    );
+    
+    // Store main cat position and scale if it exists
+    let mainCatProps = null;
+    if (mainCatImage) {
+      mainCatProps = {
+        scaleX: mainCatImage.scaleX,
+        scaleY: mainCatImage.scaleY,
+        left: mainCatImage.left,
+        top: mainCatImage.top,
+        originX: mainCatImage.originX || 'center',
+        originY: mainCatImage.originY || 'bottom'
+      };
+      console.log("Stored main cat properties before background change", mainCatProps);
+    }
+
     fabric.Image.fromURL(backgroundImage, (img) => {
-      // Calculate the new dimensions respecting the maximum width of 550px
+      // Calculate the new dimensions respecting the maximum width
       let newWidth = img.width;
       let newHeight = img.height;
 
@@ -89,24 +122,45 @@ function App() {
         }
       );
       
-      // After changing background, ensure main cat is correctly positioned
-      if (isMobile) {
+      // If main character was found, restore its properties after background change
+      if (mainCatProps) {
+        console.log("Restoring main cat properties after background change");
+        
+        // Find the main cat again after background change
         const objects = canvas.getObjects();
-        const mainCatImg = objects.find(obj => 
+        const mainCat = objects.find(obj => 
           obj.selectable === false && 
           (!obj._element || !obj._element.src || !obj._element.src.includes("stickers"))
         );
         
-        if (mainCatImg) {
-          mainCatImg.set({
-            left: canvas.width / 2,
-            top: canvas.height, 
-            originX: 'center',
-            originY: 'bottom'
-          });
+        if (mainCat) {
+          // On mobile, ensure the main cat stays aligned with the bottom regardless of background
+          if (isMobile) {
+            mainCat.set({
+              left: canvas.width / 2, // Center horizontally
+              top: canvas.height, // Align with bottom
+              originX: 'center',
+              originY: 'bottom',
+              scaleX: mainCatProps.scaleX,
+              scaleY: mainCatProps.scaleY
+            });
+          } else {
+            // For desktop, just restore previous position
+            mainCat.set({
+              left: mainCatProps.left,
+              top: mainCatProps.top,
+              originX: mainCatProps.originX,
+              originY: mainCatProps.originY,
+              scaleX: mainCatProps.scaleX,
+              scaleY: mainCatProps.scaleY
+            });
+          }
           canvas.renderAll();
+          console.log("Main cat properties restored successfully");
         }
       }
+    }, (err) => {
+      console.error("Error loading background image:", err);
     });
   };
 
@@ -122,37 +176,45 @@ function App() {
 
   useEffect(() => {
     const importStickers = async () => {
-      // Import images from all subfolders in the 'assets/stickers' directory
-      const imageContext = import.meta.glob(
-        "./assets/stickers/*/*.(png|jpg|jpeg|svg)"
-      );
-
-      // Object to store categorized images
-      const categorizedImages = {};
-
-      // Process each import promise
-      await Promise.all(
-        Object.entries(imageContext).map(async ([path, importPromise]) => {
-          const imageModule = await importPromise();
-          const imagePath = imageModule.default;
-
-          // Extract the category (subfolder name) from the path
-          const pathParts = path.split("/");
-          const folderName = pathParts[pathParts.length - 2];
-          const category = folderName.split(" ").slice(1).join(" ");
-
-          // Initialize the array for the category if it doesn't exist
-          if (!categorizedImages[category]) {
-            categorizedImages[category] = [];
-          }
-
-          // Add the image path to the appropriate category
-          categorizedImages[category].push(imagePath);
-        })
-      );
-
-      // Use the categorized images as needed
-      setStickers(categorizedImages);
+      try {
+        // Import images from all subfolders in the 'assets/stickers' directory
+        const imageContext = import.meta.glob(
+          "./assets/stickers/*/*.(png|jpg|jpeg|svg)"
+        );
+  
+        // Object to store categorized images
+        const categorizedImages = {};
+  
+        // Process each import promise
+        await Promise.all(
+          Object.entries(imageContext).map(async ([path, importPromise]) => {
+            try {
+              const imageModule = await importPromise();
+              const imagePath = imageModule.default;
+  
+              // Extract the category (subfolder name) from the path
+              const pathParts = path.split("/");
+              const folderName = pathParts[pathParts.length - 2];
+              const category = folderName.split(" ").slice(1).join(" ");
+  
+              // Initialize the array for the category if it doesn't exist
+              if (!categorizedImages[category]) {
+                categorizedImages[category] = [];
+              }
+  
+              // Add the image path to the appropriate category
+              categorizedImages[category].push(imagePath);
+            } catch (err) {
+              console.error("Error importing image:", path, err);
+            }
+          })
+        );
+  
+        // Use the categorized images as needed
+        setStickers(categorizedImages);
+      } catch (err) {
+        console.error("Error importing stickers:", err);
+      }
     };
 
     importStickers();
@@ -180,6 +242,7 @@ function App() {
     });
 
     addMainImg(newCanvas, main_cat);
+    console.log("Updating preview after adding main image");
 
     return () => {
       newCanvas.dispose();
@@ -187,22 +250,29 @@ function App() {
   }, []);
 
   const addMainImg = (canvas, image) => {
+    if (!canvas) {
+      console.error("Canvas is not available");
+      return;
+    }
+    
     fabric.Image.fromURL(image, (img) => {
       const canvasWidth = canvas.getWidth();
       const canvasHeight = canvas.getHeight();
-      
+
+      // Apply different scaling and positioning based on device
       if (isMobile) {
+        // For mobile: Make sure it's aligned with bottom
         img.scaleToWidth(canvasWidth * 1.2);
         img.set({
           left: canvasWidth / 2,
-          top: canvasHeight,
+          top: canvasHeight, // Position at the bottom edge
           originX: 'center',
-          originY: 'bottom',
+          originY: 'bottom', // Anchor to the bottom
           selectable: false
         });
       } else {
+        // For desktop: Keep original scaling
         img.scaleToWidth(canvasWidth);
-        img.scaleToHeight(img.height * (canvasWidth / img.width));
         img.set({
           selectable: false
         });
@@ -210,13 +280,21 @@ function App() {
 
       canvas.add(img);
       canvas.renderAll();
+    }, (err) => {
+      console.error("Error loading main image:", err);
     });
   };
 
   const handleAddImage = (state, setState, image) => {
+    if (!canvas) {
+      console.error("Canvas is not available");
+      return;
+    }
+    
     if (state != null) {
       canvas.remove(state);
     }
+    
     fabric.Image.fromURL(image, (img) => {
       const canvasWidth = canvas.getWidth();
 
@@ -227,15 +305,16 @@ function App() {
       });
 
       setState(img);
-
       canvas.add(img);
       canvas.renderAll();
+    }, (err) => {
+      console.error("Error loading image:", err);
     });
   };
 
   const getRandomImage = (category) => {
     const categoryItems = stickers[category];
-    if (!categoryItems || categoryItems.length === 0) return null;
+    if (categoryItems.length === 0) return null;
     const randomIndex = Math.floor(Math.random() * categoryItems.length);
     return categoryItems[randomIndex];
   };
@@ -248,6 +327,7 @@ function App() {
 
     if (randomHats) handleAddImage(hats, setHats, randomHats);
     if (randomKimonos) handleAddImage(kimonos, setKimonos, randomKimonos);
+    // if (randomPants) handleAddImage(pants, setPants, randomPants);
     if (randomWeapons) handleAddImage(weapons, setWeapons, randomWeapons);
 
     if (randomBackground) changeBackgroundImage(randomBackground, canvas);
@@ -321,7 +401,6 @@ function App() {
   };
 
   const handleCanvasClear = () => {
-    // canvas.clear();
     const newCanvas = new fabric.Canvas(canvasRef.current, {
       width: window.innerWidth <= 768 ? 400 : 400,
       height: window.innerWidth <= 768 ? 400 : 400,
@@ -330,10 +409,14 @@ function App() {
 
     setCanvas(newCanvas);
     
-    // Reset states
+    // Reset all sticker states
     setHats(null);
     setKimonos(null);
     setWeapons(null);
+    setEyewear(null);
+    setMouth(null);
+    
+    addMainImg(newCanvas, main_cat);
 
     // Event listener for object selection
     newCanvas.on("selection:created", (e) => {
@@ -348,8 +431,6 @@ function App() {
     newCanvas.on("selection:cleared", () => {
       setSelectedObject(null);
     });
-    
-    addMainImg(newCanvas, main_cat);
   };
 
   const handleDelete = () => {
@@ -383,8 +464,55 @@ function App() {
     }
   };
 
+  // useEffect(() => {
+  //   if (selectedObject && canvas) {
+  //     const isObjectInFront =
+  //       selectedObject === canvas.getObjects()[canvas.getObjects().length - 1];
+  //     const isObjectInBack = selectedObject === canvas.getObjects()[0];
+  //     setIsAtFront(isObjectInFront);
+  //     setIsAtBack(isObjectInBack);
+  //   } else {
+  //     setIsAtFront(false);
+  //     setIsAtBack(false);
+  //   }
+  // }, [selectedObject, canvas]);
+
+  // const bringForward = () => {
+  //   if (selectedObject) {
+  //     canvas.bringForward(selectedObject);
+  //     canvas.renderAll();
+  //   }
+  // };
+
+  // const bringToFront = () => {
+  //   if (selectedObject) {
+  //     canvas.bringToFront(selectedObject);
+  //     canvas.renderAll();
+  //   }
+  // };
+
+  // const sendBackward = () => {
+  //   if (selectedObject) {
+  //     canvas.sendBackwards(selectedObject);
+  //     canvas.renderAll();
+  //   }
+  // };
+
+  // const sendToBack = (object) => {
+  //   if (object) {
+  //     canvas.sendToBack(selectedObject);
+  //     canvas.renderAll();
+  //   }
+  // };
+
   return (
     <div className="min-h-screen overflow-y-auto bg-gradient-to-r from-mainRed to-darkRed">
+      {/* <img
+        className="w-full h-full absolute top-0 left-0 opacity-[0.4] object-cover md:object-cover"
+        src={isMobile ? all_bg_mobile : all_bg}
+        alt=""
+      /> */}
+
       <div
         onClick={() => (window.location.href = "https://catownkimono.com")}
         className="flex cursor-pointer absolute top-5 left-10"
@@ -421,6 +549,12 @@ function App() {
         />
         <div className="flex-1 px-5">
           <div className="flex item-center justify-center gap-5 md:gap-10 mb-5">
+            {/* <img
+              // onClick={() => window.open("https://madcatcoin.com/", "_blank")}
+              src={logo}
+              className="w-[100px] lg:w-[150px] h-auto cursor-pointer"
+              alt=""
+            /> */}
             <h1 className="text-white mt-5 lg:mt-0 text-5xl md:text-7xl text-center font-black ">
               Cok <br />
               Meme Generator
@@ -434,6 +568,7 @@ function App() {
           >
             <canvas
               ref={canvasRef}
+              // style={{ width: "550px", height: "550px" }}
             />
             {selectedObject && (
               <img
@@ -452,6 +587,7 @@ function App() {
               />
             )}
           </div>
+          
           <div className="flex flex-wrap w-full gap-5 justify-center">
             <div
               onClick={() => stickerImgInputRef.current.click()}
@@ -523,9 +659,13 @@ function App() {
               hats={hats}
               kimonos={kimonos}
               weapons={weapons}
+              eyewear={eyewear}
+              mouth={mouth}
               setHats={setHats}
               setKimonos={setKimonos}
               setWeapons={setWeapons}
+              setEyewear={setEyewear}
+              setMouth={setMouth}
             />
           </div>
         </div>
