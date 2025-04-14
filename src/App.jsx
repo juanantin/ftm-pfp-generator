@@ -1,3 +1,4 @@
+
 import { useState, useEffect, useRef } from "react";
 // Import Fabric.js properly to prevent "Canvas is not a constructor" error
 import { fabric } from "fabric";
@@ -175,11 +176,11 @@ function App() {
               
               // Apply stored properties but maintain consistent scaling for mobile
               // Use a lower scale factor to make the character smaller
-              const mobileScaleFactor = 0.8; // Reduced from 1.2 to 0.8 for smaller character
+              const mobileScaleFactor = 1.2; // Reduced from 1.8 to 1.2
               
               mainCat.set({
-                scaleX: mainCatProps.originalCanvasWidth ? (canvas.width / mainCatProps.originalCanvasWidth) * mainCatProps.scaleX * mobileScaleFactor : mainCatProps.scaleX * mobileScaleFactor,
-                scaleY: mainCatProps.originalCanvasHeight ? (canvas.height / mainCatProps.originalCanvasHeight) * mainCatProps.scaleY * mobileScaleFactor : mainCatProps.scaleY * mobileScaleFactor,
+                scaleX: mainCatProps.originalCanvasWidth ? (canvas.width / mainCatProps.originalCanvasWidth) * mainCatProps.scaleX : mainCatProps.scaleX,
+                scaleY: mainCatProps.originalCanvasHeight ? (canvas.height / mainCatProps.originalCanvasHeight) * mainCatProps.scaleY : mainCatProps.scaleY,
                 left: canvas.width / 2, // Center horizontally
                 // Ensure it stays aligned with bottom with consistent positioning
                 top: canvas.height - (mainCat.height * mainCat.scaleY * 0.65), // Match positioning from addMainImg
@@ -187,11 +188,10 @@ function App() {
                 originY: 'bottom'
               });
             } else {
-              // For desktop, also apply the smaller scale
-              const desktopScaleFactor = 0.8; // Reduced for smaller character on desktop too
+              // For desktop, simply restore previous properties
               mainCat.set({
-                scaleX: mainCatProps.scaleX * desktopScaleFactor,
-                scaleY: mainCatProps.scaleY * desktopScaleFactor,
+                scaleX: mainCatProps.scaleX,
+                scaleY: mainCatProps.scaleY,
                 left: mainCatProps.left,
                 top: mainCatProps.top,
                 originX: mainCatProps.originX,
@@ -308,7 +308,7 @@ function App() {
             if (isMobileView) {
               // For mobile: Make image more appropriately sized for smaller canvas
               // Reduced scale factor to make character smaller
-              const mobileScaleFactor = 0.8; // Further reduced from 1.2 to 0.8 for smaller character
+              const mobileScaleFactor = 1.2; // Reduced from 1.5 to 1.2
               img.scaleToWidth(canvasWidth * mobileScaleFactor);
               
               // Position the image to be fully aligned with the bottom of the canvas
@@ -319,10 +319,9 @@ function App() {
                 originY: 'bottom',
               });
             } else {
-              // Desktop scaling - also make character smaller
-              const desktopScaleFactor = 0.8; // Added scale factor for desktop too
-              img.scaleToWidth(canvasWidth * desktopScaleFactor);
-              img.scaleToHeight(img.height * (canvasWidth / img.width) * desktopScaleFactor);
+              // Desktop scaling (keep original)
+              img.scaleToWidth(canvasWidth);
+              img.scaleToHeight(img.height * (canvasWidth / img.width));
             }
             
             // Store the base model's scaling factors for reference
@@ -467,7 +466,7 @@ function App() {
         if (isMobileView) {
           // For mobile: Make image smaller for better visibility
           // Reduced scale factor
-          const mobileScaleFactor = 0.8; // Reduced from 1.2 to 0.8 for smaller character
+          const mobileScaleFactor = 1.2; // Reduced from 1.8 to 1.2
           img.scaleToWidth(canvasWidth * mobileScaleFactor);
           
           // Position the image at bottom of canvas
@@ -478,10 +477,9 @@ function App() {
             originY: 'bottom',
           });
         } else {
-          // Desktop scaling - also make character smaller
-          const desktopScaleFactor = 0.8; // Added scale factor for desktop
-          img.scaleToWidth(canvasWidth * desktopScaleFactor);
-          img.scaleToHeight(img.height * (canvasWidth / img.width) * desktopScaleFactor);
+          // Desktop scaling (keep original)
+          img.scaleToWidth(canvasWidth);
+          img.scaleToHeight(img.height * (canvasWidth / img.width));
         }
         
         // Store the base model's scaling factors for reference
@@ -893,7 +891,7 @@ function App() {
         return '';
       }
       
-      // Update the preview element (mobile only)
+      // Update the preview element (mobile only - removed duplicates)
       const updatePreviewElement = (elementId) => {
         const previewElement = document.getElementById(elementId);
         if (previewElement) {
@@ -947,4 +945,632 @@ function App() {
     }
   };
 
-  const handleCanvasClear = ()
+  const handleCanvasClear = () => {
+    try {
+      // First clear all objects on the current canvas
+      if (canvas) {
+        // Save the canvas dimensions before clearing
+        const canvasWidth = canvas.getWidth();
+        const canvasHeight = canvas.getHeight();
+        
+        // Clear all objects
+        canvas.clear();
+        
+        // Reset the background color
+        canvas.setBackgroundColor("#000", canvas.renderAll.bind(canvas));
+        
+        // Reset all state variables for stickers
+        setHeadwear(null);
+        setEyewear(null);
+        setMouth(null);
+        setKimono(null);
+        setJewelry(null);
+        setAccessories(null);
+        setBackgroundImage(null);
+        
+        // Reset active categories
+        setActiveCategories({
+          headwear: false,
+          eyewear: false,
+          mouth: false,
+          kimono: false,
+          jewelry: false,
+          accessories: false
+        });
+        
+        // Add main cat image with proper callback
+        fabric.Image.fromURL(main_cat, (img) => {
+          if (!img) {
+            console.error("Failed to load main image in reset");
+            return;
+          }
+          
+          const isMobileView = window.innerWidth <= 768;
+          
+          if (isMobileView) {
+            // For mobile: Scale and position according to reference image
+            const mobileScaleFactor = 1.2; // Reduced from 1.2 to 1.0 for smaller character
+            img.scaleToWidth(canvasWidth * mobileScaleFactor);
+            
+            // Position the image centered horizontally and with some space at bottom
+            img.set({
+              top: canvasHeight - 10, // Small space at bottom for better appearance
+              left: canvasWidth / 2,
+              originX: 'center',
+              originY: 'bottom',
+            });
+          } else {
+            // Desktop scaling (original behavior)
+            img.scaleToWidth(canvasWidth);
+            img.scaleToHeight(img.height * (canvasWidth / img.width));
+          }
+          
+          img.set({
+            selectable: false,
+            evented: false,
+            lockMovementX: true,
+            lockMovementY: true,
+            lockScalingX: true,
+            lockScalingY: true,
+            lockRotation: true,
+            hasBorders: false,
+            hasControls: false
+          });
+          
+          canvas.add(img);
+          canvas.renderAll();
+          
+          console.log("Canvas reset completed successfully");
+          
+          // Update the preview after a delay to ensure canvas renders
+          setTimeout(() => {
+            console.log("Updating preview after reset");
+            saveImageToDataURL();
+          }, 1000);
+        }, { crossOrigin: 'anonymous' });
+      } else {
+        // If canvas doesn't exist, initialize it
+        console.log("Canvas not available during reset, initializing new canvas");
+        initializeCanvas();
+      }
+    } catch (error) {
+      console.error("Error during canvas clear:", error);
+      // Try to recover by reinitializing
+      fabricInitialized.current = false;
+      setTimeout(() => initializeCanvas(), 1000);
+    }
+  };
+
+  const handleDelete = () => {
+    const activeObjects = canvas.getActiveObjects();
+    if (activeObjects && activeObjects.length > 0) {
+      activeObjects.forEach((object) => {
+        if (object.selectable) {
+          canvas.remove(object);
+        }
+      });
+      canvas.discardActiveObject().renderAll();
+      
+      // Update the preview after deletion
+      setTimeout(() => {
+        saveImageToDataURL();
+      }, 100);
+    }
+  };
+
+  const handleAddText = () => {
+    // Create custom modal dialog for text input
+    const existingModal = document.getElementById('text-input-modal');
+    if (existingModal) {
+      document.body.removeChild(existingModal);
+    }
+    
+    // Create modal container
+    const modal = document.createElement('div');
+    modal.id = 'text-input-modal';
+    modal.style.position = 'fixed';
+    modal.style.top = '0';
+    modal.style.left = '0';
+    modal.style.width = '100%';
+    modal.style.height = '100%';
+    modal.style.backgroundColor = 'rgba(0, 0, 0, 0.7)';
+    modal.style.display = 'flex';
+    modal.style.justifyContent = 'center';
+    modal.style.alignItems = 'center';
+    modal.style.zIndex = '9999';
+    
+    // Create modal content
+    const modalContent = document.createElement('div');
+    modalContent.style.backgroundColor = '#0A1F3F';
+    modalContent.style.padding = '25px';
+    modalContent.style.borderRadius = '10px';
+    modalContent.style.boxShadow = '0 0 20px rgba(0, 0, 0, 0.5)';
+    modalContent.style.width = '80%';
+    modalContent.style.maxWidth = '400px';
+    modalContent.style.textAlign = 'center';
+    modalContent.style.border = '3px solid white';
+    
+    // Create heading
+    const heading = document.createElement('h2');
+    heading.innerText = 'ENTER TEXT TO ADD';
+    heading.style.color = 'white';
+    heading.style.marginBottom = '20px';
+    heading.style.fontFamily = "'Finger Paint', cursive";
+    heading.style.fontSize = '24px';
+    
+    // Create input field
+    const input = document.createElement('input');
+    input.type = 'text';
+    input.style.width = '100%';
+    input.style.padding = '10px';
+    input.style.marginBottom = '20px';
+    input.style.backgroundColor = 'white';
+    input.style.color = '#0A1F3F';
+    input.style.border = 'none';
+    input.style.borderRadius = '5px';
+    input.style.fontSize = '16px';
+    
+    // Create color picker section
+    const colorSection = document.createElement('div');
+    colorSection.style.marginBottom = '20px';
+    
+    const colorLabel = document.createElement('p');
+    colorLabel.innerText = 'SELECT COLOR:';
+    colorLabel.style.color = 'white';
+    colorLabel.style.marginBottom = '10px';
+    colorLabel.style.fontFamily = "'Finger Paint', cursive";
+    colorLabel.style.fontSize = '16px';
+    
+    // Color options container
+    const colorOptions = document.createElement('div');
+    colorOptions.style.display = 'flex';
+    colorOptions.style.flexWrap = 'wrap';
+    colorOptions.style.justifyContent = 'center';
+    colorOptions.style.gap = '10px';
+    
+    // Define color choices
+    const colors = [
+      { name: 'White', value: '#FFFFFF' },
+      { name: 'Red', value: '#FF0000' },
+      { name: 'Blue', value: '#0000FF' },
+      { name: 'Green', value: '#00FF00' },
+      { name: 'Yellow', value: '#FFFF00' },
+      { name: 'Purple', value: '#800080' },
+      { name: 'Orange', value: '#FFA500' },
+      { name: 'Pink', value: '#FFC0CB' }
+    ];
+    
+    let selectedColor = '#FFFFFF'; // Default color: white
+    
+    // Create color buttons
+    colors.forEach(color => {
+      const colorButton = document.createElement('div');
+      colorButton.style.width = '30px';
+      colorButton.style.height = '30px';
+      colorButton.style.backgroundColor = color.value;
+      colorButton.style.borderRadius = '50%';
+      colorButton.style.cursor = 'pointer';
+      colorButton.style.border = '2px solid #FFFFFF';
+      colorButton.title = color.name;
+      
+      // Selection indicator
+      colorButton.addEventListener('click', () => {
+        // Remove selection border from all color buttons
+        colorOptions.querySelectorAll('div').forEach(btn => {
+          btn.style.border = '2px solid #FFFFFF';
+        });
+        
+        // Add selection border to selected color
+        colorButton.style.border = '2px solid #00FFFF';
+        selectedColor = color.value;
+      });
+      
+      colorOptions.appendChild(colorButton);
+    });
+    
+    // Create buttons container
+    const buttonsContainer = document.createElement('div');
+    buttonsContainer.style.display = 'flex';
+    buttonsContainer.style.justifyContent = 'space-between';
+    
+    // Create Add button
+    const addButton = document.createElement('button');
+    addButton.innerText = 'ADD';
+    addButton.style.backgroundColor = '#0c46af';
+    addButton.style.color = 'white';
+    addButton.style.border = '2px solid white';
+    addButton.style.padding = '10px 20px';
+    addButton.style.borderRadius = '5px';
+    addButton.style.cursor = 'pointer';
+    addButton.style.fontFamily = "'Finger Paint', cursive";
+    addButton.style.fontSize = '16px';
+    addButton.style.width = '48%';
+    
+    // Create Cancel button
+    const cancelButton = document.createElement('button');
+    cancelButton.innerText = 'CANCEL';
+    cancelButton.style.backgroundColor = 'transparent';
+    cancelButton.style.color = 'white';
+    cancelButton.style.border = '2px solid white';
+    cancelButton.style.padding = '10px 20px';
+    cancelButton.style.borderRadius = '5px';
+    cancelButton.style.cursor = 'pointer';
+    cancelButton.style.fontFamily = "'Finger Paint', cursive";
+    cancelButton.style.fontSize = '16px';
+    cancelButton.style.width = '48%';
+    
+    // Add event listeners
+    addButton.addEventListener('click', () => {
+      const text = input.value;
+      if (text) {
+        const newText = new fabric.Text(text.toUpperCase(), {
+          fontFamily: "'Finger Paint', cursive",
+          fontSize: 20,
+          fill: selectedColor,
+          stroke: "",
+          fontWeight: "bold",
+          left: 100,
+          top: 100,
+          charSpacing: 1,
+        });
+
+        canvas.add(newText);
+        
+        // Update the preview
+        setTimeout(() => {
+          saveImageToDataURL();
+        }, 100);
+      }
+      document.body.removeChild(modal);
+    });
+    
+    cancelButton.addEventListener('click', () => {
+      document.body.removeChild(modal);
+    });
+    
+    // Build modal
+    buttonsContainer.appendChild(addButton);
+    buttonsContainer.appendChild(cancelButton);
+    
+    // Assemble the modal content
+    modalContent.appendChild(heading);
+    modalContent.appendChild(input);
+    
+    // Add the color section
+    colorSection.appendChild(colorLabel);
+    colorSection.appendChild(colorOptions);
+    modalContent.appendChild(colorSection);
+    
+    modalContent.appendChild(buttonsContainer);
+    modal.appendChild(modalContent);
+    
+    // Add to document and focus input
+    document.body.appendChild(modal);
+    input.focus();
+    
+    // Allow closing by clicking outside
+    modal.addEventListener('click', (e) => {
+      if (e.target === modal) {
+        document.body.removeChild(modal);
+      }
+    });
+  };
+
+  return (
+    <div className="min-h-screen overflow-y-auto night-sky-bg pb-20" style={{ 
+      backgroundImage: `url('/lovable-uploads/be971682-1466-471f-96a4-78b21fb504ff.png')`,
+      backgroundSize: 'cover',
+      backgroundPosition: 'center',
+      backgroundRepeat: 'no-repeat'
+    }}>
+      {/* Top Logo */}
+      <div
+        onClick={() => window.open("https://fantomsonic.com/", "_blank")}
+        className="flex cursor-pointer absolute top-5 left-10 mb-16"
+      >
+        <img 
+          src="/lovable-uploads/d3db5656-828a-47f4-b0b4-888cde78af09.png" 
+          alt="Logo" 
+          className="h-10 w-10" 
+        />
+      </div>
+
+      <div className="w-full flex py-6 pt-20 flex-col lg:flex-row justify-center">
+        <input
+          type="file"
+          accept="image/*"
+          hidden
+          ref={bgImgInputRef}
+          onChange={handleBackgroundImageChange}
+        />
+
+        <input
+          type="file"
+          accept="image/*"
+          hidden
+          ref={stickerImgInputRef}
+          onChange={handleAddSticker}
+        />
+        <div className="flex-1 px-5">
+          <div className="flex item-center justify-center gap-5 md:gap-10 mb-3">
+            <img
+              src="/lovable-uploads/13dd479a-7c88-43de-94c7-701c74fae6c8.png"
+              className="w-full max-w-[230px] h-auto mx-auto lg:mt-0"
+              alt="FANTOM PFP GENERATOR"
+              style={{ margin: '0 auto' }}
+            />
+          </div>
+
+          {/* Mobile layout - Use the desktop preview style instead */}
+          {isMobile && (
+            <>
+              {/* Desktop-style canvas preview for mobile */}
+              <div className="flex flex-col items-center">
+                <div className="mx-auto mb-3 bg-transparent rounded-2xl relative w-[290px]">
+                  <canvas ref={canvasRef} style={{ 
+                    width: '100%', 
+                    height: 'auto',
+                    maxWidth: '290px'
+                  }} />
+                  {selectedObject && (
+                    <img
+                      onClick={handleDelete}
+                      id="selected-img"
+                      style={{
+                        position: "absolute",
+                        top: selectedObject.top - 30,
+                        left: selectedObject.left,
+                        cursor: "pointer",
+                      }}
+                      src="https://cdn-icons-png.flaticon.com/512/5610/5610967.png"
+                      width={20}
+                      height={20}
+                      alt=""
+                    />
+                  )}
+                </div>
+              </div>
+              
+              {/* Single mobile pixel-perfect preview */}
+              <div className="w-full mt-4 mb-4 flex justify-center">
+                <div className="w-[290px] h-[290px] relative bg-transparent rounded-xl overflow-hidden border-2 border-[#0A1F3F]" 
+                     id="mobile-pixel-preview">
+                  <img 
+                    id="mobile-preview" 
+                    alt="Mobile Preview" 
+                    className="absolute top-0 left-0 w-full h-full object-contain"
+                  />
+                </div>
+              </div>
+              
+              {/* Stickers section with category headers and delete buttons */}
+              <div className="mb-6 mt-0">
+                <ImageScroller
+                  canvas={canvas}
+                  categorizedImages={stickers}
+                  handleAddImage={(state, setState, image, category) => handleAddImage(state, setState, image, category)}
+                  changeBackgroundImage={changeBackgroundImage}
+                  hats={headwear}
+                  kimonos={kimono}
+                  weapons={accessories}
+                  eyewear={eyewear}
+                  mouth={mouth}
+                  setHats={setHeadwear}
+                  setKimonos={setKimono}
+                  setWeapons={setAccessories}
+                  setEyewear={setEyewear}
+                  setMouth={setMouth}
+                  handleRemoveCategory={handleRemoveCategory}
+                  activeCategories={activeCategories}
+                />
+              </div>
+              
+              {/* Mobile control buttons - Adjusted spacing and smaller text (moved below stickers) */}
+              <div className="flex flex-wrap w-full gap-3 justify-center mt-4 mb-3 pt-2">
+                <div
+                  onClick={() => stickerImgInputRef.current.click()}
+                  className="border-1 cursor-pointer border-white bg-[#0A1F3F] text-white px-2 py-1 rounded-xl flex justify-center items-center overflow-hidden relative group transition-all duration-300 ease-in-out transform hover:scale-105 w-[30%]"
+                >
+                  <p className="text-white text-center text-xs tracking-wider relative" style={{ fontFamily: "'Finger Paint', cursive" }}>
+                    UPLOAD ELEMENT
+                  </p>
+                </div>
+                <div
+                  onClick={() => bgImgInputRef.current.click()}
+                  className="border-1 cursor-pointer border-white bg-[#0A1F3F] text-white px-2 py-1 rounded-lg flex justify-center items-center overflow-hidden relative group transition-all duration-300 ease-in-out transform hover:scale-105 w-[30%]"
+                >
+                  <p className="text-white text-center text-xs tracking-wider relative" style={{ fontFamily: "'Finger Paint', cursive" }}>
+                    UPLOAD BG
+                  </p>
+                </div>
+                <div
+                  onClick={handleAddText}
+                  className="border-1 cursor-pointer border-white bg-[#0A1F3F] text-white px-2 py-1 rounded-lg flex justify-center items-center overflow-hidden relative group transition-all duration-300 ease-in-out transform hover:scale-105 w-[30%]"
+                >
+                  <p className="text-white text-center text-xs tracking-wider relative" style={{ fontFamily: "'Finger Paint', cursive" }}>
+                    ADD TEXT
+                  </p>
+                </div>
+                <div
+                  onClick={handleCanvasClear}
+                  className="border-1 cursor-pointer border-white bg-[#0A1F3F] text-white px-2 py-1 rounded-lg flex justify-center items-center overflow-hidden relative group transition-all duration-300 ease-in-out transform hover:scale-105 w-[30%]"
+                >
+                  <p className="text-white text-center text-xs tracking-wider relative" style={{ fontFamily: "'Finger Paint', cursive" }}>
+                    RESET
+                  </p>
+                </div>
+                <div
+                  onClick={generateRandom}
+                  className="border-1 cursor-pointer border-white bg-[#0c46af] text-white px-2 py-1 rounded-lg flex justify-center items-center overflow-hidden relative group transition-all duration-300 ease-in-out transform hover:scale-105 w-[30%]"
+                >
+                  <p className="text-white text-center text-xs tracking-wider relative" style={{ fontFamily: "'Finger Paint', cursive" }}>
+                    RANDOM
+                  </p>
+                </div>
+                <div
+                  onClick={saveImageToLocal}
+                  className="border-1 cursor-pointer border-white bg-[#0c46af] text-white px-2 py-1 rounded-lg flex justify-center items-center overflow-hidden relative group transition-all duration-300 ease-in-out transform hover:scale-105 w-[30%]"
+                >
+                  <p className="text-white text-center text-xs tracking-wider relative" style={{ fontFamily: "'Finger Paint', cursive" }}>
+                    DOWNLOAD
+                  </p>
+                </div>
+              </div>
+            </>
+          )}
+
+          {/* Desktop layout - Canvas Preview with small preview */}
+          {!isMobile && (
+            <div className="flex flex-col items-center">
+              <div
+                className="mx-auto mb-3 bg-transparent rounded-2xl relative w-[400px]"
+              >
+                <canvas ref={canvasRef} />
+                {selectedObject && (
+                  <img
+                    onClick={handleDelete}
+                    id="selected-img"
+                    style={{
+                      position: "absolute",
+                      top: selectedObject.top - 30,
+                      left: selectedObject.left,
+                      cursor: "pointer",
+                    }}
+                    src="https://cdn-icons-png.flaticon.com/512/5610/5610967.png"
+                    width={20}
+                    height={20}
+                    alt=""
+                  />
+                )}
+              </div>
+            </div>
+          )}
+          
+          {/* Hidden element for compatibility with existing code */}
+          <div style={{ display: 'none' }}>
+            <img id="result-preview" alt="Hidden Preview" />
+          </div>
+        </div>
+
+        {/* Desktop layout - Show stickers on side aligned with preview */}
+        {!isMobile && (
+          <div className="w-full lg:w-[60%] px-5 lg:pl-0">
+            <div className="flex-1">
+              <ImageScroller
+                canvas={canvas}
+                categorizedImages={stickers}
+                handleAddImage={(state, setState, image, category) => handleAddImage(state, setState, image, category)}
+                changeBackgroundImage={changeBackgroundImage}
+                hats={headwear}
+                kimonos={kimono}
+                weapons={accessories}
+                eyewear={eyewear}
+                mouth={mouth}
+                setHats={setHeadwear}
+                setKimonos={setKimono}
+                setWeapons={setAccessories}
+                setEyewear={setEyewear}
+                setMouth={setMouth}
+                handleRemoveCategory={handleRemoveCategory}
+                activeCategories={activeCategories}
+              />
+              
+              {/* Control buttons moved under sticker controls for desktop */}
+              <div className="flex flex-wrap w-full gap-5 justify-center mt-8">
+                <div
+                  onClick={() => stickerImgInputRef.current.click()}
+                  className="border-2 cursor-pointer border-white bg-[#0A1F3F] text-white px-5 py-2 rounded-lg flex justify-center items-center overflow-hidden relative group transition-all duration-300 ease-in-out transform hover:scale-105 w-full sm:w-full md:w-1/3 lg:w-1/3"
+                >
+                  <p className="text-white text-center text-lg tracking-wider relative" style={{ fontFamily: "'Finger Paint', cursive" }}>
+                    UPLOAD ELEMENT
+                  </p>
+                  <div className="absolute top-0 left-0 w-full h-full bg-black opacity-0 z-0 transition duration-300 ease-in-out group-hover:opacity-50"></div>
+                </div>
+                <div
+                  onClick={() => bgImgInputRef.current.click()}
+                  className="border-2 cursor-pointer border-white bg-[#0A1F3F] text-white px-5 py-2 rounded-lg flex justify-center items-center overflow-hidden relative group transition-all duration-300 ease-in-out transform hover:scale-105 w-full sm:w-full md:w-1/3 lg:w-1/3"
+                >
+                  <p className="text-white text-center text-lg tracking-wider relative" style={{ fontFamily: "'Finger Paint', cursive" }}>
+                    UPLOAD BG
+                  </p>
+                  <div className="absolute top-0 left-0 w-full h-full bg-black opacity-0 z-0 transition duration-300 ease-in-out group-hover:opacity-50"></div>
+                </div>
+                <div
+                  onClick={handleAddText}
+                  className="border-2 cursor-pointer border-white bg-[#0A1F3F] text-white px-5 py-2 rounded-lg flex justify-center items-center overflow-hidden relative group transition-all duration-300 ease-in-out transform hover:scale-105 w-full sm:w-full md:w-1/3 lg:w-1/3"
+                >
+                  <p className="text-white text-center text-lg tracking-wider relative" style={{ fontFamily: "'Finger Paint', cursive" }}>
+                    ADD TEXT
+                  </p>
+                  <div className="absolute top-0 left-0 w-full h-full bg-black opacity-0 z-0 transition duration-300 ease-in-out group-hover:opacity-50"></div>
+                </div>
+                <div
+                  onClick={handleCanvasClear}
+                  className="border-2 cursor-pointer border-white bg-[#0A1F3F] text-white px-5 py-2 rounded-lg flex justify-center items-center overflow-hidden relative group transition-all duration-300 ease-in-out transform hover:scale-105 w-full sm:w-full md:w-1/3 lg:w-1/3"
+                >
+                  <p className="text-white text-center text-lg tracking-wider relative" style={{ fontFamily: "'Finger Paint', cursive" }}>
+                    RESET
+                  </p>
+                  <div className="absolute top-0 left-0 w-full h-full bg-black opacity-0 z-0 transition duration-300 ease-in-out group-hover:opacity-50"></div>
+                </div>
+                <div
+                  onClick={generateRandom}
+                  className="border-2 cursor-pointer border-white bg-[#0c46af] text-white px-5 py-2 rounded-lg flex justify-center items-center overflow-hidden relative group transition-all duration-300 ease-in-out transform hover:scale-105 w-full sm:w-full md:w-1/3 lg:w-1/3"
+                >
+                  <p className="text-white text-center text-lg tracking-wider relative" style={{ fontFamily: "'Finger Paint', cursive" }}>
+                    RANDOM
+                  </p>
+                  <div className="absolute top-0 left-0 w-full h-full bg-black opacity-0 z-0 transition duration-300 ease-in-out group-hover:opacity-50"></div>
+                </div>
+                <div
+                  onClick={saveImageToLocal}
+                  className="border-2 cursor-pointer border-white bg-[#0c46af] text-white px-5 py-2 rounded-lg flex justify-center items-center overflow-hidden relative group transition-all duration-300 ease-in-out transform hover:scale-105 w-full sm:w-full md:w-1/3 lg:w-1/3"
+                >
+                  <p className="text-white text-center text-lg tracking-wider relative" style={{ fontFamily: "'Finger Paint', cursive" }}>
+                    DOWNLOAD
+                  </p>
+                  <div className="absolute top-0 left-0 w-full h-full bg-black opacity-0 z-0 transition duration-300 ease-in-out group-hover:opacity-50"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
+      </div>
+      
+      {/* Mobile footer logo only - bottom preview removed completely */}
+      {isMobile && (
+        <div className="w-full relative mt-4 mb-16 pt-4">
+          {/* Footer logo with proper spacing and caption */}
+          <div className="w-full flex flex-col items-center justify-center py-6 mt-4 mb-10">
+            <img 
+              onClick={() => window.open("https://fantomsonic.com/", "_blank")}
+              src="/lovable-uploads/d3db5656-828a-47f4-b0b4-888cde78af09.png" 
+              alt="Logo" 
+              className="h-16 w-16 cursor-pointer mb-3" 
+            />
+            <p className="text-white mb-4 text-center text-xs" style={{ fontFamily: "'Finger Paint', cursive" }}>
+              FANTOM SONIC
+            </p>
+            {/* Extra space at bottom */}
+            <div className="h-16"></div>
+          </div>
+        </div>
+      )}
+      
+      {/* Desktop footer logo for navigation */}
+      {!isMobile && (
+        <div className="w-full flex justify-center py-6 mt-8">
+          <img 
+            onClick={() => window.open("https://fantomsonic.com/", "_blank")}
+            src="/lovable-uploads/d3db5656-828a-47f4-b0b4-888cde78af09.png" 
+            alt="Logo" 
+            className="h-12 w-12 cursor-pointer" 
+          />
+        </div>
+      )}
+    </div>
+  );
+}
+
+export default App;
+
