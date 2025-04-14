@@ -1,3 +1,4 @@
+
 /* App.css - Updated for latest Lovable version */
 
 .lovable-app {
@@ -9,13 +10,6 @@
 .canvas-container {
   margin: 0 auto;
   border-radius: 20px;
-}
-
-/* Ensure canvas is properly rounded on mobile */
-.canvas-mobile .canvas-container,
-.canvas-mobile canvas {
-  border-radius: 20px !important;
-  overflow: hidden;
 }
 
 /* Font styling */
@@ -37,8 +31,8 @@ p.content-font, h2.content-font {
 
 /* Preview image */
 #result-preview {
-  max-width: 100%;
-  max-height: 100%;
+  max-width: 300px;
+  max-height: 300px;
   display: block;
   margin: 0 auto;
   background-color: transparent;
@@ -50,17 +44,12 @@ p.content-font, h2.content-font {
 /* Preview container */
 .preview-container {
   position: relative;
-  width: 100%;
-  max-width: 90%;
-  height: auto;
-  aspect-ratio: 1/1;
-  margin: 0 auto;
-  background-color: transparent;
+  width: 300px;
+  height: 300px;
+  background-color: rgba(10, 31, 63, 0.3);
   display: flex;
   align-items: center;
   justify-content: center;
-  border-radius: 20px;
-  overflow: hidden;
 }
 
 body {
@@ -76,50 +65,4 @@ body {
   background-repeat: no-repeat;
   background-position: center;
   background-attachment: fixed;
-  background-color: #050b1f; /* Fallback color matching the night sky */
-}
-
-/* Category Delete Button */
-.category-delete-btn {
-  position: absolute;
-  top: -10px;
-  right: -10px;
-  width: 24px;
-  height: 24px;
-  background-color: #FF3B30;
-  color: white;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 14px;
-  font-weight: bold;
-  border: 2px solid white;
-  cursor: pointer;
-  box-shadow: 0 2px 5px rgba(0,0,0,0.3);
-  z-index: 10;
-}
-
-/* Category Header */
-.category-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  margin-bottom: 8px;
-  position: relative;
-}
-
-.category-title {
-  font-family: 'Finger Paint', cursive;
-  color: white;
-  font-size: 18px;
-  margin: 0;
-  padding: 0;
-  text-transform: uppercase;
-}
-
-/* Section styling */
-.category-section {
-  position: relative;
-  margin-bottom: 15px;
 }
