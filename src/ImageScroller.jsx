@@ -1,5 +1,5 @@
+
 import React, { useState } from "react";
-import { Trash2 } from 'lucide-react';
 
 function ImageScroller({
   canvas,
@@ -26,62 +26,29 @@ function ImageScroller({
     setSelectedCategory(category);
   };
 
-  // Handle removing sticker based on category
-  const handleRemoveSticker = (category) => {
-    switch(category) {
-      case "headwear":
-        if (hats) {
-          canvas.remove(hats);
-          setHats(null);
-        }
-        break;
-      case "kimono":
-        if (kimonos) {
-          canvas.remove(kimonos);
-          setKimonos(null);
-        }
-        break;
-      case "accessories":
-        if (weapons) {
-          canvas.remove(weapons);
-          setWeapons(null);
-        }
-        break;
-      case "eyewear":
-        if (eyewear) {
-          canvas.remove(eyewear);
-          setEyewear(null);
-        }
-        break;
-      case "mouth":
-        if (mouth) {
-          canvas.remove(mouth);
-          setMouth(null);
-        }
-        break;
-    }
-  };
-
   const renderStickers = () => {
     const stickers = categorizedImages[selectedCategory] || [];
     
     return (
       <div className="flex flex-col w-full">
-        {/* Category header */}
-        <div className="flex items-center mb-6 px-2">
-          <h3 className="text-3xl text-white font-bold">
+        {/* Category header with delete button */}
+        <div className="category-header mb-4">
+          <h3 className="category-title">
             {selectedCategory === "kimono" ? "Clothing" : selectedCategory.charAt(0).toUpperCase() + selectedCategory.slice(1)}
           </h3>
+          {activeCategories[selectedCategory] && (
+            <button
+              onClick={() => handleRemoveCategory(selectedCategory)}
+              className="category-delete-btn"
+              aria-label={`Delete ${selectedCategory}`}
+            >
+              ×
+            </button>
+          )}
         </div>
 
-        {/* Stickers grid with delete button as first item */}
+        {/* Stickers grid */}
         <div className="flex flex-wrap gap-2 justify-center">
-          <div
-            className="w-[100px] h-[100px] bg-red-500 rounded-md overflow-hidden cursor-pointer shadow-md transform hover:scale-105 transition-transform flex items-center justify-center"
-            onClick={() => handleRemoveSticker(selectedCategory)}
-          >
-            <Trash2 size={48} color="white" />
-          </div>
           {stickers.map((sticker, index) => {
             // Handle background images differently
             if (selectedCategory === "background") {
