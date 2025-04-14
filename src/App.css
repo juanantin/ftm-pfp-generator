@@ -1,126 +1,44 @@
 
-/* App.css - Updated for latest Lovable version */
-
-.lovable-app {
-  width: 100%;
-  height: 100%;
+/* Reset default margins and paddings */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
 }
 
-/* Additional styles for Fabric.js canvas */
-.canvas-container {
-  margin: 0 auto;
-  border-radius: 20px;
-}
-
-/* Ensure canvas is properly rounded on mobile */
-.canvas-mobile .canvas-container,
-.canvas-mobile canvas {
-  border-radius: 20px !important;
-  overflow: hidden;
-}
-
-/* Font styling */
-h1.title-font {
-  font-family: 'Crypster', cursive !important;
-}
-
-p.content-font, h2.content-font {
-  font-family: 'Finger Paint', cursive !important;
-}
-
-.title-font {
-  font-family: 'Crypster', cursive !important;
-}
-
-.content-font {
-  font-family: 'Finger Paint', cursive !important;
-}
-
-/* Preview image */
-#result-preview {
+/* Mobile canvas styles */
+.canvas-mobile {
+  width: 400px;
   max-width: 100%;
-  max-height: 100%;
-  display: block;
-  margin: 0 auto;
-  background-color: transparent;
-  object-fit: contain;
-  width: 100%;
-  height: 100%;
 }
 
-/* Preview container */
-.preview-container {
-  position: relative;
-  width: 100%;
-  max-width: 90%;
-  height: auto;
-  aspect-ratio: 1/1;
-  margin: 0 auto;
-  background-color: transparent;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border-radius: 20px;
-  overflow: hidden;
-}
-
-body {
-  margin: 0;
-  padding: 0;
-  min-height: 100vh;
-  overflow-x: hidden;
-}
-
-/* Night sky background styling */
 .night-sky-bg {
-  background-size: cover;
-  background-repeat: no-repeat;
-  background-position: center;
-  background-attachment: fixed;
-  background-color: #050b1f; /* Fallback color matching the night sky */
+  background-color: #000;
 }
 
-/* Category Delete Button */
-.category-delete-btn {
-  position: absolute;
-  top: -10px;
-  right: -10px;
-  width: 24px;
-  height: 24px;
-  background-color: #FF3B30;
-  color: white;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 14px;
-  font-weight: bold;
-  border: 2px solid white;
-  cursor: pointer;
-  box-shadow: 0 2px 5px rgba(0,0,0,0.3);
-  z-index: 10;
+/* Remove any duplicate preview styles */
+#result-preview {
+  display: none;
 }
 
-/* Category Header */
-.category-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  margin-bottom: 8px;
-  position: relative;
+#mobile-preview, #bottom-mobile-preview {
+  display: none;
 }
 
-.category-title {
-  font-family: 'Finger Paint', cursive;
-  color: white;
-  font-size: 18px;
-  margin: 0;
-  padding: 0;
-  text-transform: uppercase;
+/* Hide redundant preview elements */
+#mobile-pixel-preview {
+  display: none;
 }
 
-/* Section styling */
-.category-section {
-  position: relative;
-  margin-bottom: 15px;
+/* Hide any extra preview containers */
+.preview-container {
+  display: none;
+}
+
+/* Add some font for text input */
+@font-face {
+  font-family: 'Finger Paint';
+  src: url('/src/assets/fonts/KapsalonPrintDEMO.otf') format('opentype');
+  font-weight: normal;
+  font-style: normal;
 }
