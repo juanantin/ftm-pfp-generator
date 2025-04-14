@@ -69,132 +69,16 @@ function App() {
   const addMainImg = (canvas, image) => {
     fabric.Image.fromURL(image, (img) => {
       const canvasWidth = canvas.getWidth();
-      const targetWidth = canvasWidth * 0.8; // Make the character 80% of canvas width
-      
-      img.scaleToWidth(targetWidth);
-      img.scaleToHeight(img.height * (targetWidth / img.width));
+
+      img.scaleToWidth(canvasWidth);
+      img.scaleToHeight(img.height * (canvasWidth / img.width));
       img.set({
-        selectable: false,
-        // Center the image
-        left: (canvasWidth - (img.width * img.scaleX)) / 2,
-        top: (canvas.getHeight() - (img.height * img.scaleY)) / 2
+        selectable: false, // Disable selection
       });
 
       canvas.add(img);
     });
   };
-
-  const changeBackgroundImage = (backgroundImage, canvas) => {
-    fabric.Image.fromURL(backgroundImage, (img) => {
-      let maxWidth = isMobile ? 400 : 400;
-      let newWidth = maxWidth;
-      let newHeight = 400;
-
-      canvas.setWidth(newWidth);
-      canvas.setHeight(newHeight);
-      canvas.renderAll();
-
-      canvas.setBackgroundImage(
-        backgroundImage,
-        () => {
-          canvas.renderAll();
-          // Re-add the main character with correct size after background change
-          canvas.getObjects().forEach(obj => canvas.remove(obj));
-          addMainImg(canvas, main_cat);
-        },
-        {
-          scaleX: canvas.width / img.width,
-          scaleY: canvas.height / img.height,
-        }
-      );
-    });
-  };
-
-  useEffect(() => {
-    if (!canvas) return;
-
-    if (backgroundImage) {
-      changeBackgroundImage(backgroundImage, canvas);
-    } else {
-      canvas.setBackgroundImage("", canvas.renderAll.bind(canvas));
-    }
-  }, [canvas, backgroundImage, isMobile]);
-
-  useEffect(() => {
-    const importStickers = async () => {
-      // Import images from all subfolders in the 'assets/stickers' directory
-      const imageContext = import.meta.glob(
-        "./assets/stickers/*/*.(png|jpg|jpeg|svg)"
-      );
-
-      // Object to store categorized images
-      const categorizedImages = {};
-
-      // Process each import promise
-      await Promise.all(
-        Object.entries(imageContext).map(async ([path, importPromise]) => {
-          const imageModule = await importPromise();
-          const imagePath = imageModule.default;
-
-          // Extract the category (subfolder name) from the path
-          const pathParts = path.split("/");
-          const folderName = pathParts[pathParts.length - 2];
-          const category = folderName.split(" ").slice(1).join(" ");
-
-          // Initialize the array for the category if it doesn't exist
-          if (!categorizedImages[category]) {
-            categorizedImages[category] = [];
-          }
-
-          // Add the image path to the appropriate category
-          categorizedImages[category].push(imagePath);
-        })
-      );
-
-      // Use the categorized images as needed
-      setStickers(categorizedImages);
-    };
-
-    importStickers();
-
-    const newCanvas = new fabric.Canvas(canvasRef.current, {
-      width: window.innerWidth <= 768 ? 400 : 400,
-      height: window.innerWidth <= 768 ? 400 : 400,
-      backgroundColor: "#fff",
-    });
-
-    setCanvas(newCanvas);
-
-    // Event listener for object selection
-    newCanvas.on("selection:created", (e) => {
-      setSelectedObject(e.selected[0]);
-    });
-
-    newCanvas.on("object:modified", (e) => {
-      setSelectedObject(e.target);
-    });
-
-    // Event listener for object deselection
-    newCanvas.on("selection:cleared", () => {
-      setSelectedObject(null);
-    });
-
-    // fabric.Image.fromURL(bgImg, (img) => {
-    //   newCanvas.setBackgroundImage(img, newCanvas.renderAll.bind(newCanvas), {
-    //     scaleX: newCanvas.width / img.width,
-    //     scaleY: newCanvas.height / img.height,
-    //   });
-    // });
-
-    // changeBackgroundImage(bg, newCanvas);
-    // handleAddImage(null, null, logo);
-
-    addMainImg(newCanvas, main_cat);
-
-    return () => {
-      newCanvas.dispose();
-    };
-  }, []);
 
   const handleAddImage = (state, setState, image) => {
     if (state != null) {
@@ -352,6 +236,121 @@ function App() {
 
       canvas.add(newText);
     }
+  };
+
+  useEffect(() => {
+    if (!canvas) return;
+
+    if (backgroundImage) {
+      changeBackgroundImage(backgroundImage, canvas);
+    } else {
+      canvas.setBackgroundImage("", canvas.renderAll.bind(canvas));
+    }
+  }, [canvas, backgroundImage, isMobile]);
+
+  useEffect(() => {
+    const importStickers = async () => {
+      // Import images from all subfolders in the 'assets/stickers' directory
+      const imageContext = import.meta.glob(
+        "./assets/stickers/*/*.(png|jpg|jpeg|svg)"
+      );
+
+      // Object to store categorized images
+      const categorizedImages = {};
+
+      // Process each import promise
+      await Promise.all(
+        Object.entries(imageContext).map(async ([path, importPromise]) => {
+          const imageModule = await importPromise();
+          const imagePath = imageModule.default;
+
+          // Extract the category (subfolder name) from the path
+          const pathParts = path.split("/");
+          const folderName = pathParts[pathParts.length - 2];
+          const category = folderName.split(" ").slice(1).join(" ");
+
+          // Initialize the array for the category if it doesn't exist
+          if (!categorizedImages[category]) {
+            categorizedImages[category] = [];
+          }
+
+          // Add the image path to the appropriate category
+          categorizedImages[category].push(imagePath);
+        })
+      );
+
+      // Use the categorized images as needed
+      setStickers(categorizedImages);
+    };
+
+    importStickers();
+
+    const newCanvas = new fabric.Canvas(canvasRef.current, {
+      width: window.innerWidth <= 768 ? 400 : 400,
+      height: window.innerWidth <= 768 ? 400 : 400,
+      backgroundColor: "#fff",
+    });
+
+    setCanvas(newCanvas);
+
+    // Event listener for object selection
+    newCanvas.on("selection:created", (e) => {
+      setSelectedObject(e.selected[0]);
+    });
+
+    newCanvas.on("object:modified", (e) => {
+      setSelectedObject(e.target);
+    });
+
+    // Event listener for object deselection
+    newCanvas.on("selection:cleared", () => {
+      setSelectedObject(null);
+    });
+
+    // fabric.Image.fromURL(bgImg, (img) => {
+    //   newCanvas.setBackgroundImage(img, newCanvas.renderAll.bind(newCanvas), {
+    //     scaleX: newCanvas.width / img.width,
+    //     scaleY: newCanvas.height / img.height,
+    //   });
+    // });
+
+    // changeBackgroundImage(bg, newCanvas);
+    // handleAddImage(null, null, logo);
+
+    addMainImg(newCanvas, main_cat);
+
+    return () => {
+      newCanvas.dispose();
+    };
+  }, []);
+
+  const changeBackgroundImage = (backgroundImage, canvas) => {
+    fabric.Image.fromURL(backgroundImage, (img) => {
+      // Calculate the new dimensions respecting the maximum width of 550px
+      let newWidth = img.width;
+      let newHeight = img.height;
+
+      let maxWidth = isMobile ? 400 : 400;
+
+      if (img.width > maxWidth) {
+        newWidth = maxWidth;
+        newHeight = (maxWidth / img.width) * img.height;
+      }
+
+      canvas.setWidth(newWidth);
+      canvas.setHeight(400);
+
+      canvas.renderAll();
+
+      canvas.setBackgroundImage(
+        backgroundImage,
+        canvas.renderAll.bind(canvas),
+        {
+          scaleX: canvas.width / img.width,
+          scaleY: canvas.height / img.height,
+        }
+      );
+    });
   };
 
   // useEffect(() => {
