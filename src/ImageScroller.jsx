@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 
 function ImageScroller({
@@ -26,25 +25,58 @@ function ImageScroller({
     setSelectedCategory(category);
   };
 
+  // Handle removing sticker based on category
+  const handleRemoveSticker = (category) => {
+    switch(category) {
+      case "headwear":
+        if (hats) {
+          canvas.remove(hats);
+          setHats(null);
+        }
+        break;
+      case "kimono":
+        if (kimonos) {
+          canvas.remove(kimonos);
+          setKimonos(null);
+        }
+        break;
+      case "accessories":
+        if (weapons) {
+          canvas.remove(weapons);
+          setWeapons(null);
+        }
+        break;
+      case "eyewear":
+        if (eyewear) {
+          canvas.remove(eyewear);
+          setEyewear(null);
+        }
+        break;
+      case "mouth":
+        if (mouth) {
+          canvas.remove(mouth);
+          setMouth(null);
+        }
+        break;
+    }
+  };
+
   const renderStickers = () => {
     const stickers = categorizedImages[selectedCategory] || [];
     
     return (
       <div className="flex flex-col w-full">
         {/* Category header with delete button */}
-        <div className="category-header mb-4">
-          <h3 className="category-title">
+        <div className="flex justify-between items-center mb-4 px-2">
+          <h3 className="text-2xl text-white">
             {selectedCategory === "kimono" ? "Clothing" : selectedCategory.charAt(0).toUpperCase() + selectedCategory.slice(1)}
           </h3>
-          {activeCategories[selectedCategory] && (
-            <button
-              onClick={() => handleRemoveCategory(selectedCategory)}
-              className="category-delete-btn"
-              aria-label={`Delete ${selectedCategory}`}
-            >
-              ×
-            </button>
-          )}
+          <button
+            onClick={() => handleRemoveSticker(selectedCategory)}
+            className="bg-red-500 hover:bg-red-600 text-white px-3 py-1 rounded-lg transition-colors"
+          >
+            Remove {selectedCategory === "kimono" ? "Clothing" : selectedCategory}
+          </button>
         </div>
 
         {/* Stickers grid */}
