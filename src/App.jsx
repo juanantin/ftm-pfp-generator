@@ -948,43 +948,49 @@ function App() {
   };
 
   const handleCanvasClear = () => {
-    if (!canvas) {
-      console.error("Canvas not available for clearing");
-      return;
-    }
+    if (!canvas) return;
     
-    // Reset all stickers and their states
-    if (headwear) {
-      canvas.remove(headwear);
-      setHeadwear(null);
-    }
+    // Create a new canvas with the same dimensions and settings
+    const newCanvas = new fabric.Canvas(canvasRef.current, {
+      width: window.innerWidth <= 768 ? 290 : 400,
+      height: window.innerWidth <= 768 ? 290 : 400,
+      backgroundColor: "#000",
+      preserveObjectStacking: true,
+    });
     
-    if (eyewear) {
-      canvas.remove(eyewear);
-      setEyewear(null);
-    }
+    // Update canvas reference
+    setCanvas(newCanvas);
+    fabricInitialized.current = true;
     
-    if (mouth) {
-      canvas.remove(mouth);
-      setMouth(null);
-    }
+    // Set up the event listeners again
+    newCanvas.on("selection:created", (e) => {
+      setSelectedObject(e.selected[0]);
+    });
+
+    newCanvas.on("object:modified", (e) => {
+      setSelectedObject(e.target);
+      // Update preview after modifying object
+      setTimeout(() => {
+        saveImageToDataURL();
+      }, 500);
+    });
+
+    newCanvas.on("selection:cleared", () => {
+      setSelectedObject(null);
+    });
+
+    // Re-add the main cat image
+    addMainImg(newCanvas, main_cat);
     
-    if (kimono) {
-      canvas.remove(kimono);
-      setKimono(null);
-    }
+    // Reset state variables for all categories
+    setHeadwear(null);
+    setEyewear(null);
+    setMouth(null);
+    setKimono(null);
+    setJewelry(null);
+    setAccessories(null);
     
-    if (jewelry) {
-      canvas.remove(jewelry);
-      setJewelry(null);
-    }
-    
-    if (accessories) {
-      canvas.remove(accessories);
-      setAccessories(null);
-    }
-    
-    // Reset active categories
+    // Reset active categories state
     setActiveCategories({
       headwear: false,
       eyewear: false,
@@ -994,29 +1000,42 @@ function App() {
       accessories: false
     });
     
-    // Re-initialize the canvas with default settings
-    const canvasWidth = window.innerWidth <= 768 ? 290 : 400;
-    const canvasHeight = window.innerWidth <= 768 ? 290 : 400;
-    
-    canvas.setWidth(canvasWidth);
-    canvas.setHeight(canvasHeight);
-    canvas.setBackgroundImage("", canvas.renderAll.bind(canvas));
-    
-    // Clear all objects except the main character
-    const objects = canvas.getObjects();
-    objects.forEach(obj => {
-      canvas.remove(obj);
-    });
-    
-    // Re-add the main character
-    addMainImg(canvas, main_cat);
-    
-    // Update the preview
+    // Update the preview after resetting
     setTimeout(() => {
+      console.log("Updating preview after canvas clear");
       saveImageToDataURL();
-    }, 500);
-    
-    console.log("Canvas cleared and reset");
+    }, 800);
+  };
+
+  const handleDelete = () => {
+    const activeObjects = canvas.getActiveObjects();
+    if (activeObjects && activeObjects.length > 0) {
+      activeObjects.forEach((object) => {
+        if (object.selectable) {
+          canvas.remove(object);
+        }
+      });
+      canvas.discardActiveObject().renderAll();
+    }
+  };
+
+  const handleAddText = () => {
+    const text = prompt("Enter your text:");
+
+    if (text) {
+      const newText = new fabric.Text(text, {
+        fontFamily: "Tahoma",
+        fontSize: 20,
+        fill: "#fff",
+        stroke: "#000",
+        fontWeight: "bold",
+        left: 100,
+        top: 100,
+        charSpacing: 1,
+      });
+
+      canvas.add(newText);
+    }
   };
 
   return (
