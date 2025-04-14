@@ -30,7 +30,6 @@ function ImageScroller({
       canvas.remove(hats);
       setHats(null);
     } else if (category === "kimono" && setKimonos) {
-      // Fixed: changed from "Clothing" to "kimono" to match App.jsx state handling
       canvas.remove(kimonos);
       setKimonos(null);
     } else if (category === "accessories" && setWeapons) {
@@ -56,7 +55,7 @@ function ImageScroller({
     
     return (
       <div className="flex flex-wrap gap-2 justify-center">
-        {/* Delete card at the beginning of each category - changed to dark red */}
+        {/* Delete card at the beginning of each category - dark red background */}
         <div
           className="w-[100px] h-[100px] bg-[#8B0000] rounded-md overflow-hidden cursor-pointer shadow-md transform hover:scale-105 transition-transform flex items-center justify-center"
           onClick={() => handleRemoveSticker(selectedCategory)}
@@ -94,7 +93,6 @@ function ImageScroller({
             stateVarToUpdate = hats;
             setStateVarToUpdate = setHats;
           } else if (selectedCategory === "kimono") {
-            // Fixed: changed from "Clothing" to "kimono" to match the state handling in App.jsx
             stateVarToUpdate = kimonos;
             setStateVarToUpdate = setKimonos;
           } else if (selectedCategory === "accessories") {
