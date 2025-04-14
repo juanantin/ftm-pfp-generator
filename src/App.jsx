@@ -947,4 +947,288 @@ function App() {
     }
   };
 
-  const handleCanvasClear = ()
+  const handleCanvasClear = () => {
+    if (!canvas) {
+      console.error("Canvas not available for clearing");
+      return;
+    }
+    
+    // Reset all stickers and their states
+    if (headwear) {
+      canvas.remove(headwear);
+      setHeadwear(null);
+    }
+    
+    if (eyewear) {
+      canvas.remove(eyewear);
+      setEyewear(null);
+    }
+    
+    if (mouth) {
+      canvas.remove(mouth);
+      setMouth(null);
+    }
+    
+    if (kimono) {
+      canvas.remove(kimono);
+      setKimono(null);
+    }
+    
+    if (jewelry) {
+      canvas.remove(jewelry);
+      setJewelry(null);
+    }
+    
+    if (accessories) {
+      canvas.remove(accessories);
+      setAccessories(null);
+    }
+    
+    // Reset active categories
+    setActiveCategories({
+      headwear: false,
+      eyewear: false,
+      mouth: false,
+      kimono: false,
+      jewelry: false,
+      accessories: false
+    });
+    
+    // Re-initialize the canvas with default settings
+    const canvasWidth = window.innerWidth <= 768 ? 290 : 400;
+    const canvasHeight = window.innerWidth <= 768 ? 290 : 400;
+    
+    canvas.setWidth(canvasWidth);
+    canvas.setHeight(canvasHeight);
+    canvas.setBackgroundImage("", canvas.renderAll.bind(canvas));
+    
+    // Clear all objects except the main character
+    const objects = canvas.getObjects();
+    objects.forEach(obj => {
+      canvas.remove(obj);
+    });
+    
+    // Re-add the main character
+    addMainImg(canvas, main_cat);
+    
+    // Update the preview
+    setTimeout(() => {
+      saveImageToDataURL();
+    }, 500);
+    
+    console.log("Canvas cleared and reset");
+  };
+
+  return (
+    <div className=" min-h-screen overflow-y-auto bg-gradient-to-r from-mainRed to-darkRed">
+      {/* <img
+        className="w-full h-full absolute top-0 left-0 opacity-[0.4] object-cover md:object-cover"
+        src={isMobile ? all_bg_mobile : all_bg}
+        alt=""
+      /> */}
+
+      <div
+        onClick={() => (window.location.href = "https://catownkimono.com")}
+        className="flex cursor-pointer absolute top-5 left-10"
+      >
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          width="32"
+          height="32"
+          viewBox="0 0 24 24"
+        >
+          <path
+            fill="#000"
+            d="m6.921 12.5l5.793 5.792L12 19l-7-7l7-7l.714.708L6.92 11.5H19v1z"
+          />
+        </svg>
+        <h1 className="text-3xl">Home</h1>
+      </div>
+
+      <div className="w-full flex py-10 flex-col lg:flex-row justify-center">
+        <input
+          type="file"
+          accept="image/*"
+          hidden
+          ref={bgImgInputRef}
+          onChange={handleBackgroundImageChange}
+        />
+
+        <input
+          type="file"
+          accept="image/*"
+          hidden
+          ref={stickerImgInputRef}
+          onChange={handleAddSticker}
+        />
+        <div className="flex-1 px-5">
+          <div className="flex item-center justify-center gap-5 md:gap-10 mb-5">
+            {/* <img
+              // onClick={() => window.open("https://madcatcoin.com/", "_blank")}
+              src={logo}
+              className="w-[100px] lg:w-[150px] h-auto cursor-pointer"
+              alt=""
+            /> */}
+            <h1 className="text-white mt-5 lg:mt-0 text-5xl md:text-7xl text-center font-black ">
+              Cok <br />
+              Meme Generator
+            </h1>
+          </div>
+
+          <div
+            className={`mx-auto mb-7 bg-transparent rounded-xl relative
+          ${isMobile ? "canvas-mobile" : "w-[400px]"}
+          `}
+          >
+            <canvas
+              ref={canvasRef}
+              // style={{ width: "550px", height: "550px" }}
+            />
+            {selectedObject && (
+              <img
+                onClick={handleDelete}
+                id="selected-img"
+                style={{
+                  position: "absolute",
+                  top: selectedObject.top - 30,
+                  left: selectedObject.left,
+                  cursor: "pointer",
+                }}
+                src="https://cdn-icons-png.flaticon.com/512/5610/5610967.png"
+                width={20}
+                height={20}
+                alt=""
+              />
+            )}
+          </div>
+          <div className="flex flex-wrap w-full gap-5 justify-center">
+            <div
+              onClick={() => stickerImgInputRef.current.click()}
+              className="border-4 cursor-pointer border-black bg-white text-black px-5 py-2 rounded-lg flex justify-center items-center overflow-hidden relative group transition-all duration-300 ease-in-out transform hover:scale-105 w-full sm:w-full md:w-1/3 lg:w-1/3"
+            >
+              <p className="text-black text-center text-2xl tracking-wider font-medium relative">
+                UPLOAD STICKER
+              </p>
+              <div className="absolute top-0 left-0 w-full h-full bg-black opacity-0 z-0 transition duration-300 ease-in-out group-hover:opacity-50"></div>
+            </div>
+            <div
+              onClick={() => bgImgInputRef.current.click()}
+              className="border-4 cursor-pointer border-black bg-white text-black px-5 py-2 rounded-lg flex justify-center items-center overflow-hidden relative group transition-all duration-300 ease-in-out transform hover:scale-105 w-full sm:w-full md:w-1/3 lg:w-1/3"
+            >
+              <p className="text-black text-center text-2xl tracking-wider font-medium relative">
+                UPLOAD BACKGROUND
+              </p>
+              <div className="absolute top-0 left-0 w-full h-full bg-black opacity-0 z-0 transition duration-300 ease-in-out group-hover:opacity-50"></div>
+            </div>
+            <div
+              onClick={handleAddText}
+              className="border-4 cursor-pointer border-black bg-white text-black px-5 py-2 rounded-lg flex justify-center items-center overflow-hidden relative group transition-all duration-300 ease-in-out transform hover:scale-105 w-full sm:w-full md:w-1/3 lg:w-1/3"
+            >
+              <p className="text-black text-center text-2xl tracking-wider font-medium relative">
+                ADD TEXT
+              </p>
+              <div className="absolute top-0 left-0 w-full h-full bg-black opacity-0 z-0 transition duration-300 ease-in-out group-hover:opacity-50"></div>
+            </div>
+            <div
+              onClick={handleCanvasClear}
+              className="border-4 cursor-pointer border-black bg-white text-black px-5 py-2 rounded-lg flex justify-center items-center overflow-hidden relative group transition-all duration-300 ease-in-out transform hover:scale-105 w-full sm:w-full md:w-1/3 lg:w-1/3"
+            >
+              <p className="text-black text-center text-2xl tracking-wider font-medium relative">
+                RESET
+              </p>
+              <div className="absolute top-0 left-0 w-full h-full bg-black opacity-0 z-0 transition duration-300 ease-in-out group-hover:opacity-50"></div>
+            </div>
+            <div
+              onClick={generateRandom}
+              className="border-4 cursor-pointer border-black bg-white text-black px-5 py-2 rounded-lg flex justify-center items-center overflow-hidden relative group transition-all duration-300 ease-in-out transform hover:scale-105 w-full sm:w-full md:w-1/3 lg:w-1/3"
+            >
+              <p className="text-black text-center text-2xl tracking-wider font-medium relative">
+                GENERATE RANDOM
+              </p>
+              <div className="absolute top-0 left-0 w-full h-full bg-black opacity-0 z-0 transition duration-300 ease-in-out group-hover:opacity-50"></div>
+            </div>
+            <div
+              onClick={saveImageToLocal}
+              className="border-4 cursor-pointer border-black bg-white text-black px-5 py-2 rounded-lg flex justify-center items-center overflow-hidden relative group transition-all duration-300 ease-in-out transform hover:scale-105 w-full sm:w-full md:w-1/3 lg:w-1/3"
+            >
+              <p className="text-black text-center text-2xl tracking-wider font-medium relative">
+                SAVE MEME
+              </p>
+              <div className="absolute top-0 left-0 w-full h-full bg-black opacity-0 z-0 transition duration-300 ease-in-out group-hover:opacity-50"></div>
+            </div>
+          </div>
+
+          {/* <div className="flex flex-wrap w-full mt-5 gap-5 justify-center">
+            <div
+              onClick={bringForward}
+              // disabled={isAtFront}
+              className="border-4 cursor-pointer border-black bg-white text-black px-5 py-2   rounded-lg flex justify-center items-center overflow-hidden relative group transition-all duration-300 ease-in-out transform hover:scale-105"
+            >
+              <p className="text-black text-center text-2xl tracking-wider font-medium relative">
+                BRING FORWARD
+              </p>
+              <div className="absolute top-0 left-0 w-full h-full bg-black opacity-0 z-0 transition duration-300 ease-in-out group-hover:opacity-50"></div>
+            </div>
+            <div
+              onClick={bringToFront}
+              // disabled={isAtFront}
+              className="border-4 cursor-pointer border-black bg-white text-black px-5 py-2   rounded-lg flex justify-center items-center overflow-hidden relative group transition-all duration-300 ease-in-out transform hover:scale-105"
+            >
+              <p className="text-black text-center text-2xl tracking-wider font-medium relative">
+                BRING TO FRONT
+              </p>
+              <div className="absolute top-0 left-0 w-full h-full bg-black opacity-0 z-0 transition duration-300 ease-in-out group-hover:opacity-50"></div>
+            </div>
+
+            <div
+              onClick={sendBackward}
+              // disabled={isAtBack}
+              className="border-4 cursor-pointer border-black bg-white text-black px-5 py-2   rounded-lg flex justify-center items-center overflow-hidden relative group transition-all duration-300 ease-in-out transform hover:scale-105"
+            >
+              <p className="text-black text-center text-2xl tracking-wider font-medium relative">
+                SEND BACKWARD
+              </p>
+              <div className="absolute top-0 left-0 w-full h-full bg-black opacity-0 z-0 transition duration-300 ease-in-out group-hover:opacity-50"></div>
+            </div>
+            <div
+              onClick={sendToBack}
+              // disabled={isAtBack}
+              className="border-4 cursor-pointer border-black  bg-white text-black px-5 py-2 rounded-lg flex justify-center items-center overflow-hidden relative group transition-all duration-300 ease-in-out transform hover:scale-105"
+            >
+              <p className="text-black text-center text-2xl tracking-wider font-medium relative">
+                SEND TO BACK
+              </p>
+              <div className="absolute top-0 left-0 w-full h-full bg-black opacity-0 z-0 transition duration-300 ease-in-out group-hover:opacity-50"></div>
+            </div>
+          </div> */}
+        </div>
+
+        <div className="mt-5 w-full lg:w-[60%] px-5 lg:pl-0 ">
+          <div className="flex-1">
+            <h1 className="text-4xl text-center text-white mt-10">
+              CLICK TO ADD STICKER
+            </h1>
+            <ImageScroller
+              canvas={canvas}
+              categorizedImages={stickers}
+              handleAddImage={handleAddImage}
+              changeBackgroundImage={changeBackgroundImage}
+              hats={headwear}
+              kimonos={kimono}
+              weapons={accessories}
+              eyewear={eyewear}
+              mouth={mouth}
+              setHats={setHeadwear}
+              setKimonos={setKimono}
+              setWeapons={setAccessories}
+              setEyewear={setEyewear}
+              setMouth={setMouth}
+            />
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+export default App;
