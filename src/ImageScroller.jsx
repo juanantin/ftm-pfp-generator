@@ -16,22 +16,12 @@ function ImageScroller({
   setWeapons,
   setEyewear,
   setMouth,
-  removeSticker,
 }) {
   const [selectedCategory, setSelectedCategory] = useState("headwear");
 
   // Handle category selection
   const handleCategorySelect = (category) => {
     setSelectedCategory(category);
-  };
-  
-  // Function to handle sticker removal
-  const handleStickerRemoval = (category) => {
-    if (typeof removeSticker === 'function') {
-      removeSticker(category);
-    } else {
-      console.error('removeSticker function not properly provided to ImageScroller');
-    }
   };
 
   const renderStickers = () => {
@@ -63,7 +53,7 @@ function ImageScroller({
           if (selectedCategory === "headwear") {
             stateVarToUpdate = hats;
             setStateVarToUpdate = setHats;
-          } else if (selectedCategory === "kimono") {
+          } else if (selectedCategory === "Clothing") {
             stateVarToUpdate = kimonos;
             setStateVarToUpdate = setKimonos;
           } else if (selectedCategory === "accessories") {
@@ -95,53 +85,6 @@ function ImageScroller({
     );
   };
 
-  // Add delete buttons for sticker categories
-  const renderDeleteButtons = () => {
-    const isMobile = window.innerWidth <= 768;
-    const buttonStyle = isMobile ? 
-      "mb-3 bg-red-500 text-white px-2 py-1 rounded-md text-xs font-medium" : 
-      "mb-4 bg-red-500 text-white px-3 py-1 rounded-md text-sm font-medium";
-      
-    return (
-      <div className="w-full flex flex-wrap justify-center gap-3 mb-4 mt-2">
-        <button 
-          className={buttonStyle}
-          onClick={() => handleStickerRemoval("headwear")}
-        >
-          Remove Headwear
-        </button>
-        
-        <button 
-          className={buttonStyle}
-          onClick={() => handleStickerRemoval("eyewear")}
-        >
-          Remove Eyewear
-        </button>
-        
-        <button 
-          className={buttonStyle}
-          onClick={() => handleStickerRemoval("mouth")}
-        >
-          Remove Mouth
-        </button>
-        
-        <button 
-          className={buttonStyle}
-          onClick={() => handleStickerRemoval("kimono")}
-        >
-          Remove Clothing
-        </button>
-        
-        <button 
-          className={buttonStyle}
-          onClick={() => handleStickerRemoval("accessories")}
-        >
-          Remove Accessories
-        </button>
-      </div>
-    );
-  };
-
   return (
     <div>
       {/* Category selector */}
@@ -157,13 +100,10 @@ function ImageScroller({
             } transition-colors`}
             style={{ fontFamily: "'Finger Paint', cursive" }}
           >
-            {category.charAt(0).toUpperCase() + category.slice(1)}
+            {category === "kimono" ? "Clothing" : category.charAt(0).toUpperCase() + category.slice(1)}
           </div>
         ))}
       </div>
-      
-      {/* Delete buttons for stickers */}
-      {renderDeleteButtons()}
 
       {/* Display stickers for the selected category */}
       <div className="mt-3 pb-8">
