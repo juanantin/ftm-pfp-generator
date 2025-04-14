@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { Trash2 } from "lucide-react";
 
 function ImageScroller({
   canvas,
@@ -20,12 +21,10 @@ function ImageScroller({
 }) {
   const [selectedCategory, setSelectedCategory] = useState("headwear");
 
-  // Handle category selection
   const handleCategorySelect = (category) => {
     setSelectedCategory(category);
   };
 
-  // Handle removing sticker based on category
   const handleRemoveSticker = (category) => {
     switch(category) {
       case "headwear":
@@ -66,23 +65,21 @@ function ImageScroller({
     
     return (
       <div className="flex flex-col w-full">
-        {/* Category header with delete button */}
-        <div className="flex justify-between items-center mb-4 px-2">
-          <h3 className="text-2xl text-white">
-            {selectedCategory === "kimono" ? "Clothing" : selectedCategory.charAt(0).toUpperCase() + selectedCategory.slice(1)}
-          </h3>
-          <button
-            onClick={() => handleRemoveSticker(selectedCategory)}
-            className="bg-red-500 hover:bg-red-600 text-white px-3 py-1 rounded-lg transition-colors"
-          >
-            Remove {selectedCategory === "kimono" ? "Clothing" : selectedCategory}
-          </button>
-        </div>
+        <h3 className="text-4xl text-white mb-4 px-2">
+          {selectedCategory === "kimono" ? "Clothing" : selectedCategory.charAt(0).toUpperCase() + selectedCategory.slice(1)}
+        </h3>
 
-        {/* Stickers grid */}
         <div className="flex flex-wrap gap-2 justify-center">
+          {/* Delete button as first sticker */}
+          <div
+            className="w-[100px] h-[100px] bg-white rounded-md overflow-hidden cursor-pointer shadow-md transform hover:scale-105 transition-transform flex items-center justify-center"
+            onClick={() => handleRemoveSticker(selectedCategory)}
+          >
+            <Trash2 size={40} className="text-red-500" />
+          </div>
+
+          {/* Rest of the stickers */}
           {stickers.map((sticker, index) => {
-            // Handle background images differently
             if (selectedCategory === "background") {
               return (
                 <div
@@ -99,7 +96,6 @@ function ImageScroller({
               );
             }
 
-            // For non-background stickers
             let stateVarToUpdate, setStateVarToUpdate;
             
             if (selectedCategory === "headwear") {
