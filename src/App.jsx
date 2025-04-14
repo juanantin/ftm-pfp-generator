@@ -69,11 +69,18 @@ function App() {
   const addMainImg = (canvas, image) => {
     fabric.Image.fromURL(image, (img) => {
       const canvasWidth = canvas.getWidth();
-
-      img.scaleToWidth(canvasWidth);
-      img.scaleToHeight(img.height * (canvasWidth / img.width));
+      const canvasHeight = canvas.getHeight();
+      
+      // Calculate size to maintain aspect ratio while filling 80% of canvas width
+      const scale = (canvasWidth * 0.8) / img.width;
+      img.scaleToWidth(canvasWidth * 0.8);
+      img.scaleToHeight(img.height * scale);
+      
+      // Center the image
       img.set({
-        selectable: false, // Disable selection
+        left: (canvasWidth - img.getScaledWidth()) / 2,
+        top: (canvasHeight - img.getScaledHeight()) / 2,
+        selectable: false,
       });
 
       canvas.add(img);
@@ -326,30 +333,23 @@ function App() {
 
   const changeBackgroundImage = (backgroundImage, canvas) => {
     fabric.Image.fromURL(backgroundImage, (img) => {
-      // Calculate the new dimensions respecting the maximum width of 550px
-      let newWidth = img.width;
-      let newHeight = img.height;
-
-      let maxWidth = isMobile ? 400 : 400;
-
-      if (img.width > maxWidth) {
-        newWidth = maxWidth;
-        newHeight = (maxWidth / img.width) * img.height;
-      }
-
-      canvas.setWidth(newWidth);
+      const maxWidth = isMobile ? 400 : 400;
+      canvas.setWidth(maxWidth);
       canvas.setHeight(400);
 
-      canvas.renderAll();
-
+      // Set background image maintaining aspect ratio
       canvas.setBackgroundImage(
         backgroundImage,
         canvas.renderAll.bind(canvas),
         {
-          scaleX: canvas.width / img.width,
-          scaleY: canvas.height / img.height,
+          scaleX: maxWidth / img.width,
+          scaleY: 400 / img.height,
+          originX: 'left',
+          originY: 'top'
         }
       );
+
+      canvas.renderAll();
     });
   };
 
