@@ -21,6 +21,8 @@ function App() {
   const [kimonos, setKimonos] = useState(null);
   // const [pants, Pants] = useState(null);
   const [weapons, setWeapons] = useState(null);
+  const [eyewear, setEyewear] = useState(null);
+  const [mouth, setMouth] = useState(null);
 
   // const [isAtFront, setIsAtFront] = useState(false);
   // const [isAtBack, setIsAtBack] = useState(false);
@@ -67,6 +69,32 @@ function App() {
   }, [canvas, selectedObject, isMobile]);
 
   const changeBackgroundImage = (backgroundImage, canvas) => {
+    // Store current objects
+    const currentObjects = canvas.getObjects();
+    
+    // Find the main cat image specifically (the base character)
+    const mainCatImage = currentObjects.find(obj => 
+      obj.selectable === false && 
+      (!obj._element || !obj._element.src || !obj._element.src.includes("stickers"))
+    );
+    
+    // Store main cat position and scale if it exists
+    let mainCatProps = null;
+    const isMobileView = window.innerWidth <= 768;
+    
+    if (mainCatImage) {
+      mainCatProps = {
+        scaleX: mainCatImage.scaleX,
+        scaleY: mainCatImage.scaleY,
+        left: mainCatImage.left,
+        top: mainCatImage.top,
+        originX: mainCatImage.originX || 'center',
+        originY: mainCatImage.originY || 'bottom'
+      };
+      
+      console.log("Stored main cat properties before background change", mainCatProps);
+    }
+    
     fabric.Image.fromURL(backgroundImage, (img) => {
       // Calculate the new dimensions respecting the maximum width of 550px
       let newWidth = img.width;
@@ -92,6 +120,46 @@ function App() {
           scaleY: canvas.height / img.height,
         }
       );
+      
+      // If main character was found, restore its properties
+      if (mainCatProps) {
+        // Wait for background to load, then restore main cat position
+        setTimeout(() => {
+          const objects = canvas.getObjects();
+          // Find the main cat by checking if it's non-selectable
+          const mainCat = objects.find(obj => 
+            obj.selectable === false && 
+            (!obj._element || !obj._element.src || !obj._element.src.includes("stickers"))
+          );
+          
+          if (mainCat) {
+            console.log("Restoring main cat properties after background change");
+            
+            if (isMobileView) {
+              // For mobile: Make sure the main cat stays aligned to the bottom
+              // This is crucial to fix the issue where the model moves up on background change
+              mainCat.set({
+                left: canvas.width / 2, // Center horizontally
+                top: canvas.height,     // Align with bottom
+                originX: 'center',
+                originY: 'bottom'
+              });
+            } else {
+              // For desktop: Simply restore previous properties (working fine)
+              mainCat.set({
+                scaleX: mainCatProps.scaleX,
+                scaleY: mainCatProps.scaleY,
+                left: mainCatProps.left,
+                top: mainCatProps.top,
+                originX: mainCatProps.originX,
+                originY: mainCatProps.originY
+              });
+            }
+            
+            canvas.renderAll();
+          }
+        }, 100);
+      }
     });
   };
 
@@ -337,7 +405,7 @@ function App() {
   const handleAddText = () => {
     const text = prompt("Enter your text:");
 
-    if (text && canvas) {
+    if (text) {
       const newText = new fabric.Text(text, {
         fontFamily: "Tahoma",
         fontSize: 20,
@@ -350,7 +418,6 @@ function App() {
       });
 
       canvas.add(newText);
-      canvas.renderAll();
     }
   };
 
@@ -592,9 +659,13 @@ function App() {
               hats={hats}
               kimonos={kimonos}
               weapons={weapons}
+              eyewear={eyewear}
+              mouth={mouth}
               setHats={setHats}
               setKimonos={setKimonos}
               setWeapons={setWeapons}
+              setEyewear={setEyewear}
+              setMouth={setMouth}
             />
           </div>
         </div>
