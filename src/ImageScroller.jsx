@@ -16,6 +16,8 @@ function ImageScroller({
   setWeapons,
   setEyewear,
   setMouth,
+  handleRemoveCategory,
+  activeCategories
 }) {
   const [selectedCategory, setSelectedCategory] = useState("headwear");
 
@@ -28,59 +30,78 @@ function ImageScroller({
     const stickers = categorizedImages[selectedCategory] || [];
     
     return (
-      <div className="flex flex-wrap gap-2 justify-center">
-        {stickers.map((sticker, index) => {
-          // Handle background images differently
-          if (selectedCategory === "background") {
+      <div className="flex flex-col w-full">
+        {/* Category header with delete button */}
+        <div className="category-header mb-4">
+          <h3 className="category-title">
+            {selectedCategory === "kimono" ? "Clothing" : selectedCategory.charAt(0).toUpperCase() + selectedCategory.slice(1)}
+          </h3>
+          {activeCategories[selectedCategory] && (
+            <button
+              onClick={() => handleRemoveCategory(selectedCategory)}
+              className="category-delete-btn"
+              aria-label={`Delete ${selectedCategory}`}
+            >
+              ×
+            </button>
+          )}
+        </div>
+
+        {/* Stickers grid */}
+        <div className="flex flex-wrap gap-2 justify-center">
+          {stickers.map((sticker, index) => {
+            // Handle background images differently
+            if (selectedCategory === "background") {
+              return (
+                <div
+                  key={index}
+                  className="w-[120px] h-[85px] bg-white rounded-md overflow-hidden cursor-pointer shadow-md transform hover:scale-105 transition-transform"
+                  onClick={() => changeBackgroundImage(sticker, canvas)}
+                >
+                  <img
+                    src={sticker}
+                    alt={`${selectedCategory}-${index}`}
+                    className="w-full h-full object-cover"
+                  />
+                </div>
+              );
+            }
+
+            // For non-background stickers
+            let stateVarToUpdate, setStateVarToUpdate;
+            
+            if (selectedCategory === "headwear") {
+              stateVarToUpdate = hats;
+              setStateVarToUpdate = setHats;
+            } else if (selectedCategory === "kimono") {
+              stateVarToUpdate = kimonos;
+              setStateVarToUpdate = setKimonos;
+            } else if (selectedCategory === "accessories") {
+              stateVarToUpdate = weapons;
+              setStateVarToUpdate = setWeapons;
+            } else if (selectedCategory === "eyewear") {
+              stateVarToUpdate = eyewear;
+              setStateVarToUpdate = setEyewear;
+            } else if (selectedCategory === "mouth") {
+              stateVarToUpdate = mouth;
+              setStateVarToUpdate = setMouth;
+            }
+            
             return (
               <div
                 key={index}
-                className="w-[120px] h-[85px] bg-white rounded-md overflow-hidden cursor-pointer shadow-md transform hover:scale-105 transition-transform"
-                onClick={() => changeBackgroundImage(sticker, canvas)}
+                className="w-[100px] h-[100px] bg-white rounded-md overflow-hidden cursor-pointer shadow-md transform hover:scale-105 transition-transform"
+                onClick={() => handleAddImage(stateVarToUpdate, setStateVarToUpdate, sticker, selectedCategory)}
               >
                 <img
                   src={sticker}
                   alt={`${selectedCategory}-${index}`}
-                  className="w-full h-full object-cover"
+                  className="w-full h-full object-cover object-center"
                 />
               </div>
             );
-          }
-
-          // For non-background stickers
-          let stateVarToUpdate, setStateVarToUpdate;
-          
-          if (selectedCategory === "headwear") {
-            stateVarToUpdate = hats;
-            setStateVarToUpdate = setHats;
-          } else if (selectedCategory === "Clothing") {
-            stateVarToUpdate = kimonos;
-            setStateVarToUpdate = setKimonos;
-          } else if (selectedCategory === "accessories") {
-            stateVarToUpdate = weapons;
-            setStateVarToUpdate = setWeapons;
-          } else if (selectedCategory === "eyewear") {
-            stateVarToUpdate = eyewear;
-            setStateVarToUpdate = setEyewear; 
-          } else if (selectedCategory === "mouth") {
-            stateVarToUpdate = mouth;
-            setStateVarToUpdate = setMouth;
-          }
-          
-          return (
-            <div
-              key={index}
-              className="w-[100px] h-[100px] bg-white rounded-md overflow-hidden cursor-pointer shadow-md transform hover:scale-105 transition-transform"
-              onClick={() => handleAddImage(stateVarToUpdate, setStateVarToUpdate, sticker)}
-            >
-              <img
-                src={sticker}
-                alt={`${selectedCategory}-${index}`}
-                className="w-full h-full object-cover object-center"
-              />
-            </div>
-          );
-        })}
+          })}
+        </div>
       </div>
     );
   };
