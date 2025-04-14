@@ -26,10 +26,14 @@ function ImageScroller({
 
   // Handle sticker removal for the selected category
   const handleRemoveSticker = (category) => {
+    if (!canvas) return; // Guard against null canvas
+    
+    console.log("Removing sticker for category:", category);
+    
     if (category === "headwear" && setHats) {
       canvas.remove(hats);
       setHats(null);
-    } else if (category === "Clothing" && setKimonos) {
+    } else if (category === "kimono" && setKimonos) {
       canvas.remove(kimonos);
       setKimonos(null);
     } else if (category === "accessories" && setWeapons) {
@@ -41,17 +45,35 @@ function ImageScroller({
     } else if (category === "mouth" && setMouth) {
       canvas.remove(mouth);
       setMouth(null);
+    } else if (category === "background") {
+      // Add background removal functionality
+      if (canvas) {
+        canvas.setBackgroundImage(null, canvas.renderAll.bind(canvas));
+        canvas.setBackgroundColor("#fff", canvas.renderAll.bind(canvas));
+      }
+    }
+    
+    // Ensure the canvas is re-rendered
+    if (canvas) {
+      canvas.renderAll();
     }
   };
 
   const renderStickers = () => {
+    // Guard against null categorizedImages
+    if (!categorizedImages) {
+      console.log("No categorized images available");
+      return <div>Loading stickers...</div>;
+    }
+    
     const stickers = categorizedImages[selectedCategory] || [];
+    console.log(`Rendering ${stickers.length} stickers for category ${selectedCategory}`);
     
     return (
       <div className="flex flex-wrap gap-2 justify-center">
-        {/* Delete card at the beginning of each category */}
+        {/* Delete card at the beginning of each category - dark red */}
         <div
-          className="w-[100px] h-[100px] bg-red-500 rounded-md overflow-hidden cursor-pointer shadow-md transform hover:scale-105 transition-transform flex items-center justify-center"
+          className="w-[100px] h-[100px] bg-[#8B0000] rounded-md overflow-hidden cursor-pointer shadow-md transform hover:scale-105 transition-transform flex items-center justify-center"
           onClick={() => handleRemoveSticker(selectedCategory)}
         >
           <div className="text-white text-center font-bold">
@@ -75,6 +97,10 @@ function ImageScroller({
                   src={sticker}
                   alt={`${selectedCategory}-${index}`}
                   className="w-full h-full object-cover"
+                  onError={(e) => {
+                    console.error("Failed to load image:", sticker);
+                    e.target.src = "https://via.placeholder.com/120x85?text=Error";
+                  }}
                 />
               </div>
             );
@@ -86,7 +112,7 @@ function ImageScroller({
           if (selectedCategory === "headwear") {
             stateVarToUpdate = hats;
             setStateVarToUpdate = setHats;
-          } else if (selectedCategory === "Clothing") {
+          } else if (selectedCategory === "kimono") {
             stateVarToUpdate = kimonos;
             setStateVarToUpdate = setKimonos;
           } else if (selectedCategory === "accessories") {
@@ -110,6 +136,10 @@ function ImageScroller({
                 src={sticker}
                 alt={`${selectedCategory}-${index}`}
                 className="w-full h-full object-cover object-center"
+                onError={(e) => {
+                  console.error("Failed to load image:", sticker);
+                  e.target.src = "https://via.placeholder.com/100x100?text=Error";
+                }}
               />
             </div>
           );
