@@ -34,7 +34,6 @@ function ImageScroller({
       canvas.remove(hats);
       setHats(null);
     } else if (category === "kimono" && setKimonos) {
-      // Fixed: changed from "Clothing" to "kimono" to match App.jsx state handling
       canvas.remove(kimonos);
       setKimonos(null);
     } else if (category === "accessories" && setWeapons) {
@@ -114,7 +113,6 @@ function ImageScroller({
             stateVarToUpdate = hats;
             setStateVarToUpdate = setHats;
           } else if (selectedCategory === "kimono") {
-            // Fixed: changed from "Clothing" to "kimono" to match the state handling in App.jsx
             stateVarToUpdate = kimonos;
             setStateVarToUpdate = setKimonos;
           } else if (selectedCategory === "accessories") {
