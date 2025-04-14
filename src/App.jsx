@@ -1,3 +1,4 @@
+
 import { useState, useEffect, useRef } from "react";
 // Import Fabric.js properly to prevent "Canvas is not a constructor" error
 import { fabric } from "fabric";
@@ -27,7 +28,15 @@ function App() {
   const [kimono, setKimono] = useState(null);
   const [jewelry, setJewelry] = useState(null);
   const [accessories, setAccessories] = useState(null);
-  // Removed pawAccessories state
+  // Track which categories have active stickers for deletion
+  const [activeCategories, setActiveCategories] = useState({
+    headwear: false,
+    eyewear: false,
+    mouth: false,
+    kimono: false,
+    jewelry: false,
+    accessories: false
+  });
 
   useEffect(() => {
     const handleResize = () => {
@@ -166,8 +175,8 @@ function App() {
               const scaleRatioY = canvas.height / (mainCatProps.originalCanvasHeight || canvas.height);
               
               // Apply stored properties but maintain consistent scaling for mobile
-              // Use a fixed scale factor to prevent inconsistent sizing when changing backgrounds
-              const mobileScaleFactor = 1.8; // Use the same scale factor as in addMainImg function
+              // Use a lower scale factor to make the character smaller
+              const mobileScaleFactor = 1.2; // Reduced from 1.8 to 1.2
               
               mainCat.set({
                 scaleX: mainCatProps.originalCanvasWidth ? (canvas.width / mainCatProps.originalCanvasWidth) * mainCatProps.scaleX : mainCatProps.scaleX,
@@ -298,7 +307,8 @@ function App() {
             
             if (isMobileView) {
               // For mobile: Make image more appropriately sized for smaller canvas
-              const mobileScaleFactor = 1.5; // Adjusted for better visibility
+              // Reduced scale factor to make character smaller
+              const mobileScaleFactor = 1.2; // Reduced from 1.5 to 1.2
               img.scaleToWidth(canvasWidth * mobileScaleFactor);
               
               // Position the image to be fully aligned with the bottom of the canvas
@@ -409,15 +419,6 @@ function App() {
         setTimeout(() => {
           console.log("Initial preview update");
           saveImageToDataURL();
-          
-          // Ensure preview is visible by forcing another update
-          setTimeout(() => {
-            const resultPreview = document.getElementById('result-preview');
-            if (resultPreview && (!resultPreview.src || resultPreview.src === '')) {
-              console.log("Forcing additional preview update");
-              saveImageToDataURL();
-            }
-          }, 1500);
         }, 2000);
       }, 500);
     };
@@ -463,14 +464,14 @@ function App() {
 
         // Scale base image differently on mobile vs desktop
         if (isMobileView) {
-          // For mobile: Make image larger to fill more of the frame
-          // Increased scale factor for better proportions
-          const mobileScaleFactor = 1.8; // Increased from 1.3 to 1.8
+          // For mobile: Make image smaller for better visibility
+          // Reduced scale factor
+          const mobileScaleFactor = 1.2; // Reduced from 1.8 to 1.2
           img.scaleToWidth(canvasWidth * mobileScaleFactor);
           
-          // Position the image further down - almost at bottom of canvas
+          // Position the image at bottom of canvas
           img.set({
-            top: canvasHeight - (img.height * img.scaleY * 0.65), // Adjusted from 0.75 to 0.65 to show more of character
+            top: canvasHeight - (img.height * img.scaleY * 0.65), // Adjusted to show more of character
             left: canvasWidth / 2,
             originX: 'center',
             originY: 'bottom',
@@ -521,7 +522,7 @@ function App() {
     }, { crossOrigin: 'anonymous' });
   };
 
-  const handleAddImage = (state, setState, image) => {
+  const handleAddImage = (state, setState, image, category) => {
     if (state != null) {
       canvas.remove(state);
     }
@@ -612,6 +613,13 @@ function App() {
         // Make sure to set state if setState is provided
         if (setState) {
           setState(img);
+          // Update active categories for deletion
+          if (category) {
+            setActiveCategories(prev => ({
+              ...prev,
+              [category]: true
+            }));
+          }
         }
         
         canvas.add(img);
@@ -629,6 +637,63 @@ function App() {
     }, { crossOrigin: 'anonymous' });
   };
 
+  const handleRemoveCategory = (category) => {
+    // Remove the sticker from the specific category
+    switch(category) {
+      case 'headwear':
+        if (headwear) {
+          canvas.remove(headwear);
+          setHeadwear(null);
+        }
+        break;
+      case 'eyewear':
+        if (eyewear) {
+          canvas.remove(eyewear);
+          setEyewear(null);
+        }
+        break;
+      case 'mouth':
+        if (mouth) {
+          canvas.remove(mouth);
+          setMouth(null);
+        }
+        break;
+      case 'kimono':
+        if (kimono) {
+          canvas.remove(kimono);
+          setKimono(null);
+        }
+        break;
+      case 'jewelry':
+        if (jewelry) {
+          canvas.remove(jewelry);
+          setJewelry(null);
+        }
+        break;
+      case 'accessories':
+        if (accessories) {
+          canvas.remove(accessories);
+          setAccessories(null);
+        }
+        break;
+      default:
+        return;
+    }
+    
+    // Update active categories
+    setActiveCategories(prev => ({
+      ...prev,
+      [category]: false
+    }));
+    
+    canvas.renderAll();
+    
+    // Update the preview after removing the sticker
+    setTimeout(() => {
+      saveImageToDataURL();
+    }, 300);
+  };
+
   const getRandomImage = (category) => {
     const categoryItems = stickers[category];
     if (!categoryItems || categoryItems.length === 0) return null;
@@ -638,14 +703,14 @@ function App() {
 
   const generateRandom = () => {
     const randomHeadwear = getRandomImage("headwear");
-    if (randomHeadwear) handleAddImage(headwear, setHeadwear, randomHeadwear);
+    if (randomHeadwear) handleAddImage(headwear, setHeadwear, randomHeadwear, "headwear");
 
     const randomKimono = getRandomImage("kimono");
-    if (randomKimono) handleAddImage(kimono, setKimono, randomKimono);
+    if (randomKimono) handleAddImage(kimono, setKimono, randomKimono, "kimono");
 
     const randomAccessories = getRandomImage("accessories");
     if (randomAccessories)
-      handleAddImage(accessories, setAccessories, randomAccessories);
+      handleAddImage(accessories, setAccessories, randomAccessories, "accessories");
 
     const randomBackground = getRandomImage("background");
     if (randomBackground) changeBackgroundImage(randomBackground, canvas);
@@ -826,7 +891,7 @@ function App() {
         return '';
       }
       
-      // Update the preview element
+      // Update the preview element (mobile only - removed duplicates)
       const updatePreviewElement = (elementId) => {
         const previewElement = document.getElementById(elementId);
         if (previewElement) {
@@ -866,12 +931,10 @@ function App() {
         }
       };
       
-      // Update all preview elements
+      // Update only the main mobile preview (removed duplicates)
       updatePreviewElement('mobile-preview');
-      updatePreviewElement('bottom-mobile-preview');
-      // desktop preview removed
       
-      // Make sure both previews work for compatibility with any code that expects them
+      // Hidden element for compatibility with existing code
       const resultPreview = document.getElementById('result-preview');
       if (resultPreview) resultPreview.src = dataURL;
       
@@ -905,6 +968,16 @@ function App() {
         setAccessories(null);
         setBackgroundImage(null);
         
+        // Reset active categories
+        setActiveCategories({
+          headwear: false,
+          eyewear: false,
+          mouth: false,
+          kimono: false,
+          jewelry: false,
+          accessories: false
+        });
+        
         // Add main cat image with proper callback
         fabric.Image.fromURL(main_cat, (img) => {
           if (!img) {
@@ -916,7 +989,7 @@ function App() {
           
           if (isMobileView) {
             // For mobile: Scale and position according to reference image
-            const mobileScaleFactor = 1.2; // Adjusted based on reference image
+            const mobileScaleFactor = 1.2; // Reduced from 1.2 to 1.0 for smaller character
             img.scaleToWidth(canvasWidth * mobileScaleFactor);
             
             // Position the image centered horizontally and with some space at bottom
@@ -1258,7 +1331,7 @@ function App() {
                 </div>
               </div>
               
-              {/* New mobile pixel-perfect preview */}
+              {/* Single mobile pixel-perfect preview */}
               <div className="w-full mt-4 mb-4 flex justify-center">
                 <div className="w-[290px] h-[290px] relative bg-transparent rounded-xl overflow-hidden border-2 border-[#0A1F3F]" 
                      id="mobile-pixel-preview">
@@ -1270,12 +1343,12 @@ function App() {
                 </div>
               </div>
               
-              {/* Stickers section with zero spacing */}
+              {/* Stickers section with category headers and delete buttons */}
               <div className="mb-6 mt-0">
                 <ImageScroller
                   canvas={canvas}
                   categorizedImages={stickers}
-                  handleAddImage={handleAddImage}
+                  handleAddImage={(state, setState, image, category) => handleAddImage(state, setState, image, category)}
                   changeBackgroundImage={changeBackgroundImage}
                   hats={headwear}
                   kimonos={kimono}
@@ -1287,6 +1360,8 @@ function App() {
                   setWeapons={setAccessories}
                   setEyewear={setEyewear}
                   setMouth={setMouth}
+                  handleRemoveCategory={handleRemoveCategory}
+                  activeCategories={activeCategories}
                 />
               </div>
               
@@ -1368,12 +1443,8 @@ function App() {
                   />
                 )}
               </div>
-              
-              {/* Desktop preview removed */}
             </div>
           )}
-          
-          {/* Control buttons for desktop removed from here - now under sticker controls */}
           
           {/* Hidden element for compatibility with existing code */}
           <div style={{ display: 'none' }}>
@@ -1388,7 +1459,7 @@ function App() {
               <ImageScroller
                 canvas={canvas}
                 categorizedImages={stickers}
-                handleAddImage={handleAddImage}
+                handleAddImage={(state, setState, image, category) => handleAddImage(state, setState, image, category)}
                 changeBackgroundImage={changeBackgroundImage}
                 hats={headwear}
                 kimonos={kimono}
@@ -1400,6 +1471,8 @@ function App() {
                 setWeapons={setAccessories}
                 setEyewear={setEyewear}
                 setMouth={setMouth}
+                handleRemoveCategory={handleRemoveCategory}
+                activeCategories={activeCategories}
               />
               
               {/* Control buttons moved under sticker controls for desktop */}
@@ -1500,3 +1573,4 @@ function App() {
 }
 
 export default App;
+
