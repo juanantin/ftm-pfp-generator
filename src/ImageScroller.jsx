@@ -1,5 +1,5 @@
-
 import React, { useState } from "react";
+import { Trash2 } from "lucide-react";
 
 function ImageScroller({
   canvas,
@@ -16,71 +16,120 @@ function ImageScroller({
   setWeapons,
   setEyewear,
   setMouth,
+  handleRemoveCategory,
+  activeCategories
 }) {
   const [selectedCategory, setSelectedCategory] = useState("headwear");
 
-  // Handle category selection
   const handleCategorySelect = (category) => {
     setSelectedCategory(category);
+  };
+
+  const handleRemoveSticker = (category) => {
+    switch(category) {
+      case "headwear":
+        if (hats) {
+          canvas.remove(hats);
+          setHats(null);
+        }
+        break;
+      case "kimono":
+        if (kimonos) {
+          canvas.remove(kimonos);
+          setKimonos(null);
+        }
+        break;
+      case "accessories":
+        if (weapons) {
+          canvas.remove(weapons);
+          setWeapons(null);
+        }
+        break;
+      case "eyewear":
+        if (eyewear) {
+          canvas.remove(eyewear);
+          setEyewear(null);
+        }
+        break;
+      case "mouth":
+        if (mouth) {
+          canvas.remove(mouth);
+          setMouth(null);
+        }
+        break;
+    }
   };
 
   const renderStickers = () => {
     const stickers = categorizedImages[selectedCategory] || [];
     
     return (
-      <div className="flex flex-wrap gap-2 justify-center">
-        {stickers.map((sticker, index) => {
-          // Handle background images differently
-          if (selectedCategory === "background") {
+      <div className="flex flex-col w-full">
+        <h3 className="text-4xl text-white mb-4 px-2">
+          {selectedCategory === "kimono" ? "Clothing" : selectedCategory.charAt(0).toUpperCase() + selectedCategory.slice(1)}
+        </h3>
+
+        <div className="flex flex-wrap gap-2 justify-center">
+          {/* Delete button as first sticker */}
+          <div
+            className="w-[100px] h-[100px] bg-white rounded-md overflow-hidden cursor-pointer shadow-md transform hover:scale-105 transition-transform flex items-center justify-center"
+            onClick={() => handleRemoveSticker(selectedCategory)}
+          >
+            <Trash2 size={40} className="text-red-500" />
+          </div>
+
+          {/* Rest of the stickers */}
+          {stickers.map((sticker, index) => {
+            if (selectedCategory === "background") {
+              return (
+                <div
+                  key={index}
+                  className="w-[120px] h-[85px] bg-white rounded-md overflow-hidden cursor-pointer shadow-md transform hover:scale-105 transition-transform"
+                  onClick={() => changeBackgroundImage(sticker, canvas)}
+                >
+                  <img
+                    src={sticker}
+                    alt={`${selectedCategory}-${index}`}
+                    className="w-full h-full object-cover"
+                  />
+                </div>
+              );
+            }
+
+            let stateVarToUpdate, setStateVarToUpdate;
+            
+            if (selectedCategory === "headwear") {
+              stateVarToUpdate = hats;
+              setStateVarToUpdate = setHats;
+            } else if (selectedCategory === "kimono") {
+              stateVarToUpdate = kimonos;
+              setStateVarToUpdate = setKimonos;
+            } else if (selectedCategory === "accessories") {
+              stateVarToUpdate = weapons;
+              setStateVarToUpdate = setWeapons;
+            } else if (selectedCategory === "eyewear") {
+              stateVarToUpdate = eyewear;
+              setStateVarToUpdate = setEyewear;
+            } else if (selectedCategory === "mouth") {
+              stateVarToUpdate = mouth;
+              setStateVarToUpdate = setMouth;
+            }
+            
             return (
               <div
                 key={index}
-                className="w-[120px] h-[85px] bg-white rounded-md overflow-hidden cursor-pointer shadow-md transform hover:scale-105 transition-transform"
-                onClick={() => changeBackgroundImage(sticker, canvas)}
+                className="w-[100px] h-[100px] bg-white rounded-md overflow-hidden cursor-pointer shadow-md transform hover:scale-105 transition-transform"
+                onClick={() => handleAddImage(stateVarToUpdate, setStateVarToUpdate, sticker, selectedCategory)}
               >
                 <img
                   src={sticker}
                   alt={`${selectedCategory}-${index}`}
-                  className="w-full h-full object-cover"
+                  className="w-full h-full object-cover object-center"
                 />
               </div>
             );
-          }
-
-          // For non-background stickers
-          let stateVarToUpdate, setStateVarToUpdate;
-          
-          if (selectedCategory === "headwear") {
-            stateVarToUpdate = hats;
-            setStateVarToUpdate = setHats;
-          } else if (selectedCategory === "Clothing") {
-            stateVarToUpdate = kimonos;
-            setStateVarToUpdate = setKimonos;
-          } else if (selectedCategory === "accessories") {
-            stateVarToUpdate = weapons;
-            setStateVarToUpdate = setWeapons;
-          } else if (selectedCategory === "eyewear") {
-            stateVarToUpdate = eyewear;
-            setStateVarToUpdate = setEyewear; 
-          } else if (selectedCategory === "mouth") {
-            stateVarToUpdate = mouth;
-            setStateVarToUpdate = setMouth;
-          }
-          
-          return (
-            <div
-              key={index}
-              className="w-[100px] h-[100px] bg-white rounded-md overflow-hidden cursor-pointer shadow-md transform hover:scale-105 transition-transform"
-              onClick={() => handleAddImage(stateVarToUpdate, setStateVarToUpdate, sticker)}
-            >
-              <img
-                src={sticker}
-                alt={`${selectedCategory}-${index}`}
-                className="w-full h-full object-cover object-center"
-              />
-            </div>
-          );
-        })}
+          })}
+        </div>
       </div>
     );
   };
