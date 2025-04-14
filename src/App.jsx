@@ -69,8 +69,10 @@ function App() {
   }, [canvas, selectedObject, isMobile]);
 
   const changeBackgroundImage = (backgroundImage, canvas) => {
-    // Store current objects
-    const currentObjects = canvas.getObjects();
+    if (!canvas) return;
+    
+    // Store current objects to restore after background change
+    const currentObjects = [...canvas.getObjects()]; 
     
     // Find the main cat image specifically (the base character)
     const mainCatImage = currentObjects.find(obj => 
@@ -80,8 +82,6 @@ function App() {
     
     // Store main cat position and scale if it exists
     let mainCatProps = null;
-    const isMobileView = window.innerWidth <= 768;
-    
     if (mainCatImage) {
       mainCatProps = {
         scaleX: mainCatImage.scaleX,
@@ -91,10 +91,8 @@ function App() {
         originX: mainCatImage.originX || 'center',
         originY: mainCatImage.originY || 'bottom'
       };
-      
-      console.log("Stored main cat properties before background change", mainCatProps);
     }
-    
+
     fabric.Image.fromURL(backgroundImage, (img) => {
       // Calculate the new dimensions respecting the maximum width of 550px
       let newWidth = img.width;
@@ -106,6 +104,10 @@ function App() {
         newWidth = maxWidth;
         newHeight = (maxWidth / img.width) * img.height;
       }
+
+      // Temporarily store the current canvas dimensions
+      const oldWidth = canvas.width;
+      const oldHeight = canvas.height;
 
       canvas.setWidth(newWidth);
       canvas.setHeight(400);
@@ -121,44 +123,39 @@ function App() {
         }
       );
       
-      // If main character was found, restore its properties
+      // If main character was found, restore its properties after background change
       if (mainCatProps) {
-        // Wait for background to load, then restore main cat position
-        setTimeout(() => {
-          const objects = canvas.getObjects();
-          // Find the main cat by checking if it's non-selectable
-          const mainCat = objects.find(obj => 
-            obj.selectable === false && 
-            (!obj._element || !obj._element.src || !obj._element.src.includes("stickers"))
-          );
-          
-          if (mainCat) {
-            console.log("Restoring main cat properties after background change");
-            
-            if (isMobileView) {
-              // For mobile: Make sure the main cat stays aligned to the bottom
-              // This is crucial to fix the issue where the model moves up on background change
-              mainCat.set({
-                left: canvas.width / 2, // Center horizontally
-                top: canvas.height,     // Align with bottom
-                originX: 'center',
-                originY: 'bottom'
-              });
-            } else {
-              // For desktop: Simply restore previous properties (working fine)
-              mainCat.set({
-                scaleX: mainCatProps.scaleX,
-                scaleY: mainCatProps.scaleY,
-                left: mainCatProps.left,
-                top: mainCatProps.top,
-                originX: mainCatProps.originX,
-                originY: mainCatProps.originY
-              });
-            }
-            
-            canvas.renderAll();
+        // Find the main cat again after background change
+        const objects = canvas.getObjects();
+        const mainCat = objects.find(obj => 
+          obj.selectable === false && 
+          (!obj._element || !obj._element.src || !obj._element.src.includes("stickers"))
+        );
+        
+        if (mainCat) {
+          // On mobile, ensure the main cat stays aligned with the bottom regardless of background
+          if (isMobile) {
+            mainCat.set({
+              left: canvas.width / 2, // Center horizontally
+              top: canvas.height, // Align with bottom
+              originX: 'center',
+              originY: 'bottom',
+              scaleX: mainCatProps.scaleX,
+              scaleY: mainCatProps.scaleY
+            });
+          } else {
+            // For desktop, just restore previous position
+            mainCat.set({
+              left: mainCatProps.left,
+              top: mainCatProps.top,
+              originX: mainCatProps.originX,
+              originY: mainCatProps.originY,
+              scaleX: mainCatProps.scaleX,
+              scaleY: mainCatProps.scaleY
+            });
           }
-        }, 100);
+          canvas.renderAll();
+        }
       }
     });
   };
@@ -252,14 +249,30 @@ function App() {
   const addMainImg = (canvas, image) => {
     fabric.Image.fromURL(image, (img) => {
       const canvasWidth = canvas.getWidth();
+      const canvasHeight = canvas.getHeight();
 
-      img.scaleToWidth(canvasWidth);
-      img.scaleToHeight(img.height * (canvasWidth / img.width));
-      img.set({
-        selectable: false, // Disable selection
-      });
+      // Apply different scaling and positioning based on device
+      if (isMobile) {
+        // For mobile: Make the image slightly larger and ensure it's aligned with bottom
+        img.scaleToWidth(canvasWidth * 1.2);
+        img.set({
+          left: canvasWidth / 2,
+          top: canvasHeight, // Position at the bottom edge
+          originX: 'center',
+          originY: 'bottom', // Anchor to the bottom
+          selectable: false
+        });
+      } else {
+        // For desktop: Keep original scaling
+        img.scaleToWidth(canvasWidth);
+        img.scaleToHeight(img.height * (canvasWidth / img.width));
+        img.set({
+          selectable: false
+        });
+      }
 
       canvas.add(img);
+      canvas.renderAll();
     });
   };
 
@@ -386,6 +399,13 @@ function App() {
 
     setCanvas(newCanvas);
     addMainImg(newCanvas, main_cat);
+
+    // Reset sticker states
+    setHats(null);
+    setKimonos(null);
+    setWeapons(null);
+    setEyewear(null);
+    setMouth(null);
 
     // changeBackgroundImage(bg, newCanvas);
   };

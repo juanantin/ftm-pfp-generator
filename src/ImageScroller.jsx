@@ -26,55 +26,28 @@ function ImageScroller({
 
   // Handle sticker removal for the selected category
   const handleRemoveSticker = (category) => {
-    // Ensure the canvas object is valid before attempting to remove items
-    if (!canvas) {
-      console.error("Canvas is not available for removing stickers");
-      return;
-    }
-    
-    try {
-      if (category === "headwear" && setHats) {
-        canvas.remove(hats);
-        setHats(null);
-      } else if (category === "kimono" && setKimonos) {
-        // Fixed: changed from "Clothing" to "kimono" to match App.jsx state handling
-        canvas.remove(kimonos);
-        setKimonos(null);
-      } else if (category === "accessories" && setWeapons) {
-        canvas.remove(weapons);
-        setWeapons(null);
-      } else if (category === "eyewear" && setEyewear) {
-        canvas.remove(eyewear);
-        setEyewear(null);
-      } else if (category === "mouth" && setMouth) {
-        canvas.remove(mouth);
-        setMouth(null);
-      } else if (category === "background") {
-        // Add background removal functionality
-        if (canvas) {
-          canvas.setBackgroundImage(null, canvas.renderAll.bind(canvas));
-          canvas.setBackgroundColor("#000", canvas.renderAll.bind(canvas));
-          
-          // Force canvas to render after background removal
-          setTimeout(() => {
-            canvas.renderAll();
-          }, 100);
-        }
+    if (category === "headwear" && setHats) {
+      canvas.remove(hats);
+      setHats(null);
+    } else if (category === "kimono" && setKimonos) {
+      // Fixed: changed from "Clothing" to "kimono" to match App.jsx state handling
+      canvas.remove(kimonos);
+      setKimonos(null);
+    } else if (category === "accessories" && setWeapons) {
+      canvas.remove(weapons);
+      setWeapons(null);
+    } else if (category === "eyewear" && setEyewear) {
+      canvas.remove(eyewear);
+      setEyewear(null);
+    } else if (category === "mouth" && setMouth) {
+      canvas.remove(mouth);
+      setMouth(null);
+    } else if (category === "background") {
+      // Add background removal functionality
+      if (canvas) {
+        canvas.setBackgroundImage(null, canvas.renderAll.bind(canvas));
+        canvas.setBackgroundColor("#000", canvas.renderAll.bind(canvas));
       }
-      
-      // Force canvas to render after any deletion
-      canvas.renderAll();
-      
-      // Force an additional update after a slight delay to ensure UI is updated
-      setTimeout(() => {
-        if (canvas && canvas.renderAll) {
-          canvas.renderAll();
-        }
-      }, 200);
-      
-      console.log(`Removed sticker from category: ${category}`);
-    } catch (error) {
-      console.error("Error removing sticker:", error);
     }
   };
 
@@ -83,7 +56,7 @@ function ImageScroller({
     
     return (
       <div className="flex flex-wrap gap-2 justify-center">
-        {/* Delete card at the beginning of each category - changed to dark red */}
+        {/* Delete card at the beginning of each category - dark red */}
         <div
           className="w-[100px] h-[100px] bg-[#8B0000] rounded-md overflow-hidden cursor-pointer shadow-md transform hover:scale-105 transition-transform flex items-center justify-center"
           onClick={() => handleRemoveSticker(selectedCategory)}
