@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from "react";
 import { fabric } from "fabric";
 import logo from "./assets/logo.png";
-import ImageScroller from "./ImageScroller";
+import AssetTabs from "./components/AssetTabs";
 import bg from "./assets/bg.png";
 import main_cat from "./assets/main_cat.png";
 
@@ -186,12 +186,9 @@ function App() {
   const addMainImg = (canvas, image) => {
     fabric.Image.fromURL(image, (img) => {
       const canvasWidth = canvas.getWidth();
-      
-      // Set a larger width for the base character (adjusted from the original)
-      const targetWidth = canvasWidth * 0.8; // 80% of canvas width
-      
-      img.scaleToWidth(targetWidth);
-      img.scaleToHeight(img.height * (targetWidth / img.width));
+
+      img.scaleToWidth(canvasWidth);
+      img.scaleToHeight(img.height * (canvasWidth / img.width));
       img.set({
         selectable: false, // Disable selection
       });
@@ -400,13 +397,7 @@ function App() {
   // };
 
   return (
-    <div className=" min-h-screen overflow-y-auto bg-gradient-to-r from-mainRed to-darkRed">
-      {/* <img
-        className="w-full h-full absolute top-0 left-0 opacity-[0.4] object-cover md:object-cover"
-        src={isMobile ? all_bg_mobile : all_bg}
-        alt=""
-      /> */}
-
+    <div className="min-h-screen overflow-y-auto bg-gradient-to-r from-mainRed to-darkRed">
       <div
         onClick={() => (window.location.href = "https://catownkimono.com")}
         className="flex cursor-pointer absolute top-5 left-10"
@@ -583,12 +574,12 @@ function App() {
           </div> */}
         </div>
 
-        <div className="mt-5 w-full lg:w-[60%] px-5 lg:pl-0 ">
+        <div className="mt-5 w-full lg:w-[60%] px-5 lg:pl-0">
           <div className="flex-1">
-            <h1 className="text-4xl text-center text-white mt-10">
+            <h1 className="text-4xl text-center text-white mt-10 mb-6">
               CLICK TO ADD STICKER
             </h1>
-            <ImageScroller
+            <AssetTabs
               canvas={canvas}
               categorizedImages={stickers}
               handleAddImage={handleAddImage}
