@@ -26,6 +26,10 @@ function ImageScroller({
 
   // Handle sticker removal for the selected category
   const handleRemoveSticker = (category) => {
+    if (!canvas) return; // Guard against null canvas
+    
+    console.log("Removing sticker for category:", category);
+    
     if (category === "headwear" && setHats) {
       canvas.remove(hats);
       setHats(null);
@@ -46,13 +50,25 @@ function ImageScroller({
       // Add background removal functionality
       if (canvas) {
         canvas.setBackgroundImage(null, canvas.renderAll.bind(canvas));
-        canvas.setBackgroundColor("#000", canvas.renderAll.bind(canvas));
+        canvas.setBackgroundColor("#fff", canvas.renderAll.bind(canvas));
       }
+    }
+    
+    // Ensure the canvas is re-rendered
+    if (canvas) {
+      canvas.renderAll();
     }
   };
 
   const renderStickers = () => {
+    // Guard against null categorizedImages
+    if (!categorizedImages) {
+      console.log("No categorized images available");
+      return <div>Loading stickers...</div>;
+    }
+    
     const stickers = categorizedImages[selectedCategory] || [];
+    console.log(`Rendering ${stickers.length} stickers for category ${selectedCategory}`);
     
     return (
       <div className="flex flex-wrap gap-2 justify-center">
@@ -82,6 +98,10 @@ function ImageScroller({
                   src={sticker}
                   alt={`${selectedCategory}-${index}`}
                   className="w-full h-full object-cover"
+                  onError={(e) => {
+                    console.error("Failed to load image:", sticker);
+                    e.target.src = "https://via.placeholder.com/120x85?text=Error";
+                  }}
                 />
               </div>
             );
@@ -118,6 +138,10 @@ function ImageScroller({
                 src={sticker}
                 alt={`${selectedCategory}-${index}`}
                 className="w-full h-full object-cover object-center"
+                onError={(e) => {
+                  console.error("Failed to load image:", sticker);
+                  e.target.src = "https://via.placeholder.com/100x100?text=Error";
+                }}
               />
             </div>
           );

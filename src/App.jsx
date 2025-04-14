@@ -17,19 +17,14 @@ function App() {
   const [backgroundImage, setBackgroundImage] = useState(null);
   const [isMobile, setIsMobile] = useState(false);
   const [hats, setHats] = useState(null);
-  // const [faces, setFaces] = useState(null);
   const [kimonos, setKimonos] = useState(null);
-  // const [pants, Pants] = useState(null);
   const [weapons, setWeapons] = useState(null);
   const [eyewear, setEyewear] = useState(null);
   const [mouth, setMouth] = useState(null);
 
-  // const [isAtFront, setIsAtFront] = useState(false);
-  // const [isAtBack, setIsAtBack] = useState(false);
-
   useEffect(() => {
     const handleResize = () => {
-      setIsMobile(window.innerWidth <= 768); // You can adjust this threshold as needed
+      setIsMobile(window.innerWidth <= 768);
     };
 
     // Initial check
@@ -60,16 +55,23 @@ function App() {
         updateImagePosition();
       };
 
-      canvas.on("object:modified", objectModifiedHandler);
-
-      return () => {
-        canvas.off("object:modified", objectModifiedHandler);
-      };
+      if (canvas) {
+        canvas.on("object:modified", objectModifiedHandler);
+  
+        return () => {
+          canvas.off("object:modified", objectModifiedHandler);
+        };
+      }
     }
   }, [canvas, selectedObject, isMobile]);
 
   const changeBackgroundImage = (backgroundImage, canvas) => {
-    if (!canvas) return;
+    if (!canvas) {
+      console.error("Canvas is not available");
+      return;
+    }
+    
+    console.log("Changing background image");
     
     // Store current objects to restore after background change
     const currentObjects = [...canvas.getObjects()]; 
@@ -91,10 +93,11 @@ function App() {
         originX: mainCatImage.originX || 'center',
         originY: mainCatImage.originY || 'bottom'
       };
+      console.log("Stored main cat properties before background change", mainCatProps);
     }
 
     fabric.Image.fromURL(backgroundImage, (img) => {
-      // Calculate the new dimensions respecting the maximum width of 550px
+      // Calculate the new dimensions respecting the maximum width
       let newWidth = img.width;
       let newHeight = img.height;
 
@@ -104,10 +107,6 @@ function App() {
         newWidth = maxWidth;
         newHeight = (maxWidth / img.width) * img.height;
       }
-
-      // Temporarily store the current canvas dimensions
-      const oldWidth = canvas.width;
-      const oldHeight = canvas.height;
 
       canvas.setWidth(newWidth);
       canvas.setHeight(400);
@@ -125,6 +124,8 @@ function App() {
       
       // If main character was found, restore its properties after background change
       if (mainCatProps) {
+        console.log("Restoring main cat properties after background change");
+        
         // Find the main cat again after background change
         const objects = canvas.getObjects();
         const mainCat = objects.find(obj => 
@@ -155,8 +156,11 @@ function App() {
             });
           }
           canvas.renderAll();
+          console.log("Main cat properties restored successfully");
         }
       }
+    }, (err) => {
+      console.error("Error loading background image:", err);
     });
   };
 
@@ -172,37 +176,45 @@ function App() {
 
   useEffect(() => {
     const importStickers = async () => {
-      // Import images from all subfolders in the 'assets/stickers' directory
-      const imageContext = import.meta.glob(
-        "./assets/stickers/*/*.(png|jpg|jpeg|svg)"
-      );
-
-      // Object to store categorized images
-      const categorizedImages = {};
-
-      // Process each import promise
-      await Promise.all(
-        Object.entries(imageContext).map(async ([path, importPromise]) => {
-          const imageModule = await importPromise();
-          const imagePath = imageModule.default;
-
-          // Extract the category (subfolder name) from the path
-          const pathParts = path.split("/");
-          const folderName = pathParts[pathParts.length - 2];
-          const category = folderName.split(" ").slice(1).join(" ");
-
-          // Initialize the array for the category if it doesn't exist
-          if (!categorizedImages[category]) {
-            categorizedImages[category] = [];
-          }
-
-          // Add the image path to the appropriate category
-          categorizedImages[category].push(imagePath);
-        })
-      );
-
-      // Use the categorized images as needed
-      setStickers(categorizedImages);
+      try {
+        // Import images from all subfolders in the 'assets/stickers' directory
+        const imageContext = import.meta.glob(
+          "./assets/stickers/*/*.(png|jpg|jpeg|svg)"
+        );
+  
+        // Object to store categorized images
+        const categorizedImages = {};
+  
+        // Process each import promise
+        await Promise.all(
+          Object.entries(imageContext).map(async ([path, importPromise]) => {
+            try {
+              const imageModule = await importPromise();
+              const imagePath = imageModule.default;
+  
+              // Extract the category (subfolder name) from the path
+              const pathParts = path.split("/");
+              const folderName = pathParts[pathParts.length - 2];
+              const category = folderName.split(" ").slice(1).join(" ");
+  
+              // Initialize the array for the category if it doesn't exist
+              if (!categorizedImages[category]) {
+                categorizedImages[category] = [];
+              }
+  
+              // Add the image path to the appropriate category
+              categorizedImages[category].push(imagePath);
+            } catch (err) {
+              console.error("Error importing image:", path, err);
+            }
+          })
+        );
+  
+        // Use the categorized images as needed
+        setStickers(categorizedImages);
+      } catch (err) {
+        console.error("Error importing stickers:", err);
+      }
     };
 
     importStickers();
@@ -229,17 +241,8 @@ function App() {
       setSelectedObject(null);
     });
 
-    // fabric.Image.fromURL(bgImg, (img) => {
-    //   newCanvas.setBackgroundImage(img, newCanvas.renderAll.bind(newCanvas), {
-    //     scaleX: newCanvas.width / img.width,
-    //     scaleY: newCanvas.height / img.height,
-    //   });
-    // });
-
-    // changeBackgroundImage(bg, newCanvas);
-    // handleAddImage(null, null, logo);
-
     addMainImg(newCanvas, main_cat);
+    console.log("Updating preview after adding main image");
 
     return () => {
       newCanvas.dispose();
@@ -247,13 +250,18 @@ function App() {
   }, []);
 
   const addMainImg = (canvas, image) => {
+    if (!canvas) {
+      console.error("Canvas is not available");
+      return;
+    }
+    
     fabric.Image.fromURL(image, (img) => {
       const canvasWidth = canvas.getWidth();
       const canvasHeight = canvas.getHeight();
 
       // Apply different scaling and positioning based on device
       if (isMobile) {
-        // For mobile: Make the image slightly larger and ensure it's aligned with bottom
+        // For mobile: Make sure it's aligned with bottom
         img.scaleToWidth(canvasWidth * 1.2);
         img.set({
           left: canvasWidth / 2,
@@ -265,7 +273,6 @@ function App() {
       } else {
         // For desktop: Keep original scaling
         img.scaleToWidth(canvasWidth);
-        img.scaleToHeight(img.height * (canvasWidth / img.width));
         img.set({
           selectable: false
         });
@@ -273,13 +280,21 @@ function App() {
 
       canvas.add(img);
       canvas.renderAll();
+    }, (err) => {
+      console.error("Error loading main image:", err);
     });
   };
 
   const handleAddImage = (state, setState, image) => {
+    if (!canvas) {
+      console.error("Canvas is not available");
+      return;
+    }
+    
     if (state != null) {
       canvas.remove(state);
     }
+    
     fabric.Image.fromURL(image, (img) => {
       const canvasWidth = canvas.getWidth();
 
@@ -290,8 +305,10 @@ function App() {
       });
 
       setState(img);
-
       canvas.add(img);
+      canvas.renderAll();
+    }, (err) => {
+      console.error("Error loading image:", err);
     });
   };
 
@@ -384,30 +401,36 @@ function App() {
   };
 
   const handleCanvasClear = () => {
-    // canvas.clear();
     const newCanvas = new fabric.Canvas(canvasRef.current, {
       width: window.innerWidth <= 768 ? 400 : 400,
       height: window.innerWidth <= 768 ? 400 : 400,
       backgroundColor: "#fff",
     });
 
-    // const newCanvas = new fabric.Canvas(canvasRef.current, {
-    //   width: 300,
-    //   height: 300,
-    //   backgroundColor: "#fff",
-    // });
-
     setCanvas(newCanvas);
-    addMainImg(newCanvas, main_cat);
-
-    // Reset sticker states
+    
+    // Reset all sticker states
     setHats(null);
     setKimonos(null);
     setWeapons(null);
     setEyewear(null);
     setMouth(null);
+    
+    addMainImg(newCanvas, main_cat);
 
-    // changeBackgroundImage(bg, newCanvas);
+    // Event listener for object selection
+    newCanvas.on("selection:created", (e) => {
+      setSelectedObject(e.selected[0]);
+    });
+
+    newCanvas.on("object:modified", (e) => {
+      setSelectedObject(e.target);
+    });
+
+    // Event listener for object deselection
+    newCanvas.on("selection:cleared", () => {
+      setSelectedObject(null);
+    });
   };
 
   const handleDelete = () => {
@@ -483,7 +506,7 @@ function App() {
   // };
 
   return (
-    <div className=" min-h-screen overflow-y-auto bg-gradient-to-r from-mainRed to-darkRed">
+    <div className="min-h-screen overflow-y-auto bg-gradient-to-r from-mainRed to-darkRed">
       {/* <img
         className="w-full h-full absolute top-0 left-0 opacity-[0.4] object-cover md:object-cover"
         src={isMobile ? all_bg_mobile : all_bg}
@@ -564,6 +587,7 @@ function App() {
               />
             )}
           </div>
+          
           <div className="flex flex-wrap w-full gap-5 justify-center">
             <div
               onClick={() => stickerImgInputRef.current.click()}
@@ -620,50 +644,6 @@ function App() {
               <div className="absolute top-0 left-0 w-full h-full bg-black opacity-0 z-0 transition duration-300 ease-in-out group-hover:opacity-50"></div>
             </div>
           </div>
-
-          {/* <div className="flex flex-wrap w-full mt-5 gap-5 justify-center">
-            <div
-              onClick={bringForward}
-              // disabled={isAtFront}
-              className="border-4 cursor-pointer border-black bg-white text-black px-5 py-2   rounded-lg flex justify-center items-center overflow-hidden relative group transition-all duration-300 ease-in-out transform hover:scale-105"
-            >
-              <p className="text-black text-center text-2xl tracking-wider font-medium relative">
-                BRING FORWARD
-              </p>
-              <div className="absolute top-0 left-0 w-full h-full bg-black opacity-0 z-0 transition duration-300 ease-in-out group-hover:opacity-50"></div>
-            </div>
-            <div
-              onClick={bringToFront}
-              // disabled={isAtFront}
-              className="border-4 cursor-pointer border-black bg-white text-black px-5 py-2   rounded-lg flex justify-center items-center overflow-hidden relative group transition-all duration-300 ease-in-out transform hover:scale-105"
-            >
-              <p className="text-black text-center text-2xl tracking-wider font-medium relative">
-                BRING TO FRONT
-              </p>
-              <div className="absolute top-0 left-0 w-full h-full bg-black opacity-0 z-0 transition duration-300 ease-in-out group-hover:opacity-50"></div>
-            </div>
-
-            <div
-              onClick={sendBackward}
-              // disabled={isAtBack}
-              className="border-4 cursor-pointer border-black bg-white text-black px-5 py-2   rounded-lg flex justify-center items-center overflow-hidden relative group transition-all duration-300 ease-in-out transform hover:scale-105"
-            >
-              <p className="text-black text-center text-2xl tracking-wider font-medium relative">
-                SEND BACKWARD
-              </p>
-              <div className="absolute top-0 left-0 w-full h-full bg-black opacity-0 z-0 transition duration-300 ease-in-out group-hover:opacity-50"></div>
-            </div>
-            <div
-              onClick={sendToBack}
-              // disabled={isAtBack}
-              className="border-4 cursor-pointer border-black  bg-white text-black px-5 py-2 rounded-lg flex justify-center items-center overflow-hidden relative group transition-all duration-300 ease-in-out transform hover:scale-105"
-            >
-              <p className="text-black text-center text-2xl tracking-wider font-medium relative">
-                SEND TO BACK
-              </p>
-              <div className="absolute top-0 left-0 w-full h-full bg-black opacity-0 z-0 transition duration-300 ease-in-out group-hover:opacity-50"></div>
-            </div>
-          </div> */}
         </div>
 
         <div className="mt-5 w-full lg:w-[60%] px-5 lg:pl-0 ">
