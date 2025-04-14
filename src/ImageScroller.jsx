@@ -69,7 +69,7 @@ function ImageScroller({
       <div className="flex flex-col w-full">
         {/* Category header */}
         <div className="flex items-center mb-6 px-2">
-          <h3 className="text-4xl text-white font-bold">
+          <h3 className="text-3xl text-white font-bold">
             {selectedCategory === "kimono" ? "Clothing" : selectedCategory.charAt(0).toUpperCase() + selectedCategory.slice(1)}
           </h3>
         </div>
