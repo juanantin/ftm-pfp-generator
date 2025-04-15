@@ -1,11 +1,9 @@
 import { useState, useEffect, useRef } from "react";
 import { fabric } from "fabric";
 import ImageScroller from "./ImageScroller";
-// Fix the import path - use relative path from src to public
 import baseCharacter from "../public/lovable-uploads/c1f10ba7-7878-44be-9be8-56715615e69f.png";
-import logo from "./assets/logo.png";
-import bg from "./assets/bg.png";
-import main_cat from "./assets/main_cat.png";
+import fantomLogo from "../public/lovable-uploads/e562fef2-b876-4191-9dd8-82c2e04581ec.png";
+import roundLogo from "../public/lovable-uploads/be6d606d-e20d-47a4-a906-4f6f02bd8668.png";
 
 function App() {
   const [stickers, setStickers] = useState({});
@@ -302,13 +300,15 @@ function App() {
     const randomHats = getRandomImage("headwear");
     const randomKimonos = getRandomImage("kimono");
     const randomWeapons = getRandomImage("accessory");
+    const randomEyewear = getRandomImage("eyewear");
+    const randomMouth = getRandomImage("mouth");
     const randomBackground = getRandomImage("background");
 
     if (randomHats) handleAddImage(hats, setHats, randomHats);
     if (randomKimonos) handleAddImage(kimonos, setKimonos, randomKimonos);
-    // if (randomPants) handleAddImage(pants, setPants, randomPants);
     if (randomWeapons) handleAddImage(weapons, setWeapons, randomWeapons);
-
+    if (randomEyewear) handleAddImage(eyewear, setEyewear, randomEyewear);
+    if (randomMouth) handleAddImage(mouth, setMouth, randomMouth);
     if (randomBackground) changeBackgroundImage(randomBackground, canvas);
   };
 
@@ -480,25 +480,22 @@ function App() {
 
   return (
     <div className="min-h-screen overflow-y-auto bg-[#050b1f]">
-      <div
-        onClick={() => (window.location.href = "https://catownkimono.com")}
-        className="flex cursor-pointer absolute top-5 left-10"
-      >
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          width="32"
-          height="32"
-          viewBox="0 0 24 24"
-        >
-          <path
-            fill="#fff"
-            d="m6.921 12.5l5.793 5.792L12 19l-7-7l7-7l.714.708L6.92 11.5H19v1z"
-          />
-        </svg>
-        <h1 className="text-3xl text-white">Home</h1>
+      {/* Remove old title and add Fantom logo image */}
+      <div className="flex items-center justify-center py-5">
+        <img src={fantomLogo} alt="Fantom PFP Generator" className="w-[500px] h-auto" />
       </div>
 
-      <div className="w-full flex py-10 flex-col lg:flex-row justify-center">
+      {/* Update home link with round logo */}
+      <div className="fixed top-5 left-5 z-10">
+        <img
+          src={roundLogo}
+          alt="Home"
+          onClick={() => window.location.href = "https://catownkimono.com"}
+          className="w-12 h-12 cursor-pointer hover:opacity-80 transition-opacity"
+        />
+      </div>
+
+      <div className="w-full flex py-5 flex-col lg:flex-row justify-center">
         <input
           type="file"
           accept="image/*"
@@ -514,13 +511,8 @@ function App() {
           ref={stickerImgInputRef}
           onChange={handleAddSticker}
         />
-        <div className="flex-1 px-5">
-          <div className="flex items-center justify-center gap-5 md:gap-10 mb-5">
-            <h1 className="text-5xl md:text-7xl text-white font-bold content-font">
-              Fantom PFP Generator
-            </h1>
-          </div>
 
+        <div className="flex-1 px-5">
           <div
             className={`mx-auto mb-7 bg-transparent rounded-xl relative
             ${isMobile ? "canvas-mobile" : "w-[400px]"}
@@ -547,7 +539,7 @@ function App() {
 
           <div className="mt-5 w-full lg:w-[60%] px-5 lg:pl-0">
             <div className="flex-1">
-              <h1 className="text-4xl text-center text-white mt-10 content-font">
+              <h1 className="text-2xl text-center text-white mt-5 content-font">
                 CLICK TO ADD STICKER
               </h1>
               <ImageScroller
@@ -577,12 +569,6 @@ function App() {
               UPLOAD STICKER
             </button>
             <button
-              onClick={() => bgImgInputRef.current.click()}
-              className="border-2 content-font cursor-pointer border-white bg-transparent text-white px-4 py-2 rounded-lg text-base hover:bg-white hover:text-black transition-all duration-300"
-            >
-              UPLOAD BACKGROUND
-            </button>
-            <button
               onClick={handleAddText}
               className="border-2 content-font cursor-pointer border-white bg-transparent text-white px-4 py-2 rounded-lg text-base hover:bg-white hover:text-black transition-all duration-300"
             >
@@ -608,6 +594,15 @@ function App() {
             </button>
           </div>
         </div>
+      </div>
+
+      {/* Add round logo at the bottom */}
+      <div className="flex justify-center pb-8">
+        <img
+          src={roundLogo}
+          alt="Logo"
+          className="w-16 h-16"
+        />
       </div>
     </div>
   );

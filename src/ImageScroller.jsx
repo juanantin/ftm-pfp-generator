@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 
 function ImageScroller({
@@ -18,6 +17,12 @@ function ImageScroller({
   setMouth,
 }) {
   const [selectedCategory, setSelectedCategory] = useState("headwear");
+
+  // Function to get ordered categories
+  const getOrderedCategories = (categories) => {
+    const order = ["headwear", "eyewear", "mouth", "kimono", "accessory", "background"];
+    return order.filter(cat => categories.includes(cat));
+  };
 
   // Handle category selection
   const handleCategorySelect = (category) => {
@@ -130,7 +135,7 @@ function ImageScroller({
     <div>
       {/* Category selector */}
       <div className="flex flex-wrap justify-center gap-3 mb-4 mt-2">
-        {Object.keys(categorizedImages || {}).map((category) => (
+        {getOrderedCategories(Object.keys(categorizedImages || {})).map((category) => (
           <div
             key={category}
             onClick={() => handleCategorySelect(category)}
