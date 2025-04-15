@@ -10,7 +10,8 @@ export default defineConfig(({ mode }) => ({
     react(),
     mode === 'development' && componentTagger(),
   ].filter(Boolean),
-  base: mode === 'production' ? '/ftm-pfp/' : '/',
+  // Use conditional base path depending on the environment
+  base: process.env.VERCEL ? '/' : mode === 'production' ? '/ftm-pfp/' : '/',
   server: {
     host: "::",
     port: 8080

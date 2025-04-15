@@ -5,7 +5,7 @@ import App from './App.jsx'
 import './index.css'
 import './App.css'
 
-// Get the current base path from the environment or default to '/'
+// Get the current base path from the environment
 const basePath = import.meta.env.BASE_URL || '/'
 console.log('Base path:', basePath)
 
