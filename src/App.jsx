@@ -4,7 +4,6 @@ import logo from "./assets/logo.png";
 import ImageScroller from "./ImageScroller";
 import bg from "./assets/bg.png";
 import main_cat from "./assets/main_cat.png";
-import TextDialog from "./TextDialog";
 
 function App() {
   const [stickers, setStickers] = useState({});
@@ -18,11 +17,10 @@ function App() {
   const [backgroundImage, setBackgroundImage] = useState(null);
   const [isMobile, setIsMobile] = useState(false);
   const [hats, setHats] = useState(null);
-  // const [faces, setFaces] = useState(null);
+  const [eyewear, setEyewear] = useState(null);
+  const [mouth, setMouth] = useState(null);
   const [kimonos, setKimonos] = useState(null);
-  // const [pants, Pants] = useState(null);
   const [weapons, setWeapons] = useState(null);
-  const [isTextModalOpen, setIsTextModalOpen] = useState(false);
 
   // const [isAtFront, setIsAtFront] = useState(false);
   // const [isAtBack, setIsAtBack] = useState(false);
@@ -336,12 +334,16 @@ function App() {
     }
   };
 
-  const handleAddText = (text, color) => {
+  const handleAddText = () => {
+    const text = prompt("Enter your text:");
+
     if (text) {
       const newText = new fabric.Text(text, {
-        fontFamily: "Finger Paint",
+        fontFamily: "Tahoma",
         fontSize: 20,
-        fill: color,
+        fill: "#fff",
+        stroke: "#000",
+        fontWeight: "bold",
         left: 100,
         top: 100,
         charSpacing: 1,
@@ -351,68 +353,8 @@ function App() {
     }
   };
 
-  const openTextModal = () => {
-    setIsTextModalOpen(true);
-  };
-
-  const closeTextModal = () => {
-    setIsTextModalOpen(false);
-  };
-
-  const onTextSubmit = (text, color) => {
-    handleAddText(text, color);
-    closeTextModal();
-  };
-
-  // useEffect(() => {
-  //   if (selectedObject && canvas) {
-  //     const isObjectInFront =
-  //       selectedObject === canvas.getObjects()[canvas.getObjects().length - 1];
-  //     const isObjectInBack = selectedObject === canvas.getObjects()[0];
-  //     setIsAtFront(isObjectInFront);
-  //     setIsAtBack(isObjectInBack);
-  //   } else {
-  //     setIsAtFront(false);
-  //     setIsAtBack(false);
-  //   }
-  // }, [selectedObject, canvas]);
-
-  // const bringForward = () => {
-  //   if (selectedObject) {
-  //     canvas.bringForward(selectedObject);
-  //     canvas.renderAll();
-  //   }
-  // };
-
-  // const bringToFront = () => {
-  //   if (selectedObject) {
-  //     canvas.bringToFront(selectedObject);
-  //     canvas.renderAll();
-  //   }
-  // };
-
-  // const sendBackward = () => {
-  //   if (selectedObject) {
-  //     canvas.sendBackwards(selectedObject);
-  //     canvas.renderAll();
-  //   }
-  // };
-
-  // const sendToBack = (object) => {
-  //   if (object) {
-  //     canvas.sendToBack(selectedObject);
-  //     canvas.renderAll();
-  //   }
-  // };
-
   return (
     <div className=" min-h-screen overflow-y-auto bg-gradient-to-r from-mainRed to-darkRed">
-      {/* <img
-        className="w-full h-full absolute top-0 left-0 opacity-[0.4] object-cover md:object-cover"
-        src={isMobile ? all_bg_mobile : all_bg}
-        alt=""
-      /> */}
-
       <div
         onClick={() => (window.location.href = "https://catownkimono.com")}
         className="flex cursor-pointer absolute top-5 left-10"
@@ -449,12 +391,6 @@ function App() {
         />
         <div className="flex-1 px-5">
           <div className="flex item-center justify-center gap-5 md:gap-10 mb-5">
-            {/* <img
-              // onClick={() => window.open("https://madcatcoin.com/", "_blank")}
-              src={logo}
-              className="w-[100px] lg:w-[150px] h-auto cursor-pointer"
-              alt=""
-            /> */}
             <h1 className="text-white mt-5 lg:mt-0 text-5xl md:text-7xl text-center font-black ">
               Cok <br />
               Meme Generator
@@ -468,7 +404,6 @@ function App() {
           >
             <canvas
               ref={canvasRef}
-              // style={{ width: "550px", height: "550px" }}
             />
             {selectedObject && (
               <img
@@ -506,8 +441,8 @@ function App() {
               </p>
               <div className="absolute top-0 left-0 w-full h-full bg-black opacity-0 z-0 transition duration-300 ease-in-out group-hover:opacity-50"></div>
             </div>
-             <div
-              onClick={openTextModal}
+            <div
+              onClick={handleAddText}
               className="border-4 cursor-pointer border-black bg-white text-black px-5 py-2 rounded-lg flex justify-center items-center overflow-hidden relative group transition-all duration-300 ease-in-out transform hover:scale-105 w-full sm:w-full md:w-1/3 lg:w-1/3"
             >
               <p className="text-black text-center text-2xl tracking-wider font-medium relative">
@@ -543,50 +478,6 @@ function App() {
               <div className="absolute top-0 left-0 w-full h-full bg-black opacity-0 z-0 transition duration-300 ease-in-out group-hover:opacity-50"></div>
             </div>
           </div>
-
-          {/* <div className="flex flex-wrap w-full mt-5 gap-5 justify-center">
-            <div
-              onClick={bringForward}
-              // disabled={isAtFront}
-              className="border-4 cursor-pointer border-black bg-white text-black px-5 py-2   rounded-lg flex justify-center items-center overflow-hidden relative group transition-all duration-300 ease-in-out transform hover:scale-105"
-            >
-              <p className="text-black text-center text-2xl tracking-wider font-medium relative">
-                BRING FORWARD
-              </p>
-              <div className="absolute top-0 left-0 w-full h-full bg-black opacity-0 z-0 transition duration-300 ease-in-out group-hover:opacity-50"></div>
-            </div>
-            <div
-              onClick={bringToFront}
-              // disabled={isAtFront}
-              className="border-4 cursor-pointer border-black bg-white text-black px-5 py-2   rounded-lg flex justify-center items-center overflow-hidden relative group transition-all duration-300 ease-in-out transform hover:scale-105"
-            >
-              <p className="text-black text-center text-2xl tracking-wider font-medium relative">
-                BRING TO FRONT
-              </p>
-              <div className="absolute top-0 left-0 w-full h-full bg-black opacity-0 z-0 transition duration-300 ease-in-out group-hover:opacity-50"></div>
-            </div>
-
-            <div
-              onClick={sendBackward}
-              // disabled={isAtBack}
-              className="border-4 cursor-pointer border-black bg-white text-black px-5 py-2   rounded-lg flex justify-center items-center overflow-hidden relative group transition-all duration-300 ease-in-out transform hover:scale-105"
-            >
-              <p className="text-black text-center text-2xl tracking-wider font-medium relative">
-                SEND BACKWARD
-              </p>
-              <div className="absolute top-0 left-0 w-full h-full bg-black opacity-0 z-0 transition duration-300 ease-in-out group-hover:opacity-50"></div>
-            </div>
-            <div
-              onClick={sendToBack}
-              // disabled={isAtBack}
-              className="border-4 cursor-pointer border-black  bg-white text-black px-5 py-2 rounded-lg flex justify-center items-center overflow-hidden relative group transition-all duration-300 ease-in-out transform hover:scale-105"
-            >
-              <p className="text-black text-center text-2xl tracking-wider font-medium relative">
-                SEND TO BACK
-              </p>
-              <div className="absolute top-0 left-0 w-full h-full bg-black opacity-0 z-0 transition duration-300 ease-in-out group-hover:opacity-50"></div>
-            </div>
-          </div> */}
         </div>
 
         <div className="mt-5 w-full lg:w-[60%] px-5 lg:pl-0 ">
@@ -602,16 +493,17 @@ function App() {
               hats={hats}
               kimonos={kimonos}
               weapons={weapons}
+              eyewear={eyewear}
+              mouth={mouth}
               setHats={setHats}
               setKimonos={setKimonos}
               setWeapons={setWeapons}
+              setEyewear={setEyewear}
+              setMouth={setMouth}
             />
           </div>
         </div>
       </div>
-       {isTextModalOpen && (
-        <TextDialog onSubmit={onTextSubmit} onClose={closeTextModal} />
-      )}
     </div>
   );
 }
