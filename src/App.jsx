@@ -1,7 +1,8 @@
 import { useState, useEffect, useRef } from "react";
 import { fabric } from "fabric";
 import ImageScroller from "./ImageScroller";
-import baseCharacter from "public/lovable-uploads/c1f10ba7-7878-44be-9be8-56715615e69f.png";
+// Fix the import path - use relative path from src to public
+import baseCharacter from "../public/lovable-uploads/c1f10ba7-7878-44be-9be8-56715615e69f.png";
 import logo from "./assets/logo.png";
 import bg from "./assets/bg.png";
 import main_cat from "./assets/main_cat.png";
