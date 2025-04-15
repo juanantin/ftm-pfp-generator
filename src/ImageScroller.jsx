@@ -1,3 +1,4 @@
+
 import React, { useState } from "react";
 
 function ImageScroller({
@@ -128,7 +129,6 @@ function ImageScroller({
 
   return (
     <div className="flex flex-col items-center">
-      {/* Category selector - no title text */}
       <div className="flex flex-wrap justify-center gap-3 mb-4 mt-2">
         {getOrderedCategories(Object.keys(categorizedImages || {})).map((category) => (
           <div
@@ -141,7 +141,9 @@ function ImageScroller({
             } transition-colors`}
             style={{ fontFamily: "'Finger Paint', cursive" }}
           >
-            {category === "kimono" ? "Clothing" : category.charAt(0).toUpperCase() + category.slice(1)}
+            {category === "kimono" ? "Clothing" : 
+             category === "accessory" ? "Accessories" :
+             category.charAt(0).toUpperCase() + category.slice(1)}
           </div>
         ))}
       </div>
