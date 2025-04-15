@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 
 function ImageScroller({
@@ -20,7 +19,7 @@ function ImageScroller({
   const [selectedCategory, setSelectedCategory] = useState("headwear");
 
   const getOrderedCategories = (categories) => {
-    // Ensure accessory category is included in the order
+    // Updated order to include accessory between kimono and background
     const order = ["headwear", "eyewear", "mouth", "kimono", "accessory", "background"];
     return order.filter(cat => categories.includes(cat));
   };
@@ -59,7 +58,7 @@ function ImageScroller({
     
     return (
       <div className="flex flex-wrap gap-2 justify-center">
-        {/* Delete card at the beginning of each category - dark red */}
+        {/* Delete card - keep existing styling but smaller size */}
         <div
           className="w-[80px] h-[80px] bg-[#8B0000] rounded-md overflow-hidden cursor-pointer shadow-md transform hover:scale-105 transition-transform flex items-center justify-center"
           onClick={() => handleRemoveSticker(selectedCategory)}
@@ -73,12 +72,11 @@ function ImageScroller({
         </div>
         
         {stickers.map((sticker, index) => {
-          // Handle background images differently
           if (selectedCategory === "background") {
             return (
               <div
                 key={index}
-                className="w-[90px] h-[65px] bg-[#F1F1F1] rounded-md overflow-hidden cursor-pointer shadow-md transform hover:scale-105 transition-transform"
+                className="w-[100px] h-[70px] bg-[#F1F1F1] rounded-md overflow-hidden cursor-pointer shadow-md transform hover:scale-105 transition-transform"
                 onClick={() => changeBackgroundImage(sticker, canvas)}
               >
                 <img
@@ -149,7 +147,6 @@ function ImageScroller({
         ))}
       </div>
 
-      {/* Display stickers for the selected category */}
       <div className="mt-3 pb-8 flex justify-center">
         {renderStickers()}
       </div>
