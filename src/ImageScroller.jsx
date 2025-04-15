@@ -1,3 +1,4 @@
+
 import React, { useState } from "react";
 
 function ImageScroller({
@@ -18,10 +19,11 @@ function ImageScroller({
 }) {
   const [selectedCategory, setSelectedCategory] = useState("headwear");
 
-  const getOrderedCategories = (categories) => {
-    // Make sure 'accessory' is included in the order
+  const getOrderedCategories = () => {
+    // Make sure all categories are included in the correct order
     const order = ["headwear", "eyewear", "mouth", "kimono", "accessory", "background"];
-    return order.filter(cat => Object.keys(categorizedImages).includes(cat));
+    // Filter out categories that don't exist in categorizedImages
+    return order.filter(cat => categorizedImages && Object.keys(categorizedImages).includes(cat));
   };
 
   const handleCategorySelect = (category) => {
@@ -48,7 +50,7 @@ function ImageScroller({
       // Add background removal functionality
       if (canvas) {
         canvas.setBackgroundImage(null, canvas.renderAll.bind(canvas));
-        canvas.setBackgroundColor("#000", canvas.renderAll.bind(canvas));
+        canvas.setBackgroundColor("#fff", canvas.renderAll.bind(canvas));
       }
     }
   };
@@ -56,14 +58,14 @@ function ImageScroller({
   return (
     <div className="flex flex-col items-center">
       <div className="flex flex-wrap justify-center gap-3 mb-4 mt-2">
-        {getOrderedCategories(Object.keys(categorizedImages || {})).map((category) => (
+        {getOrderedCategories().map((category) => (
           <div
             key={category}
             onClick={() => handleCategorySelect(category)}
-            className={`py-2 px-3 rounded-xl text-base cursor-pointer transition-all duration-300 content-font
+            className={`py-2 px-3 rounded-xl text-base cursor-pointer transition-all duration-300 content-font font-[Finger Paint]
               ${selectedCategory === category
-                ? "bg-white text-black" 
-                : "bg-[#0A1F3F] text-white hover:bg-[#1A2F4F] transform hover:scale-105"
+                ? "bg-white text-black transform scale-105" 
+                : "bg-[#0A1F3F] text-white hover:bg-[#1A2F4F] hover:text-white transform hover:scale-105"
               }`}
           >
             {category === "kimono" ? "Clothing" : 
@@ -77,11 +79,11 @@ function ImageScroller({
         <div className="flex flex-wrap gap-2 justify-center">
           {/* Delete card - reduced size */}
           <div
-            className="w-[80px] h-[80px] bg-[#8B0000] rounded-md overflow-hidden cursor-pointer shadow-md transform hover:scale-110 transition-transform flex items-center justify-center"
+            className="w-[75px] h-[75px] bg-[#8B0000] rounded-md overflow-hidden cursor-pointer shadow-md transform hover:scale-110 transition-transform flex items-center justify-center"
             onClick={() => handleRemoveSticker(selectedCategory)}
           >
-            <div className="text-white text-center content-font">
-              <svg xmlns="http://www.w3.org/2000/svg" className="h-7 w-7 mx-auto mb-1" viewBox="0 0 20 20" fill="currentColor">
+            <div className="text-white text-center font-[Finger Paint]">
+              <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 mx-auto mb-1" viewBox="0 0 20 20" fill="currentColor">
                 <path fillRule="evenodd" d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z" clipRule="evenodd" />
               </svg>
               Delete
@@ -94,8 +96,8 @@ function ImageScroller({
               key={index}
               className={`${
                 selectedCategory === "background" 
-                  ? "w-[100px] h-[70px]" 
-                  : "w-[80px] h-[80px]"
+                  ? "w-[90px] h-[65px]" 
+                  : "w-[75px] h-[75px]"
               } bg-[#F1F1F1] rounded-md overflow-hidden cursor-pointer shadow-md transform hover:scale-110 transition-transform`}
               onClick={() => 
                 selectedCategory === "background"
