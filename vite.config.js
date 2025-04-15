@@ -10,6 +10,7 @@ export default defineConfig(({ mode }) => ({
     react(),
     mode === 'development' && componentTagger(),
   ].filter(Boolean),
+  base: '/fantomsonic/ftm-pfp/',
   server: {
     host: "::",
     port: 8080
