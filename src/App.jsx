@@ -172,19 +172,20 @@ function App() {
     }
   }, [canvas, backgroundImage, isMobile]);
 
-  const addMainImg = (canvas, image) => {
+  const addMainImg = (canvas2, image) => {
     fabric.Image.fromURL(image, (img) => {
-      const canvasWidth = canvas.getWidth();
-      const canvasHeight = canvas.getHeight();
-
-      // Calculate scale to make image fit nicely in canvas
-      const scale = 0.8; // Adjust this value to change size
+      const canvasWidth = canvas2.getWidth();
+      const canvasHeight = canvas2.getHeight();
+      
+      // Increase scale to make character larger (from 0.8 to 1.2)
+      const scale = 1.2; 
+      
       img.scaleToWidth(canvasWidth * scale);
-
+      
       if (isMobile) {
         img.set({
           left: canvasWidth / 2,
-          top: canvasHeight * 0.9, // Position slightly up from bottom
+          top: canvasHeight * 0.85, // Slightly adjust vertical position
           originX: 'center',
           originY: 'bottom',
           selectable: false
@@ -192,15 +193,15 @@ function App() {
       } else {
         img.set({
           left: canvasWidth / 2,
-          top: canvasHeight * 0.9,
+          top: canvasHeight * 0.85, // Consistent positioning for desktop
           originX: 'center',
           originY: 'bottom',
           selectable: false
         });
       }
 
-      canvas.add(img);
-      canvas.renderAll();
+      canvas2.add(img);
+      canvas2.renderAll();
     });
   };
 
