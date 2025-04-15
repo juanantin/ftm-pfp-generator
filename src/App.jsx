@@ -1,4 +1,3 @@
-
 import { useState, useEffect, useRef } from "react";
 import { fabric } from "fabric";
 import ImageScroller from "./ImageScroller";
@@ -442,12 +441,12 @@ function App() {
 
   return (
     <div className="min-h-screen overflow-y-auto bg-[#050b1f]">
-      {/* Logo - using fixed positioning */}
+      {/* Logo section */}
       <div className="pt-5 pb-10 mt-12">
         <img 
           src={fantomLogo} 
           alt="Fantom PFP Generator" 
-          className="w-[200px] md:w-[300px] h-auto mx-auto"
+          className="w-[250px] md:w-[300px] h-auto mx-auto" // Increased mobile size
         />
       </div>
 
@@ -570,6 +569,10 @@ function App() {
           onClick={() => window.location.href = "https://fantomsonic.com"}
           className="w-12 h-12 cursor-pointer hover:opacity-80 transition-opacity"
         />
+      </div>
+      {/* Copyright text */}
+      <div className="w-full text-center py-4 bg-white mt-8">
+        <p className="content-font text-black text-sm">© 2025, Fantom</p>
       </div>
     </div>
   );
