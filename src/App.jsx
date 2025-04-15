@@ -22,8 +22,6 @@ function App() {
   const [kimonos, setKimonos] = useState(null);
   // const [pants, Pants] = useState(null);
   const [weapons, setWeapons] = useState(null);
-  const [eyewear, setEyewear] = useState(null); // Add missing eyewear state
-  const [mouth, setMouth] = useState(null); // Add missing mouth state
 
   // const [isAtFront, setIsAtFront] = useState(false);
   // const [isAtBack, setIsAtBack] = useState(false);
