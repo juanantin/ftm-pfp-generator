@@ -1,11 +1,12 @@
+
 import React, { useState, useEffect, useRef } from "react";
 import { fabric } from "fabric";
+import { ArrowLeft } from "lucide-react"; // Ensure ArrowLeft is imported
 import ImageScroller from "./ImageScroller";
 import baseCharacter from "../public/lovable-uploads/c1f10ba7-7878-44be-9be8-56715615e69f.png";
 import fantomLogo from "../public/lovable-uploads/e562fef2-b876-4191-9dd8-82c2e04581ec.png";
 import roundLogo from "../public/lovable-uploads/be6d606d-e20d-47a4-a906-4f6f02bd8668.png";
 import TextDialog from "./TextDialog";
-import { ArrowLeft } from "lucide-react"; // Import the ArrowLeft icon
 
 function App() {
   const [stickers, setStickers] = useState({});
@@ -576,10 +577,11 @@ function App() {
           onClick={handleHomeNavigation} 
           className="cursor-pointer hover:opacity-80 transition-opacity"
         >
-          <img
-            src={roundLogo}
-            alt="Home"
-            className="w-12 h-12 cursor-pointer hover:opacity-80 transition-opacity"
+          <ArrowLeft 
+            color="white" 
+            size={32} 
+            strokeWidth={2.5} 
+            className="hover:scale-110 transition-transform" 
           />
         </div>
       </div>
