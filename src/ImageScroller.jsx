@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 
 function ImageScroller({
@@ -20,9 +19,9 @@ function ImageScroller({
   const [selectedCategory, setSelectedCategory] = useState("headwear");
 
   const getOrderedCategories = (categories) => {
-    // Updated order to include accessory between kimono and background
+    // Make sure 'accessory' is included in the order
     const order = ["headwear", "eyewear", "mouth", "kimono", "accessory", "background"];
-    return order.filter(cat => categories.includes(cat));
+    return order.filter(cat => Object.keys(categorizedImages).includes(cat));
   };
 
   const handleCategorySelect = (category) => {
@@ -61,11 +60,11 @@ function ImageScroller({
           <div
             key={category}
             onClick={() => handleCategorySelect(category)}
-            className={`py-2 px-3 rounded-xl text-base cursor-pointer 
+            className={`py-2 px-3 rounded-xl text-base cursor-pointer transition-all duration-300 content-font
               ${selectedCategory === category
                 ? "bg-white text-black" 
-                : "bg-[#0A1F3F] text-white hover:bg-[#1A2F4F] hover:scale-105"
-              } transition-all duration-200 content-font`}
+                : "bg-[#0A1F3F] text-white hover:bg-[#1A2F4F] transform hover:scale-105"
+              }`}
           >
             {category === "kimono" ? "Clothing" : 
              category === "accessory" ? "Accessories" :

@@ -412,12 +412,9 @@ function App() {
   const handleTextSubmit = (text, color) => {
     if (text) {
       const newText = new fabric.Text(text, {
-        fontFamily: "Tahoma",
+        fontFamily: "Finger Paint",
         fontSize: 20,
         fill: color,
-        stroke: "#000",
-        strokeWidth: 0.5,
-        fontWeight: "bold",
         left: 100,
         top: 100,
         charSpacing: 1,
