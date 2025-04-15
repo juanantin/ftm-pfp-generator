@@ -22,6 +22,8 @@ function App() {
   const [kimonos, setKimonos] = useState(null);
   // const [pants, Pants] = useState(null);
   const [weapons, setWeapons] = useState(null);
+  const [eyewear, setEyewear] = useState(null);
+  const [mouth, setMouth] = useState(null);
 
   // const [isAtFront, setIsAtFront] = useState(false);
   // const [isAtBack, setIsAtBack] = useState(false);
@@ -227,11 +229,15 @@ function App() {
     const randomKimonos = getRandomImage("kimono");
     const randomWeapons = getRandomImage("accessory");
     const randomBackground = getRandomImage("background");
+    const randomEyewear = getRandomImage("eyewear");
+    const randomMouth = getRandomImage("mouth");
 
     if (randomHats) handleAddImage(hats, setHats, randomHats);
     if (randomKimonos) handleAddImage(kimonos, setKimonos, randomKimonos);
     // if (randomPants) handleAddImage(pants, setPants, randomPants);
     if (randomWeapons) handleAddImage(weapons, setWeapons, randomWeapons);
+    if (randomEyewear) handleAddImage(eyewear, setEyewear, randomEyewear);
+    if (randomMouth) handleAddImage(mouth, setMouth, randomMouth);
 
     if (randomBackground) changeBackgroundImage(randomBackground, canvas);
   };
