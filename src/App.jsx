@@ -177,28 +177,17 @@ function App() {
       const canvasWidth = canvas2.getWidth();
       const canvasHeight = canvas2.getHeight();
       
-      // Increase scale to make character larger (from 0.8 to 1.2)
-      const scale = 1.2; 
-      
-      img.scaleToWidth(canvasWidth * scale);
-      
-      if (isMobile) {
-        img.set({
-          left: canvasWidth / 2,
-          top: canvasHeight * 0.85, // Slightly adjust vertical position
-          originX: 'center',
-          originY: 'bottom',
-          selectable: false
-        });
-      } else {
-        img.set({
-          left: canvasWidth / 2,
-          top: canvasHeight * 0.85, // Consistent positioning for desktop
-          originX: 'center',
-          originY: 'bottom',
-          selectable: false
-        });
-      }
+      // Scale to 100% of canvas height while maintaining aspect ratio
+      const scaleFactor = canvasHeight / img.height;
+      img.scaleToHeight(canvasHeight);
+
+      img.set({
+        left: canvasWidth / 2,
+        top: canvasHeight, // Align with bottom of canvas
+        originX: 'center',
+        originY: 'bottom',
+        selectable: false
+      });
 
       canvas2.add(img);
       canvas2.renderAll();
