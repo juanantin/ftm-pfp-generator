@@ -22,6 +22,8 @@ function App() {
   const [kimonos, setKimonos] = useState(null);
   // const [pants, Pants] = useState(null);
   const [weapons, setWeapons] = useState(null);
+  const [eyewear, setEyewear] = useState(null);
+  const [mouth, setMouth] = useState(null);
 
   // const [isAtFront, setIsAtFront] = useState(false);
   // const [isAtBack, setIsAtBack] = useState(false);
