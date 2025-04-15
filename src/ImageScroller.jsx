@@ -1,5 +1,5 @@
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 
 function ImageScroller({
   canvas,
@@ -18,12 +18,27 @@ function ImageScroller({
   setMouth,
 }) {
   const [selectedCategory, setSelectedCategory] = useState("headwear");
+  const [availableCategories, setAvailableCategories] = useState([]);
+
+  // This useEffect will monitor for available categories and make sure they're displayed
+  useEffect(() => {
+    if (categorizedImages) {
+      setAvailableCategories(Object.keys(categorizedImages).filter(key => 
+        Array.isArray(categorizedImages[key]) && categorizedImages[key].length > 0
+      ));
+    }
+  }, [categorizedImages]);
 
   const getOrderedCategories = () => {
     // Make sure all categories are included in the correct order
-    const order = ["headwear", "eyewear", "mouth", "kimono", "accessory", "background"];
-    // Filter out categories that don't exist in categorizedImages
-    return order.filter(cat => categorizedImages && Object.keys(categorizedImages).includes(cat));
+    const order = ["headwear", "eyewear", "mouth", "kimono", "accessories", "accessory", "background"];
+    
+    // Filter out categories that don't exist in categorizedImages or have no items
+    return order.filter(cat => 
+      availableCategories.includes(cat) || 
+      (categorizedImages && Object.keys(categorizedImages).includes(cat) && 
+       Array.isArray(categorizedImages[cat]) && categorizedImages[cat].length > 0)
+    );
   };
 
   const handleCategorySelect = (category) => {
@@ -37,7 +52,7 @@ function ImageScroller({
     } else if (category === "kimono" && setKimonos) {
       canvas.remove(kimonos);
       setKimonos(null);
-    } else if (category === "accessory" && setWeapons) {
+    } else if ((category === "accessory" || category === "accessories") && setWeapons) {
       canvas.remove(weapons);
       setWeapons(null);
     } else if (category === "eyewear" && setEyewear) {
@@ -55,6 +70,49 @@ function ImageScroller({
     }
   };
 
+  // Helper function to get the actual category name to display
+  const getCategoryDisplayName = (category) => {
+    if (category === "kimono") return "Clothing";
+    if (category === "accessory" || category === "accessories") return "Accessories";
+    return category.charAt(0).toUpperCase() + category.slice(1);
+  };
+
+  // Helper function to get the appropriate images for the selected category
+  const getCategoryImages = (category) => {
+    if (category === "accessory" && !categorizedImages[category]) {
+      return categorizedImages["accessories"] || [];
+    }
+    if (category === "accessories" && !categorizedImages[category]) {
+      return categorizedImages["accessory"] || [];
+    }
+    return categorizedImages[category] || [];
+  };
+
+  // Helper function to determine sticker handler parameters
+  const getStickerHandlerParams = (category) => {
+    let stateObject = null;
+    let setterFunction = null;
+    
+    if (category === "headwear") {
+      stateObject = hats;
+      setterFunction = setHats;
+    } else if (category === "kimono") {
+      stateObject = kimonos;
+      setterFunction = setKimonos;
+    } else if (category === "accessory" || category === "accessories") {
+      stateObject = weapons;
+      setterFunction = setWeapons;
+    } else if (category === "eyewear") {
+      stateObject = eyewear;
+      setterFunction = setEyewear;
+    } else if (category === "mouth") {
+      stateObject = mouth;
+      setterFunction = setMouth;
+    }
+    
+    return { stateObject, setterFunction };
+  };
+
   return (
     <div className="flex flex-col items-center">
       <div className="flex flex-wrap justify-center gap-3 mb-4 mt-2">
@@ -68,9 +126,7 @@ function ImageScroller({
                 : "bg-[#0A1F3F] text-white hover:bg-[#1A2F4F] hover:text-white transform hover:scale-105"
               }`}
           >
-            {category === "kimono" ? "Clothing" : 
-             category === "accessory" ? "Accessories" :
-             category.charAt(0).toUpperCase() + category.slice(1)}
+            {getCategoryDisplayName(category)}
           </div>
         ))}
       </div>
@@ -91,39 +147,31 @@ function ImageScroller({
           </div>
           
           {/* Sticker cards - reduced size */}
-          {(categorizedImages[selectedCategory] || []).map((sticker, index) => (
-            <div
-              key={index}
-              className={`${
-                selectedCategory === "background" 
-                  ? "w-[90px] h-[65px]" 
-                  : "w-[75px] h-[75px]"
-              } bg-[#F1F1F1] rounded-md overflow-hidden cursor-pointer shadow-md transform hover:scale-110 transition-transform`}
-              onClick={() => 
-                selectedCategory === "background"
-                  ? changeBackgroundImage(sticker, canvas)
-                  : handleAddImage(
-                      selectedCategory === "headwear" ? hats :
-                      selectedCategory === "kimono" ? kimonos :
-                      selectedCategory === "accessory" ? weapons :
-                      selectedCategory === "eyewear" ? eyewear :
-                      selectedCategory === "mouth" ? mouth : null,
-                      selectedCategory === "headwear" ? setHats :
-                      selectedCategory === "kimono" ? setKimonos :
-                      selectedCategory === "accessory" ? setWeapons :
-                      selectedCategory === "eyewear" ? setEyewear :
-                      selectedCategory === "mouth" ? setMouth : null,
-                      sticker
-                    )
-              }
-            >
-              <img
-                src={sticker}
-                alt={`${selectedCategory}-${index}`}
-                className="w-full h-full object-cover object-center"
-              />
-            </div>
-          ))}
+          {getCategoryImages(selectedCategory).map((sticker, index) => {
+            const { stateObject, setterFunction } = getStickerHandlerParams(selectedCategory);
+            
+            return (
+              <div
+                key={index}
+                className={`${
+                  selectedCategory === "background" 
+                    ? "w-[90px] h-[65px]" 
+                    : "w-[75px] h-[75px]"
+                } bg-[#F1F1F1] rounded-md overflow-hidden cursor-pointer shadow-md transform hover:scale-110 transition-transform`}
+                onClick={() => 
+                  selectedCategory === "background"
+                    ? changeBackgroundImage(sticker, canvas)
+                    : handleAddImage(stateObject, setterFunction, sticker)
+                }
+              >
+                <img
+                  src={sticker}
+                  alt={`${selectedCategory}-${index}`}
+                  className="w-full h-full object-cover object-center"
+                />
+              </div>
+            );
+          })}
         </div>
       </div>
     </div>
