@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef } from "react";
 import { fabric } from "fabric";
 import ImageScroller from "./ImageScroller";
+import baseCharacter from "public/lovable-uploads/c1f10ba7-7878-44be-9be8-56715615e69f.png";
 import logo from "./assets/logo.png";
 import bg from "./assets/bg.png";
 import main_cat from "./assets/main_cat.png";
@@ -170,6 +171,38 @@ function App() {
     }
   }, [canvas, backgroundImage, isMobile]);
 
+  const addMainImg = (canvas, image) => {
+    fabric.Image.fromURL(image, (img) => {
+      const canvasWidth = canvas.getWidth();
+      const canvasHeight = canvas.getHeight();
+
+      // Calculate scale to make image fit nicely in canvas
+      const scale = 0.8; // Adjust this value to change size
+      img.scaleToWidth(canvasWidth * scale);
+
+      if (isMobile) {
+        img.set({
+          left: canvasWidth / 2,
+          top: canvasHeight * 0.9, // Position slightly up from bottom
+          originX: 'center',
+          originY: 'bottom',
+          selectable: false
+        });
+      } else {
+        img.set({
+          left: canvasWidth / 2,
+          top: canvasHeight * 0.9,
+          originX: 'center',
+          originY: 'bottom',
+          selectable: false
+        });
+      }
+
+      canvas.add(img);
+      canvas.renderAll();
+    });
+  };
+
   useEffect(() => {
     const importStickers = async () => {
       // Import images from all subfolders in the 'assets/stickers' directory
@@ -210,7 +243,7 @@ function App() {
     const newCanvas = new fabric.Canvas(canvasRef.current, {
       width: window.innerWidth <= 768 ? 400 : 400,
       height: window.innerWidth <= 768 ? 400 : 400,
-      backgroundColor: "#fff",
+      backgroundColor: "#fff"
     });
 
     setCanvas(newCanvas);
@@ -239,42 +272,14 @@ function App() {
     // changeBackgroundImage(bg, newCanvas);
     // handleAddImage(null, null, logo);
 
-    addMainImg(newCanvas, main_cat);
+    // addMainImg(newCanvas, main_cat);
+    // Add the base character
+    addMainImg(newCanvas, baseCharacter);
 
     return () => {
       newCanvas.dispose();
     };
   }, []);
-
-  const addMainImg = (canvas, image) => {
-    fabric.Image.fromURL(image, (img) => {
-      const canvasWidth = canvas.getWidth();
-      const canvasHeight = canvas.getHeight();
-
-      // Apply different scaling and positioning based on device
-      if (isMobile) {
-        // For mobile: Make the image slightly larger and ensure it's aligned with bottom
-        img.scaleToWidth(canvasWidth * 1.2);
-        img.set({
-          left: canvasWidth / 2,
-          top: canvasHeight, // Position at the bottom edge
-          originX: 'center',
-          originY: 'bottom', // Anchor to the bottom
-          selectable: false
-        });
-      } else {
-        // For desktop: Keep original scaling
-        img.scaleToWidth(canvasWidth);
-        img.scaleToHeight(img.height * (canvasWidth / img.width));
-        img.set({
-          selectable: false
-        });
-      }
-
-      canvas.add(img);
-      canvas.renderAll();
-    });
-  };
 
   const handleAddImage = (state, setState, image) => {
     if (state != null) {
@@ -398,7 +403,7 @@ function App() {
     // });
 
     setCanvas(newCanvas);
-    addMainImg(newCanvas, main_cat);
+    addMainImg(newCanvas, baseCharacter);
 
     // Reset sticker states
     setHats(null);
