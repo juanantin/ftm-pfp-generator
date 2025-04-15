@@ -1,3 +1,4 @@
+
 import React, { useState } from "react";
 
 function ImageScroller({
@@ -19,7 +20,7 @@ function ImageScroller({
   const [selectedCategory, setSelectedCategory] = useState("headwear");
 
   const getOrderedCategories = (categories) => {
-    // Updated order to include accessories before background
+    // Updated order to include accessory between kimono and background
     const order = ["headwear", "eyewear", "mouth", "kimono", "accessory", "background"];
     return order.filter(cat => categories.includes(cat));
   };
@@ -60,11 +61,11 @@ function ImageScroller({
           <div
             key={category}
             onClick={() => handleCategorySelect(category)}
-            className={`py-2 px-3 rounded-xl text-base cursor-pointer ${
-              selectedCategory === category
-                ? "bg-white text-black"
-                : "bg-[#0A1F3F] text-white"
-            } transition-colors content-font`}
+            className={`py-2 px-3 rounded-xl text-base cursor-pointer 
+              ${selectedCategory === category
+                ? "bg-white text-black" 
+                : "bg-[#0A1F3F] text-white hover:bg-[#1A2F4F] hover:scale-105"
+              } transition-all duration-200 content-font`}
           >
             {category === "kimono" ? "Clothing" : 
              category === "accessory" ? "Accessories" :
@@ -77,7 +78,7 @@ function ImageScroller({
         <div className="flex flex-wrap gap-2 justify-center">
           {/* Delete card - reduced size */}
           <div
-            className="w-[90px] h-[90px] bg-[#8B0000] rounded-md overflow-hidden cursor-pointer shadow-md transform hover:scale-105 transition-transform flex items-center justify-center"
+            className="w-[80px] h-[80px] bg-[#8B0000] rounded-md overflow-hidden cursor-pointer shadow-md transform hover:scale-110 transition-transform flex items-center justify-center"
             onClick={() => handleRemoveSticker(selectedCategory)}
           >
             <div className="text-white text-center content-font">
@@ -88,15 +89,15 @@ function ImageScroller({
             </div>
           </div>
           
-          {/* Sticker cards */}
+          {/* Sticker cards - reduced size */}
           {(categorizedImages[selectedCategory] || []).map((sticker, index) => (
             <div
               key={index}
               className={`${
                 selectedCategory === "background" 
-                  ? "w-[110px] h-[75px]" 
-                  : "w-[90px] h-[90px]"
-              } bg-[#F1F1F1] rounded-md overflow-hidden cursor-pointer shadow-md transform hover:scale-105 transition-transform`}
+                  ? "w-[100px] h-[70px]" 
+                  : "w-[80px] h-[80px]"
+              } bg-[#F1F1F1] rounded-md overflow-hidden cursor-pointer shadow-md transform hover:scale-110 transition-transform`}
               onClick={() => 
                 selectedCategory === "background"
                   ? changeBackgroundImage(sticker, canvas)

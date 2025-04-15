@@ -21,19 +21,21 @@
 
 /* Font styling */
 h1.title-font {
-  font-family: 'Crypster', cursive !important;
-}
-
-p.content-font, h2.content-font {
   font-family: 'Finger Paint', cursive !important;
 }
 
+p.content-font, h2.content-font, .content-font {
+  font-family: 'Finger Paint', cursive !important;
+  text-shadow: none;  /* Remove text outline */
+}
+
 .title-font {
-  font-family: 'Crypster', cursive !important;
+  font-family: 'Finger Paint', cursive !important;
 }
 
 .content-font {
   font-family: 'Finger Paint', cursive !important;
+  text-shadow: none;  /* Remove text outline */
 }
 
 /* Preview image */
@@ -79,3 +81,10 @@ body {
   background-attachment: fixed;
   background-color: #050b1f; /* Fallback color matching the night sky */
 }
+
+/* Hover effects for category buttons */
+.category-btn:hover {
+  transform: scale(1.05);
+  transition: all 0.3s ease;
+}
+

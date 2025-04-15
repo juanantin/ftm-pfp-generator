@@ -18,16 +18,11 @@ function App() {
   const [backgroundImage, setBackgroundImage] = useState(null);
   const [isMobile, setIsMobile] = useState(false);
   const [hats, setHats] = useState(null);
-  // const [faces, setFaces] = useState(null);
   const [kimonos, setKimonos] = useState(null);
-  // const [pants, Pants] = useState(null);
   const [weapons, setWeapons] = useState(null);
   const [eyewear, setEyewear] = useState(null);
   const [mouth, setMouth] = useState(null);
   const [showTextDialog, setShowTextDialog] = useState(false);
-
-  // const [isAtFront, setIsAtFront] = useState(false);
-  // const [isAtBack, setIsAtBack] = useState(false);
 
   useEffect(() => {
     const handleResize = () => {
@@ -570,9 +565,9 @@ function App() {
           className="w-12 h-12 cursor-pointer hover:opacity-80 transition-opacity"
         />
       </div>
-      {/* Copyright text */}
-      <div className="w-full text-center py-4 bg-white mt-8">
-        <p className="content-font text-black text-sm">© 2025, Fantom</p>
+      {/* Copyright text - Keep blue background with white text */}
+      <div className="w-full text-center py-4 bg-[#050b1f] mt-8">
+        <p className="content-font text-white text-sm">© 2025, Fantom</p>
       </div>
     </div>
   );
