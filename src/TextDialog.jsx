@@ -20,13 +20,12 @@ const TextDialog = ({ onSubmit, onClose }) => {
             value={text}
             onChange={(e) => setText(e.target.value)}
             className="w-full p-2 mb-4 rounded bg-[#1A2F4F] text-white font-[Finger Paint]"
-            placeholder="Enter your text"
           />
           <input
             type="color"
             value={color}
             onChange={(e) => setColor(e.target.value)}
-            className="mb-4 w-full h-10 rounded-none cursor-pointer"
+            className="mb-4 w-10 h-10 rounded-none cursor-pointer"
             style={{ appearance: 'none', padding: '0', border: 'none' }}
           />
           <div className="flex justify-end gap-2">
