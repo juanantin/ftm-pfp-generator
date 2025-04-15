@@ -442,9 +442,13 @@ function App() {
 
   return (
     <div className="min-h-screen overflow-y-auto bg-[#050b1f]">
-      {/* Logo - not sticky */}
-      <div className="flex items-center justify-center py-5">
-        <img src={fantomLogo} alt="Fantom PFP Generator" className="w-[240px] md:w-[300px] h-auto" />
+      {/* Logo - using fixed positioning */}
+      <div className="pt-5 pb-10 mt-12">
+        <img 
+          src={fantomLogo} 
+          alt="Fantom PFP Generator" 
+          className="w-[200px] md:w-[300px] h-auto mx-auto"
+        />
       </div>
 
       {/* Top left home logo - fixed position */}
