@@ -442,12 +442,12 @@ function App() {
 
   return (
     <div className="min-h-screen overflow-y-auto bg-[#050b1f]">
-      {/* Logo - using fixed positioning */}
+      {/* Logo - using fixed positioning with smaller size on mobile */}
       <div className="pt-5 pb-10 mt-12">
         <img 
           src={fantomLogo} 
           alt="Fantom PFP Generator" 
-          className="w-[200px] md:w-[300px] h-auto mx-auto"
+          className="w-[160px] md:w-[260px] h-auto mx-auto"
         />
       </div>
 
