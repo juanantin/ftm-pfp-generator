@@ -1,6 +1,6 @@
 
 import React from 'react';
-import roundLogo from "../public/lovable-uploads/be6d606d-e20d-47a4-a906-4f6f02bd8668.png";
+import roundLogo from "/lovable-uploads/be6d606d-e20d-47a4-a906-4f6f02bd8668.png";
 
 const Footer = () => {
   return (

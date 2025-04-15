@@ -1,7 +1,7 @@
 
 import React from 'react';
-import roundLogo from "../public/lovable-uploads/be6d606d-e20d-47a4-a906-4f6f02bd8668.png";
-import fantomLogo from "../public/lovable-uploads/e562fef2-b876-4191-9dd8-82c2e04581ec.png";
+import roundLogo from "/lovable-uploads/be6d606d-e20d-47a4-a906-4f6f02bd8668.png";
+import fantomLogo from "/lovable-uploads/e562fef2-b876-4191-9dd8-82c2e04581ec.png";
 
 const Header = () => {
   return (
