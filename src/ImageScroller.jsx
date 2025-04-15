@@ -36,10 +36,9 @@ function ImageScroller({
       canvas.remove(hats);
       setHats(null);
     } else if (category === "kimono" && setKimonos) {
-      // Fixed: changed from "Clothing" to "kimono" to match App.jsx state handling
       canvas.remove(kimonos);
       setKimonos(null);
-    } else if (category === "accessories" && setWeapons) {
+    } else if (category === "accessory" && setWeapons) {
       canvas.remove(weapons);
       setWeapons(null);
     } else if (category === "eyewear" && setEyewear) {
@@ -100,10 +99,9 @@ function ImageScroller({
             stateVarToUpdate = hats;
             setStateVarToUpdate = setHats;
           } else if (selectedCategory === "kimono") {
-            // Fixed: changed from "Clothing" to "kimono" to match the state handling in App.jsx
             stateVarToUpdate = kimonos;
             setStateVarToUpdate = setKimonos;
-          } else if (selectedCategory === "accessories") {
+          } else if (selectedCategory === "accessory") {
             stateVarToUpdate = weapons;
             setStateVarToUpdate = setWeapons;
           } else if (selectedCategory === "eyewear") {
@@ -134,7 +132,7 @@ function ImageScroller({
 
   return (
     <div>
-      {/* Category selector */}
+      {/* Category selector - no title text */}
       <div className="flex flex-wrap justify-center gap-3 mb-4 mt-2">
         {getOrderedCategories(Object.keys(categorizedImages || {})).map((category) => (
           <div

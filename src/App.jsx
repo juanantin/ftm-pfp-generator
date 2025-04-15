@@ -4,6 +4,7 @@ import ImageScroller from "./ImageScroller";
 import baseCharacter from "../public/lovable-uploads/c1f10ba7-7878-44be-9be8-56715615e69f.png";
 import fantomLogo from "../public/lovable-uploads/e562fef2-b876-4191-9dd8-82c2e04581ec.png";
 import roundLogo from "../public/lovable-uploads/be6d606d-e20d-47a4-a906-4f6f02bd8668.png";
+import TextDialog from "./TextDialog";
 
 function App() {
   const [stickers, setStickers] = useState({});
@@ -23,6 +24,7 @@ function App() {
   const [weapons, setWeapons] = useState(null);
   const [eyewear, setEyewear] = useState(null);
   const [mouth, setMouth] = useState(null);
+  const [showTextDialog, setShowTextDialog] = useState(false);
 
   // const [isAtFront, setIsAtFront] = useState(false);
   // const [isAtBack, setIsAtBack] = useState(false);
@@ -409,14 +411,17 @@ function App() {
   };
 
   const handleAddText = () => {
-    const text = prompt("Enter your text:");
+    setShowTextDialog(true);
+  };
 
+  const handleTextSubmit = (text, color) => {
     if (text) {
       const newText = new fabric.Text(text, {
         fontFamily: "Tahoma",
         fontSize: 20,
-        fill: "#fff",
+        fill: color,
         stroke: "#000",
+        strokeWidth: 0.5,
         fontWeight: "bold",
         left: 100,
         top: 100,
@@ -424,12 +429,19 @@ function App() {
       });
 
       canvas.add(newText);
+      canvas.setActiveObject(newText);
+      setSelectedObject(newText);
     }
+    setShowTextDialog(false);
+  };
+
+  const handleCloseTextDialog = () => {
+    setShowTextDialog(false);
   };
 
   return (
     <div className="min-h-screen overflow-y-auto bg-[#050b1f]">
-      {/* Reduce the logo size */}
+      {/* Reduced size logo - not sticky */}
       <div className="flex items-center justify-center py-5">
         <img src={fantomLogo} alt="Fantom PFP Generator" className="w-[300px] h-auto" />
       </div>
@@ -439,7 +451,7 @@ function App() {
         <img
           src={roundLogo}
           alt="Home"
-          onClick={() => window.location.href = "https://catownkimono.com"}
+          onClick={() => window.location.href = "https://fantomsonic.com"}
           className="w-12 h-12 cursor-pointer hover:opacity-80 transition-opacity"
         />
       </div>
@@ -542,12 +554,18 @@ function App() {
         </div>
       </div>
 
-      {/* Add round logo at the bottom with more padding */}
+      {/* Text dialog modal */}
+      {showTextDialog && (
+        <TextDialog onSubmit={handleTextSubmit} onClose={handleCloseTextDialog} />
+      )}
+
+      {/* Add round logo at the bottom with more padding and link */}
       <div className="flex justify-center pb-16 mt-10">
         <img
           src={roundLogo}
           alt="Logo"
-          className="w-16 h-16"
+          onClick={() => window.location.href = "https://fantomsonic.com"}
+          className="w-16 h-16 cursor-pointer hover:opacity-80 transition-opacity"
         />
       </div>
     </div>
