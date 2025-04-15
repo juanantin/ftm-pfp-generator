@@ -1,4 +1,3 @@
-
 import { useState, useEffect, useRef } from "react";
 import { fabric } from "fabric";
 import ImageScroller from "./ImageScroller";
@@ -418,7 +417,7 @@ function App() {
   const handleTextSubmit = (text, color) => {
     if (text) {
       const newText = new fabric.Text(text, {
-        fontFamily: "Tahoma",
+        fontFamily: "Finger Paint",
         fontSize: 20,
         fill: color,
         stroke: "#000",
@@ -447,7 +446,7 @@ function App() {
         <img 
           src={fantomLogo} 
           alt="Fantom PFP Generator" 
-          className="w-[160px] md:w-[260px] h-auto mx-auto"
+          className="w-[180px] md:w-[260px] h-auto mx-auto"
         />
       </div>
 
@@ -457,7 +456,7 @@ function App() {
           src={roundLogo}
           alt="Home"
           onClick={() => window.location.href = "https://fantomsonic.com"}
-          className="w-12 h-12 cursor-pointer hover:opacity-80 transition-opacity"
+          className="w-14 h-14 cursor-pointer hover:opacity-80 transition-opacity"
         />
       </div>
 
@@ -568,7 +567,7 @@ function App() {
           src={roundLogo}
           alt="Logo"
           onClick={() => window.location.href = "https://fantomsonic.com"}
-          className="w-12 h-12 cursor-pointer hover:opacity-80 transition-opacity"
+          className="w-14 h-14 cursor-pointer hover:opacity-80 transition-opacity"
         />
       </div>
     </div>
