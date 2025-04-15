@@ -1,9 +1,11 @@
+
 import { useState, useEffect, useRef } from "react";
 import { fabric } from "fabric";
-import logo from "./assets/logo.png";
 import ImageScroller from "./ImageScroller";
-import bg from "./assets/bg.png";
-import main_cat from "./assets/main_cat.png";
+import baseCharacter from "../public/lovable-uploads/c1f10ba7-7878-44be-9be8-56715615e69f.png";
+import fantomLogo from "../public/lovable-uploads/e562fef2-b876-4191-9dd8-82c2e04581ec.png";
+import roundLogo from "../public/lovable-uploads/be6d606d-e20d-47a4-a906-4f6f02bd8668.png";
+import TextDialog from "./TextDialog";
 
 function App() {
   const [stickers, setStickers] = useState({});
@@ -17,10 +19,13 @@ function App() {
   const [backgroundImage, setBackgroundImage] = useState(null);
   const [isMobile, setIsMobile] = useState(false);
   const [hats, setHats] = useState(null);
+  // const [faces, setFaces] = useState(null);
+  const [kimonos, setKimonos] = useState(null);
+  // const [pants, Pants] = useState(null);
+  const [weapons, setWeapons] = useState(null);
   const [eyewear, setEyewear] = useState(null);
   const [mouth, setMouth] = useState(null);
-  const [kimonos, setKimonos] = useState(null);
-  const [weapons, setWeapons] = useState(null);
+  const [showTextDialog, setShowTextDialog] = useState(false);
 
   // const [isAtFront, setIsAtFront] = useState(false);
   // const [isAtBack, setIsAtBack] = useState(false);
@@ -67,6 +72,30 @@ function App() {
   }, [canvas, selectedObject, isMobile]);
 
   const changeBackgroundImage = (backgroundImage, canvas) => {
+    if (!canvas) return;
+    
+    // Store current objects to restore after background change
+    const currentObjects = [...canvas.getObjects()]; 
+    
+    // Find the main cat image specifically (the base character)
+    const mainCatImage = currentObjects.find(obj => 
+      obj.selectable === false && 
+      (!obj._element || !obj._element.src || !obj._element.src.includes("stickers"))
+    );
+    
+    // Store main cat position and scale if it exists
+    let mainCatProps = null;
+    if (mainCatImage) {
+      mainCatProps = {
+        scaleX: mainCatImage.scaleX,
+        scaleY: mainCatImage.scaleY,
+        left: mainCatImage.left,
+        top: mainCatImage.top,
+        originX: mainCatImage.originX || 'center',
+        originY: mainCatImage.originY || 'bottom'
+      };
+    }
+
     fabric.Image.fromURL(backgroundImage, (img) => {
       // Calculate the new dimensions respecting the maximum width of 550px
       let newWidth = img.width;
@@ -78,6 +107,10 @@ function App() {
         newWidth = maxWidth;
         newHeight = (maxWidth / img.width) * img.height;
       }
+
+      // Temporarily store the current canvas dimensions
+      const oldWidth = canvas.width;
+      const oldHeight = canvas.height;
 
       canvas.setWidth(newWidth);
       canvas.setHeight(400);
@@ -92,6 +125,41 @@ function App() {
           scaleY: canvas.height / img.height,
         }
       );
+      
+      // If main character was found, restore its properties after background change
+      if (mainCatProps) {
+        // Find the main cat again after background change
+        const objects = canvas.getObjects();
+        const mainCat = objects.find(obj => 
+          obj.selectable === false && 
+          (!obj._element || !obj._element.src || !obj._element.src.includes("stickers"))
+        );
+        
+        if (mainCat) {
+          // On mobile, ensure the main cat stays aligned with the bottom regardless of background
+          if (isMobile) {
+            mainCat.set({
+              left: canvas.width / 2, // Center horizontally
+              top: canvas.height, // Align with bottom
+              originX: 'center',
+              originY: 'bottom',
+              scaleX: mainCatProps.scaleX,
+              scaleY: mainCatProps.scaleY
+            });
+          } else {
+            // For desktop, just restore previous position
+            mainCat.set({
+              left: mainCatProps.left,
+              top: mainCatProps.top,
+              originX: mainCatProps.originX,
+              originY: mainCatProps.originY,
+              scaleX: mainCatProps.scaleX,
+              scaleY: mainCatProps.scaleY
+            });
+          }
+          canvas.renderAll();
+        }
+      }
     });
   };
 
@@ -104,6 +172,28 @@ function App() {
       canvas.setBackgroundImage("", canvas.renderAll.bind(canvas));
     }
   }, [canvas, backgroundImage, isMobile]);
+
+  const addMainImg = (canvas2, image) => {
+    fabric.Image.fromURL(image, (img) => {
+      const canvasWidth = canvas2.getWidth();
+      const canvasHeight = canvas2.getHeight();
+      
+      // Scale to 100% of canvas height while maintaining aspect ratio
+      const scaleFactor = canvasHeight / img.height;
+      img.scaleToHeight(canvasHeight);
+
+      img.set({
+        left: canvasWidth / 2,
+        top: canvasHeight, // Align with bottom of canvas
+        originX: 'center',
+        originY: 'bottom',
+        selectable: false
+      });
+
+      canvas2.add(img);
+      canvas2.renderAll();
+    });
+  };
 
   useEffect(() => {
     const importStickers = async () => {
@@ -145,7 +235,7 @@ function App() {
     const newCanvas = new fabric.Canvas(canvasRef.current, {
       width: window.innerWidth <= 768 ? 400 : 400,
       height: window.innerWidth <= 768 ? 400 : 400,
-      backgroundColor: "#fff",
+      backgroundColor: "#fff"
     });
 
     setCanvas(newCanvas);
@@ -174,26 +264,14 @@ function App() {
     // changeBackgroundImage(bg, newCanvas);
     // handleAddImage(null, null, logo);
 
-    addMainImg(newCanvas, main_cat);
+    // addMainImg(newCanvas, main_cat);
+    // Add the base character
+    addMainImg(newCanvas, baseCharacter);
 
     return () => {
       newCanvas.dispose();
     };
   }, []);
-
-  const addMainImg = (canvas, image) => {
-    fabric.Image.fromURL(image, (img) => {
-      const canvasWidth = canvas.getWidth();
-
-      img.scaleToWidth(canvasWidth);
-      img.scaleToHeight(img.height * (canvasWidth / img.width));
-      img.set({
-        selectable: false, // Disable selection
-      });
-
-      canvas.add(img);
-    });
-  };
 
   const handleAddImage = (state, setState, image) => {
     if (state != null) {
@@ -215,23 +293,25 @@ function App() {
   };
 
   const getRandomImage = (category) => {
-    const categoryItems = stickers[category];
-    if (categoryItems.length === 0) return null;
-    const randomIndex = Math.floor(Math.random() * categoryItems.length);
-    return categoryItems[randomIndex];
+    if (!stickers[category] || stickers[category].length === 0) return null;
+    const randomIndex = Math.floor(Math.random() * stickers[category].length);
+    return stickers[category][randomIndex];
   };
 
+  // Fix randomizer functionality to pick one from each category
   const generateRandom = () => {
     const randomHats = getRandomImage("headwear");
     const randomKimonos = getRandomImage("kimono");
     const randomWeapons = getRandomImage("accessory");
+    const randomEyewear = getRandomImage("eyewear");
+    const randomMouth = getRandomImage("mouth");
     const randomBackground = getRandomImage("background");
 
     if (randomHats) handleAddImage(hats, setHats, randomHats);
     if (randomKimonos) handleAddImage(kimonos, setKimonos, randomKimonos);
-    // if (randomPants) handleAddImage(pants, setPants, randomPants);
     if (randomWeapons) handleAddImage(weapons, setWeapons, randomWeapons);
-
+    if (randomEyewear) handleAddImage(eyewear, setEyewear, randomEyewear);
+    if (randomMouth) handleAddImage(mouth, setMouth, randomMouth);
     if (randomBackground) changeBackgroundImage(randomBackground, canvas);
   };
 
@@ -268,18 +348,16 @@ function App() {
       const url = URL.createObjectURL(blob);
 
       const link = document.createElement("a");
-      link.download = "cok_meme.png";
+      link.download = "ftm_pfp.png";
       link.href = url;
       document.body.appendChild(link);
       link.click();
       document.body.removeChild(link);
 
-      // Release the object URL to free memory
       URL.revokeObjectURL(url);
     }
   };
 
-  // Utility function to convert a data URL to a Blob
   const dataURLToBlob = (dataURL) => {
     const [header, data] = dataURL.split(",");
     const mimeString = header.match(/:(.*?);/)[1];
@@ -310,16 +388,15 @@ function App() {
       backgroundColor: "#fff",
     });
 
-    // const newCanvas = new fabric.Canvas(canvasRef.current, {
-    //   width: 300,
-    //   height: 300,
-    //   backgroundColor: "#fff",
-    // });
-
     setCanvas(newCanvas);
-    addMainImg(newCanvas, main_cat);
+    addMainImg(newCanvas, baseCharacter);
 
-    // changeBackgroundImage(bg, newCanvas);
+    // Reset sticker states
+    setHats(null);
+    setKimonos(null);
+    setWeapons(null);
+    setEyewear(null);
+    setMouth(null);
   };
 
   const handleDelete = () => {
@@ -335,14 +412,17 @@ function App() {
   };
 
   const handleAddText = () => {
-    const text = prompt("Enter your text:");
+    setShowTextDialog(true);
+  };
 
+  const handleTextSubmit = (text, color) => {
     if (text) {
       const newText = new fabric.Text(text, {
         fontFamily: "Tahoma",
         fontSize: 20,
-        fill: "#fff",
+        fill: color,
         stroke: "#000",
+        strokeWidth: 0.5,
         fontWeight: "bold",
         left: 100,
         top: 100,
@@ -350,30 +430,38 @@ function App() {
       });
 
       canvas.add(newText);
+      canvas.setActiveObject(newText);
+      setSelectedObject(newText);
     }
+    setShowTextDialog(false);
+  };
+
+  const handleCloseTextDialog = () => {
+    setShowTextDialog(false);
   };
 
   return (
-    <div className=" min-h-screen overflow-y-auto bg-gradient-to-r from-mainRed to-darkRed">
-      <div
-        onClick={() => (window.location.href = "https://catownkimono.com")}
-        className="flex cursor-pointer absolute top-5 left-10"
-      >
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          width="32"
-          height="32"
-          viewBox="0 0 24 24"
-        >
-          <path
-            fill="#000"
-            d="m6.921 12.5l5.793 5.792L12 19l-7-7l7-7l.714.708L6.92 11.5H19v1z"
-          />
-        </svg>
-        <h1 className="text-3xl">Home</h1>
+    <div className="min-h-screen overflow-y-auto bg-[#050b1f]">
+      {/* Logo - using fixed positioning */}
+      <div className="pt-5 pb-10 mt-12">
+        <img 
+          src={fantomLogo} 
+          alt="Fantom PFP Generator" 
+          className="w-[200px] md:w-[300px] h-auto mx-auto"
+        />
       </div>
 
-      <div className="w-full flex py-10 flex-col lg:flex-row justify-center">
+      {/* Top left home logo - fixed position */}
+      <div className="fixed top-5 left-5 z-10">
+        <img
+          src={roundLogo}
+          alt="Home"
+          onClick={() => window.location.href = "https://fantomsonic.com"}
+          className="w-12 h-12 cursor-pointer hover:opacity-80 transition-opacity"
+        />
+      </div>
+
+      <div className="w-full flex flex-col items-center py-5">
         <input
           type="file"
           accept="image/*"
@@ -389,22 +477,14 @@ function App() {
           ref={stickerImgInputRef}
           onChange={handleAddSticker}
         />
-        <div className="flex-1 px-5">
-          <div className="flex item-center justify-center gap-5 md:gap-10 mb-5">
-            <h1 className="text-white mt-5 lg:mt-0 text-5xl md:text-7xl text-center font-black ">
-              Cok <br />
-              Meme Generator
-            </h1>
-          </div>
 
+        <div className="flex flex-col items-center px-5">
           <div
             className={`mx-auto mb-7 bg-transparent rounded-xl relative
-          ${isMobile ? "canvas-mobile" : "w-[400px]"}
-          `}
+            ${isMobile ? "canvas-mobile" : "w-[400px]"}
+            `}
           >
-            <canvas
-              ref={canvasRef}
-            />
+            <canvas ref={canvasRef} />
             {selectedObject && (
               <img
                 onClick={handleDelete}
@@ -422,69 +502,8 @@ function App() {
               />
             )}
           </div>
-          <div className="flex flex-wrap w-full gap-5 justify-center">
-            <div
-              onClick={() => stickerImgInputRef.current.click()}
-              className="border-4 cursor-pointer border-black bg-white text-black px-5 py-2 rounded-lg flex justify-center items-center overflow-hidden relative group transition-all duration-300 ease-in-out transform hover:scale-105 w-full sm:w-full md:w-1/3 lg:w-1/3"
-            >
-              <p className="text-black text-center text-2xl tracking-wider font-medium relative">
-                UPLOAD STICKER
-              </p>
-              <div className="absolute top-0 left-0 w-full h-full bg-black opacity-0 z-0 transition duration-300 ease-in-out group-hover:opacity-50"></div>
-            </div>
-            <div
-              onClick={() => bgImgInputRef.current.click()}
-              className="border-4 cursor-pointer border-black bg-white text-black px-5 py-2 rounded-lg flex justify-center items-center overflow-hidden relative group transition-all duration-300 ease-in-out transform hover:scale-105 w-full sm:w-full md:w-1/3 lg:w-1/3"
-            >
-              <p className="text-black text-center text-2xl tracking-wider font-medium relative">
-                UPLOAD BACKGROUND
-              </p>
-              <div className="absolute top-0 left-0 w-full h-full bg-black opacity-0 z-0 transition duration-300 ease-in-out group-hover:opacity-50"></div>
-            </div>
-            <div
-              onClick={handleAddText}
-              className="border-4 cursor-pointer border-black bg-white text-black px-5 py-2 rounded-lg flex justify-center items-center overflow-hidden relative group transition-all duration-300 ease-in-out transform hover:scale-105 w-full sm:w-full md:w-1/3 lg:w-1/3"
-            >
-              <p className="text-black text-center text-2xl tracking-wider font-medium relative">
-                ADD TEXT
-              </p>
-              <div className="absolute top-0 left-0 w-full h-full bg-black opacity-0 z-0 transition duration-300 ease-in-out group-hover:opacity-50"></div>
-            </div>
-            <div
-              onClick={handleCanvasClear}
-              className="border-4 cursor-pointer border-black bg-white text-black px-5 py-2 rounded-lg flex justify-center items-center overflow-hidden relative group transition-all duration-300 ease-in-out transform hover:scale-105 w-full sm:w-full md:w-1/3 lg:w-1/3"
-            >
-              <p className="text-black text-center text-2xl tracking-wider font-medium relative">
-                RESET
-              </p>
-              <div className="absolute top-0 left-0 w-full h-full bg-black opacity-0 z-0 transition duration-300 ease-in-out group-hover:opacity-50"></div>
-            </div>
-            <div
-              onClick={generateRandom}
-              className="border-4 cursor-pointer border-black bg-white text-black px-5 py-2 rounded-lg flex justify-center items-center overflow-hidden relative group transition-all duration-300 ease-in-out transform hover:scale-105 w-full sm:w-full md:w-1/3 lg:w-1/3"
-            >
-              <p className="text-black text-center text-2xl tracking-wider font-medium relative">
-                GENERATE RANDOM
-              </p>
-              <div className="absolute top-0 left-0 w-full h-full bg-black opacity-0 z-0 transition duration-300 ease-in-out group-hover:opacity-50"></div>
-            </div>
-            <div
-              onClick={saveImageToLocal}
-              className="border-4 cursor-pointer border-black bg-white text-black px-5 py-2 rounded-lg flex justify-center items-center overflow-hidden relative group transition-all duration-300 ease-in-out transform hover:scale-105 w-full sm:w-full md:w-1/3 lg:w-1/3"
-            >
-              <p className="text-black text-center text-2xl tracking-wider font-medium relative">
-                SAVE MEME
-              </p>
-              <div className="absolute top-0 left-0 w-full h-full bg-black opacity-0 z-0 transition duration-300 ease-in-out group-hover:opacity-50"></div>
-            </div>
-          </div>
-        </div>
 
-        <div className="mt-5 w-full lg:w-[60%] px-5 lg:pl-0 ">
-          <div className="flex-1">
-            <h1 className="text-4xl text-center text-white mt-10">
-              CLICK TO ADD STICKER
-            </h1>
+          <div className="w-full">
             <ImageScroller
               canvas={canvas}
               categorizedImages={stickers}
@@ -502,7 +521,55 @@ function App() {
               setMouth={setMouth}
             />
           </div>
+
+          <div className="flex flex-wrap gap-3 justify-center mt-8">
+            <button
+              onClick={() => stickerImgInputRef.current.click()}
+              className="border-2 content-font cursor-pointer border-white bg-transparent text-white px-4 py-2 rounded-lg text-base hover:bg-white hover:text-black transition-all duration-300"
+            >
+              UPLOAD STICKER
+            </button>
+            <button
+              onClick={handleAddText}
+              className="border-2 content-font cursor-pointer border-white bg-transparent text-white px-4 py-2 rounded-lg text-base hover:bg-white hover:text-black transition-all duration-300"
+            >
+              ADD TEXT
+            </button>
+            <button
+              onClick={handleCanvasClear}
+              className="border-2 content-font cursor-pointer border-white bg-transparent text-white px-4 py-2 rounded-lg text-base hover:bg-white hover:text-black transition-all duration-300"
+            >
+              RESET
+            </button>
+            <button
+              onClick={generateRandom}
+              className="border-2 content-font cursor-pointer border-white bg-transparent text-white px-4 py-2 rounded-lg text-base hover:bg-white hover:text-black transition-all duration-300"
+            >
+              RANDOMIZER
+            </button>
+            <button
+              onClick={saveImageToLocal}
+              className="border-2 content-font cursor-pointer border-white bg-transparent text-white px-4 py-2 rounded-lg text-base hover:bg-white hover:text-black transition-all duration-300"
+            >
+              DOWNLOAD
+            </button>
+          </div>
         </div>
+      </div>
+
+      {/* Text dialog modal */}
+      {showTextDialog && (
+        <TextDialog onSubmit={handleTextSubmit} onClose={handleCloseTextDialog} />
+      )}
+
+      {/* Bottom logo with same size as top left logo */}
+      <div className="flex justify-center pb-16 mt-10">
+        <img
+          src={roundLogo}
+          alt="Logo"
+          onClick={() => window.location.href = "https://fantomsonic.com"}
+          className="w-12 h-12 cursor-pointer hover:opacity-80 transition-opacity"
+        />
       </div>
     </div>
   );
