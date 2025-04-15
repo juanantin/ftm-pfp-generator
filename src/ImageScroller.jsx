@@ -1,3 +1,4 @@
+
 import React, { useState } from "react";
 
 function ImageScroller({
@@ -18,7 +19,7 @@ function ImageScroller({
 }) {
   const [selectedCategory, setSelectedCategory] = useState("headwear");
 
-  // Function to get ordered categories
+  // Function to get ordered categories with accessories before background
   const getOrderedCategories = (categories) => {
     const order = ["headwear", "eyewear", "mouth", "kimono", "accessory", "background"];
     return order.filter(cat => categories.includes(cat));

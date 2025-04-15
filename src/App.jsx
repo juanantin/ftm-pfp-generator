@@ -345,13 +345,12 @@ function App() {
       const url = URL.createObjectURL(blob);
 
       const link = document.createElement("a");
-      link.download = "cok_meme.png";
+      link.download = "ftm_pfp.png";
       link.href = url;
       document.body.appendChild(link);
       link.click();
       document.body.removeChild(link);
 
-      // Release the object URL to free memory
       URL.revokeObjectURL(url);
     }
   };
@@ -480,12 +479,12 @@ function App() {
 
   return (
     <div className="min-h-screen overflow-y-auto bg-[#050b1f]">
-      {/* Remove old title and add Fantom logo image */}
+      {/* Reduce the logo size */}
       <div className="flex items-center justify-center py-5">
-        <img src={fantomLogo} alt="Fantom PFP Generator" className="w-[500px] h-auto" />
+        <img src={fantomLogo} alt="Fantom PFP Generator" className="w-[400px] h-auto" />
       </div>
 
-      {/* Update home link with round logo */}
+      {/* Fixed position for home logo */}
       <div className="fixed top-5 left-5 z-10">
         <img
           src={roundLogo}
@@ -539,9 +538,6 @@ function App() {
 
           <div className="mt-5 w-full lg:w-[60%] px-5 lg:pl-0">
             <div className="flex-1">
-              <h1 className="text-2xl text-center text-white mt-5 content-font">
-                CLICK TO ADD STICKER
-              </h1>
               <ImageScroller
                 canvas={canvas}
                 categorizedImages={stickers}
@@ -590,7 +586,7 @@ function App() {
               onClick={saveImageToLocal}
               className="border-2 content-font cursor-pointer border-white bg-transparent text-white px-4 py-2 rounded-lg text-base hover:bg-white hover:text-black transition-all duration-300"
             >
-              SAVE MEME
+              DOWNLOAD
             </button>
           </div>
         </div>
