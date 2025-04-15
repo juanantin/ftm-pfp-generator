@@ -1,10 +1,11 @@
-import { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { fabric } from "fabric";
 import ImageScroller from "./ImageScroller";
 import baseCharacter from "../public/lovable-uploads/c1f10ba7-7878-44be-9be8-56715615e69f.png";
 import fantomLogo from "../public/lovable-uploads/e562fef2-b876-4191-9dd8-82c2e04581ec.png";
 import roundLogo from "../public/lovable-uploads/be6d606d-e20d-47a4-a906-4f6f02bd8668.png";
 import TextDialog from "./TextDialog";
+import { ArrowLeft } from "lucide-react"; // Import the ArrowLeft icon
 
 function App() {
   const [stickers, setStickers] = useState({});
@@ -431,8 +432,25 @@ function App() {
     setShowTextDialog(false);
   };
 
+  const handleHomeNavigation = () => {
+    window.location.href = "https://fantomsonic.com/#pfp";
+  };
+
   return (
     <div className="min-h-screen overflow-y-auto bg-[#050b1f]">
+      {/* Top left home button */}
+      <div 
+        onClick={handleHomeNavigation} 
+        className="fixed top-5 left-5 z-10 cursor-pointer hover:opacity-80 transition-opacity"
+      >
+        <ArrowLeft 
+          color="white" 
+          size={32} 
+          strokeWidth={2.5} 
+          className="hover:scale-110 transition-transform" 
+        />
+      </div>
+
       {/* Logo section */}
       <div className="pt-5 pb-10 mt-12">
         <img 
@@ -443,14 +461,14 @@ function App() {
       </div>
 
       {/* Top left home logo - fixed position */}
-      <div className="fixed top-5 left-5 z-10">
+      {/* <div className="fixed top-5 left-5 z-10">
         <img
           src={roundLogo}
           alt="Home"
           onClick={() => window.location.href = "https://fantomsonic.com"}
           className="w-12 h-12 cursor-pointer hover:opacity-80 transition-opacity"
         />
-      </div>
+      </div> */}
 
       <div className="w-full flex flex-col items-center py-5">
         <input
@@ -553,16 +571,22 @@ function App() {
         <TextDialog onSubmit={handleTextSubmit} onClose={handleCloseTextDialog} />
       )}
 
-      {/* Bottom logo with same size as top left logo */}
+      {/* Bottom home button */}
       <div className="flex justify-center pb-16 mt-10">
-        <img
-          src={roundLogo}
-          alt="Logo"
-          onClick={() => window.location.href = "https://fantomsonic.com"}
-          className="w-12 h-12 cursor-pointer hover:opacity-80 transition-opacity"
-        />
+        <div 
+          onClick={handleHomeNavigation} 
+          className="cursor-pointer hover:opacity-80 transition-opacity"
+        >
+          <ArrowLeft 
+            color="white" 
+            size={32} 
+            strokeWidth={2.5} 
+            className="hover:scale-110 transition-transform" 
+          />
+        </div>
       </div>
-      {/* Copyright text - Keep blue background with white text */}
+
+      {/* Copyright text */}
       <div className="w-full text-center py-4 bg-[#050b1f] mt-8">
         <p className="content-font text-white text-sm">© 2025, Fantom</p>
       </div>
