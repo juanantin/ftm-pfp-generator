@@ -26,7 +26,7 @@ const TextDialog = ({ onSubmit, onClose }) => {
             type="color"
             value={color}
             onChange={(e) => setColor(e.target.value)}
-            className="mb-4 w-full h-10 rounded cursor-pointer"
+            className="mb-4 w-full h-10 rounded-none cursor-pointer"
             style={{ appearance: 'none', padding: '0', border: 'none' }}
           />
           <div className="flex justify-end gap-2">
