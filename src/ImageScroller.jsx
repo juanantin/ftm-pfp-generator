@@ -20,6 +20,7 @@ function ImageScroller({
   const [selectedCategory, setSelectedCategory] = useState("headwear");
 
   const getOrderedCategories = (categories) => {
+    // Ensure accessory category is included in the order
     const order = ["headwear", "eyewear", "mouth", "kimono", "accessory", "background"];
     return order.filter(cat => categories.includes(cat));
   };

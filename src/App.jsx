@@ -1,3 +1,4 @@
+
 import { useState, useEffect, useRef } from "react";
 import { fabric } from "fabric";
 import ImageScroller from "./ImageScroller";
@@ -443,10 +444,10 @@ function App() {
     <div className="min-h-screen overflow-y-auto bg-[#050b1f]">
       {/* Logo - not sticky */}
       <div className="flex items-center justify-center py-5">
-        <img src={fantomLogo} alt="Fantom PFP Generator" className="w-[300px] h-auto" />
+        <img src={fantomLogo} alt="Fantom PFP Generator" className="w-[240px] md:w-[300px] h-auto" />
       </div>
 
-      {/* Top left home logo */}
+      {/* Top left home logo - fixed position */}
       <div className="fixed top-5 left-5 z-10">
         <img
           src={roundLogo}
@@ -557,13 +558,13 @@ function App() {
         <TextDialog onSubmit={handleTextSubmit} onClose={handleCloseTextDialog} />
       )}
 
-      {/* Bottom logo with more padding */}
+      {/* Bottom logo with same size as top left logo */}
       <div className="flex justify-center pb-16 mt-10">
         <img
           src={roundLogo}
           alt="Logo"
           onClick={() => window.location.href = "https://fantomsonic.com"}
-          className="w-16 h-16 cursor-pointer hover:opacity-80 transition-opacity"
+          className="w-12 h-12 cursor-pointer hover:opacity-80 transition-opacity"
         />
       </div>
     </div>
