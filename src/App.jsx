@@ -1,8 +1,6 @@
 import { useState, useEffect, useRef } from "react";
 import { fabric } from "fabric";
 import ImageScroller from "./ImageScroller";
-import fantomTitle from "./assets/fantom-title.png";
-import fantomBase from "./assets/fantom-base.png";
 import logo from "./assets/logo.png";
 import bg from "./assets/bg.png";
 import main_cat from "./assets/main_cat.png";
@@ -522,11 +520,9 @@ function App() {
         />
         <div className="flex-1 px-5">
           <div className="flex items-center justify-center gap-5 md:gap-10 mb-5">
-            <img 
-              src={fantomTitle} 
-              alt="Fantom PFP Generator"
-              className="w-[300px] md:w-[400px] h-auto"
-            />
+            <h1 className="text-5xl md:text-7xl text-white font-bold content-font">
+              Fantom PFP Generator
+            </h1>
           </div>
 
           <div
