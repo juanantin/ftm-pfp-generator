@@ -290,12 +290,12 @@ function App() {
   };
 
   const getRandomImage = (category) => {
-    const categoryItems = stickers[category];
-    if (categoryItems.length === 0) return null;
-    const randomIndex = Math.floor(Math.random() * categoryItems.length);
-    return categoryItems[randomIndex];
+    if (!stickers[category] || stickers[category].length === 0) return null;
+    const randomIndex = Math.floor(Math.random() * stickers[category].length);
+    return stickers[category][randomIndex];
   };
 
+  // Fix randomizer functionality to pick one from each category
   const generateRandom = () => {
     const randomHats = getRandomImage("headwear");
     const randomKimonos = getRandomImage("kimono");
@@ -355,7 +355,6 @@ function App() {
     }
   };
 
-  // Utility function to convert a data URL to a Blob
   const dataURLToBlob = (dataURL) => {
     const [header, data] = dataURL.split(",");
     const mimeString = header.match(/:(.*?);/)[1];
@@ -386,12 +385,6 @@ function App() {
       backgroundColor: "#fff",
     });
 
-    // const newCanvas = new fabric.Canvas(canvasRef.current, {
-    //   width: 300,
-    //   height: 300,
-    //   backgroundColor: "#fff",
-    // });
-
     setCanvas(newCanvas);
     addMainImg(newCanvas, baseCharacter);
 
@@ -401,8 +394,6 @@ function App() {
     setWeapons(null);
     setEyewear(null);
     setMouth(null);
-
-    // changeBackgroundImage(bg, newCanvas);
   };
 
   const handleDelete = () => {
@@ -436,52 +427,11 @@ function App() {
     }
   };
 
-  // useEffect(() => {
-  //   if (selectedObject && canvas) {
-  //     const isObjectInFront =
-  //       selectedObject === canvas.getObjects()[canvas.getObjects().length - 1];
-  //     const isObjectInBack = selectedObject === canvas.getObjects()[0];
-  //     setIsAtFront(isObjectInFront);
-  //     setIsAtBack(isObjectInBack);
-  //   } else {
-  //     setIsAtFront(false);
-  //     setIsAtBack(false);
-  //   }
-  // }, [selectedObject, canvas]);
-
-  // const bringForward = () => {
-  //   if (selectedObject) {
-  //     canvas.bringForward(selectedObject);
-  //     canvas.renderAll();
-  //   }
-  // };
-
-  // const bringToFront = () => {
-  //   if (selectedObject) {
-  //     canvas.bringToFront(selectedObject);
-  //     canvas.renderAll();
-  //   }
-  // };
-
-  // const sendBackward = () => {
-  //   if (selectedObject) {
-  //     canvas.sendBackwards(selectedObject);
-  //     canvas.renderAll();
-  //   }
-  // };
-
-  // const sendToBack = (object) => {
-  //   if (object) {
-  //     canvas.sendToBack(selectedObject);
-  //     canvas.renderAll();
-  //   }
-  // };
-
   return (
     <div className="min-h-screen overflow-y-auto bg-[#050b1f]">
       {/* Reduce the logo size */}
       <div className="flex items-center justify-center py-5">
-        <img src={fantomLogo} alt="Fantom PFP Generator" className="w-[400px] h-auto" />
+        <img src={fantomLogo} alt="Fantom PFP Generator" className="w-[300px] h-auto" />
       </div>
 
       {/* Fixed position for home logo */}
@@ -580,7 +530,7 @@ function App() {
               onClick={generateRandom}
               className="border-2 content-font cursor-pointer border-white bg-transparent text-white px-4 py-2 rounded-lg text-base hover:bg-white hover:text-black transition-all duration-300"
             >
-              GENERATE RANDOM
+              RANDOMIZER
             </button>
             <button
               onClick={saveImageToLocal}
@@ -592,8 +542,8 @@ function App() {
         </div>
       </div>
 
-      {/* Add round logo at the bottom */}
-      <div className="flex justify-center pb-8">
+      {/* Add round logo at the bottom with more padding */}
+      <div className="flex justify-center pb-16 mt-10">
         <img
           src={roundLogo}
           alt="Logo"
