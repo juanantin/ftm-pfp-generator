@@ -1,13 +1,15 @@
 
-# .htaccess file for Lovable app
-<IfModule mod_rewrite.c>
-  RewriteEngine On
-  RewriteBase /
-  RewriteRule ^index\.html$ - [L]
-  RewriteCond %{REQUEST_FILENAME} !-f
-  RewriteCond %{REQUEST_FILENAME} !-d
-  RewriteRule . /index.html [L]
-</IfModule>
+# Redirect root to ftm-pfp
+RewriteEngine On
+RewriteCond %{REQUEST_URI} ^/$
+RewriteRule ^$ /ftm-pfp/ [R=301,L]
+
+# Handle SPA routing for ftm-pfp subdirectory
+RewriteBase /ftm-pfp/
+RewriteRule ^index\.html$ - [L]
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule . /ftm-pfp/index.html [L]
 
 # Cache control for static assets
 <IfModule mod_expires.c>

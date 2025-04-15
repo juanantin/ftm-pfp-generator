@@ -10,7 +10,7 @@ export default defineConfig(({ mode }) => ({
     react(),
     mode === 'development' && componentTagger(),
   ].filter(Boolean),
-  base: '/ftm-pfp/',
+  base: mode === 'production' ? '/ftm-pfp/' : '/',
   server: {
     host: "::",
     port: 8080
