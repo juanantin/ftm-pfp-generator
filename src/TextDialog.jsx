@@ -1,4 +1,6 @@
 
+import React, { useState } from "react";
+
 function TextDialog({ onSubmit, onClose }) {
   const [text, setText] = useState("");
   const [textColor, setTextColor] = useState("#FFFFFF");
