@@ -1,6 +1,4 @@
 
-import React, { useState } from "react";
-
 function TextDialog({ onSubmit, onClose }) {
   const [text, setText] = useState("");
   const [textColor, setTextColor] = useState("#FFFFFF");
@@ -19,7 +17,7 @@ function TextDialog({ onSubmit, onClose }) {
   return (
     <div className="fixed inset-0 flex items-center justify-center z-50 bg-black bg-opacity-50">
       <div className="bg-[#1EAEDB] p-5 rounded-xl border-4 border-white w-80 sm:w-96">
-        <h3 className="text-white text-xl font-bold mb-4 text-center">ENTER TEXT TO ADD</h3>
+        <h3 className="text-white text-xl font-bold mb-4 text-center" style={{ fontFamily: "'Finger Paint', cursive" }}>ENTER TEXT TO ADD</h3>
         
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>

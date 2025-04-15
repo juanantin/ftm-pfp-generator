@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 
 function ImageScroller({
@@ -19,18 +18,15 @@ function ImageScroller({
 }) {
   const [selectedCategory, setSelectedCategory] = useState("headwear");
 
-  // Function to get ordered categories with accessories before background
   const getOrderedCategories = (categories) => {
     const order = ["headwear", "eyewear", "mouth", "kimono", "accessory", "background"];
     return order.filter(cat => categories.includes(cat));
   };
 
-  // Handle category selection
   const handleCategorySelect = (category) => {
     setSelectedCategory(category);
   };
 
-  // Handle sticker removal for the selected category
   const handleRemoveSticker = (category) => {
     if (category === "headwear" && setHats) {
       canvas.remove(hats);
@@ -131,7 +127,7 @@ function ImageScroller({
   };
 
   return (
-    <div>
+    <div className="flex flex-col items-center">
       {/* Category selector - no title text */}
       <div className="flex flex-wrap justify-center gap-3 mb-4 mt-2">
         {getOrderedCategories(Object.keys(categorizedImages || {})).map((category) => (
@@ -151,7 +147,7 @@ function ImageScroller({
       </div>
 
       {/* Display stickers for the selected category */}
-      <div className="mt-3 pb-8">
+      <div className="mt-3 pb-8 flex justify-center">
         {renderStickers()}
       </div>
     </div>

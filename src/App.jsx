@@ -441,12 +441,12 @@ function App() {
 
   return (
     <div className="min-h-screen overflow-y-auto bg-[#050b1f]">
-      {/* Reduced size logo - not sticky */}
+      {/* Logo - not sticky */}
       <div className="flex items-center justify-center py-5">
         <img src={fantomLogo} alt="Fantom PFP Generator" className="w-[300px] h-auto" />
       </div>
 
-      {/* Fixed position for home logo */}
+      {/* Top left home logo */}
       <div className="fixed top-5 left-5 z-10">
         <img
           src={roundLogo}
@@ -456,7 +456,7 @@ function App() {
         />
       </div>
 
-      <div className="w-full flex py-5 flex-col lg:flex-row justify-center">
+      <div className="w-full flex flex-col items-center py-5">
         <input
           type="file"
           accept="image/*"
@@ -473,7 +473,7 @@ function App() {
           onChange={handleAddSticker}
         />
 
-        <div className="flex-1 px-5">
+        <div className="flex flex-col items-center px-5">
           <div
             className={`mx-auto mb-7 bg-transparent rounded-xl relative
             ${isMobile ? "canvas-mobile" : "w-[400px]"}
@@ -498,28 +498,26 @@ function App() {
             )}
           </div>
 
-          <div className="mt-5 w-full lg:w-[60%] px-5 lg:pl-0">
-            <div className="flex-1">
-              <ImageScroller
-                canvas={canvas}
-                categorizedImages={stickers}
-                handleAddImage={handleAddImage}
-                changeBackgroundImage={changeBackgroundImage}
-                hats={hats}
-                kimonos={kimonos}
-                weapons={weapons}
-                eyewear={eyewear}
-                mouth={mouth}
-                setHats={setHats}
-                setKimonos={setKimonos}
-                setWeapons={setWeapons}
-                setEyewear={setEyewear}
-                setMouth={setMouth}
-              />
-            </div>
+          <div className="w-full">
+            <ImageScroller
+              canvas={canvas}
+              categorizedImages={stickers}
+              handleAddImage={handleAddImage}
+              changeBackgroundImage={changeBackgroundImage}
+              hats={hats}
+              kimonos={kimonos}
+              weapons={weapons}
+              eyewear={eyewear}
+              mouth={mouth}
+              setHats={setHats}
+              setKimonos={setKimonos}
+              setWeapons={setWeapons}
+              setEyewear={setEyewear}
+              setMouth={setMouth}
+            />
           </div>
 
-          <div className="flex flex-wrap w-full gap-3 justify-center mt-8">
+          <div className="flex flex-wrap gap-3 justify-center mt-8">
             <button
               onClick={() => stickerImgInputRef.current.click()}
               className="border-2 content-font cursor-pointer border-white bg-transparent text-white px-4 py-2 rounded-lg text-base hover:bg-white hover:text-black transition-all duration-300"
@@ -559,7 +557,7 @@ function App() {
         <TextDialog onSubmit={handleTextSubmit} onClose={handleCloseTextDialog} />
       )}
 
-      {/* Add round logo at the bottom with more padding and link */}
+      {/* Bottom logo with more padding */}
       <div className="flex justify-center pb-16 mt-10">
         <img
           src={roundLogo}
