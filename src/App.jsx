@@ -438,16 +438,15 @@ function App() {
 
   return (
     <div className="min-h-screen overflow-y-auto bg-[#050b1f]">
-      {/* Top left home button */}
+      {/* Top left home logo - fixed position */}
       <div 
         onClick={handleHomeNavigation} 
-        className="fixed top-5 left-5 z-10 cursor-pointer hover:opacity-80 transition-opacity"
+        className="fixed top-5 left-5 z-10"
       >
-        <ArrowLeft 
-          color="white" 
-          size={32} 
-          strokeWidth={2.5} 
-          className="hover:scale-110 transition-transform" 
+        <img
+          src={roundLogo}
+          alt="Home"
+          className="w-12 h-12 cursor-pointer hover:opacity-80 transition-opacity"
         />
       </div>
 
@@ -577,11 +576,10 @@ function App() {
           onClick={handleHomeNavigation} 
           className="cursor-pointer hover:opacity-80 transition-opacity"
         >
-          <ArrowLeft 
-            color="white" 
-            size={32} 
-            strokeWidth={2.5} 
-            className="hover:scale-110 transition-transform" 
+          <img
+            src={roundLogo}
+            alt="Home"
+            className="w-12 h-12 cursor-pointer hover:opacity-80 transition-opacity"
           />
         </div>
       </div>
