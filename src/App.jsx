@@ -1,7 +1,7 @@
 
 import React, { useState, useEffect, useRef } from "react";
 import { fabric } from "fabric";
-import { ArrowLeft } from "lucide-react";
+import { ArrowLeft } from "lucide-react"; // Ensure ArrowLeft is imported
 import ImageScroller from "./ImageScroller";
 import baseCharacter from "../public/lovable-uploads/c1f10ba7-7878-44be-9be8-56715615e69f.png";
 import fantomLogo from "../public/lovable-uploads/e562fef2-b876-4191-9dd8-82c2e04581ec.png";
@@ -25,7 +25,6 @@ function App() {
   const [eyewear, setEyewear] = useState(null);
   const [mouth, setMouth] = useState(null);
   const [showTextDialog, setShowTextDialog] = useState(false);
-  const [canvasInitialized, setCanvasInitialized] = useState(false);
 
   useEffect(() => {
     const handleResize = () => {
@@ -94,7 +93,7 @@ function App() {
     }
 
     fabric.Image.fromURL(backgroundImage, (img) => {
-      // Calculate the new dimensions respecting the maximum width of 400px
+      // Calculate the new dimensions respecting the maximum width of 550px
       let newWidth = img.width;
       let newHeight = img.height;
 
@@ -171,8 +170,6 @@ function App() {
   }, [canvas, backgroundImage, isMobile]);
 
   const addMainImg = (canvas2, image) => {
-    if (!canvas2) return;
-    
     fabric.Image.fromURL(image, (img) => {
       const canvasWidth = canvas2.getWidth();
       const canvasHeight = canvas2.getHeight();
@@ -231,47 +228,48 @@ function App() {
 
     importStickers();
 
-    // Initialize canvas only once
-    if (!canvasInitialized) {
-      if (canvasRef.current) {
-        const newCanvas = new fabric.Canvas(canvasRef.current, {
-          width: window.innerWidth <= 768 ? 400 : 400,
-          height: window.innerWidth <= 768 ? 400 : 400,
-          backgroundColor: "#F1F0FB" // Light soft grey background
-        });
+    const newCanvas = new fabric.Canvas(canvasRef.current, {
+      width: window.innerWidth <= 768 ? 400 : 400,
+      height: window.innerWidth <= 768 ? 400 : 400,
+      backgroundColor: "#fff"
+    });
 
-        setCanvas(newCanvas);
-        setCanvasInitialized(true);
+    setCanvas(newCanvas);
 
-        // Event listener for object selection
-        newCanvas.on("selection:created", (e) => {
-          setSelectedObject(e.selected[0]);
-        });
+    // Event listener for object selection
+    newCanvas.on("selection:created", (e) => {
+      setSelectedObject(e.selected[0]);
+    });
 
-        newCanvas.on("object:modified", (e) => {
-          setSelectedObject(e.target);
-        });
+    newCanvas.on("object:modified", (e) => {
+      setSelectedObject(e.target);
+    });
 
-        // Event listener for object deselection
-        newCanvas.on("selection:cleared", () => {
-          setSelectedObject(null);
-        });
+    // Event listener for object deselection
+    newCanvas.on("selection:cleared", () => {
+      setSelectedObject(null);
+    });
 
-        // Add the base character
-        addMainImg(newCanvas, baseCharacter);
-      }
-    }
+    // fabric.Image.fromURL(bgImg, (img) => {
+    //   newCanvas.setBackgroundImage(img, newCanvas.renderAll.bind(newCanvas), {
+    //     scaleX: newCanvas.width / img.width,
+    //     scaleY: newCanvas.height / img.height,
+    //   });
+    // });
+
+    // changeBackgroundImage(bg, newCanvas);
+    // handleAddImage(null, null, logo);
+
+    // addMainImg(newCanvas, main_cat);
+    // Add the base character
+    addMainImg(newCanvas, baseCharacter);
 
     return () => {
-      if (canvas) {
-        canvas.dispose();
-      }
+      newCanvas.dispose();
     };
-  }, [canvasInitialized]);
+  }, []);
 
   const handleAddImage = (state, setState, image) => {
-    if (!canvas) return;
-    
     if (state != null) {
       canvas.remove(state);
     }
@@ -287,7 +285,6 @@ function App() {
       setState(img);
 
       canvas.add(img);
-      canvas.renderAll();
     });
   };
 
@@ -334,7 +331,6 @@ function App() {
           img.scaleToWidth(100);
           img.scaleToHeight(img.height * (100 / img.width));
           canvas.add(img);
-          canvas.renderAll();
         });
       };
       reader.readAsDataURL(file);
@@ -381,45 +377,25 @@ function App() {
   };
 
   const handleCanvasClear = () => {
-    if (canvas) {
-      canvas.dispose();
-    }
-    
+    // canvas.clear();
     const newCanvas = new fabric.Canvas(canvasRef.current, {
       width: window.innerWidth <= 768 ? 400 : 400,
       height: window.innerWidth <= 768 ? 400 : 400,
-      backgroundColor: "#F1F0FB" // Light soft grey background
+      backgroundColor: "#fff",
     });
 
     setCanvas(newCanvas);
-    
+    addMainImg(newCanvas, baseCharacter);
+
     // Reset sticker states
     setHats(null);
     setKimonos(null);
     setWeapons(null);
     setEyewear(null);
     setMouth(null);
-    
-    // Add event listeners
-    newCanvas.on("selection:created", (e) => {
-      setSelectedObject(e.selected[0]);
-    });
-
-    newCanvas.on("object:modified", (e) => {
-      setSelectedObject(e.target);
-    });
-
-    newCanvas.on("selection:cleared", () => {
-      setSelectedObject(null);
-    });
-    
-    // Add the base character
-    addMainImg(newCanvas, baseCharacter);
   };
 
   const handleDelete = () => {
-    if (!canvas) return;
-    
     const activeObjects = canvas.getActiveObjects();
     if (activeObjects && activeObjects.length > 0) {
       activeObjects.forEach((object) => {
@@ -436,7 +412,7 @@ function App() {
   };
 
   const handleTextSubmit = (text, color) => {
-    if (text && canvas) {
+    if (text) {
       const newText = new fabric.Text(text, {
         fontFamily: "Finger Paint",
         fontSize: 20,
@@ -449,7 +425,6 @@ function App() {
       canvas.add(newText);
       canvas.setActiveObject(newText);
       setSelectedObject(newText);
-      canvas.renderAll();
     }
     setShowTextDialog(false);
   };
@@ -484,6 +459,16 @@ function App() {
           className="w-[250px] md:w-[300px] h-auto mx-auto" // Increased mobile size
         />
       </div>
+
+      {/* Top left home logo - fixed position */}
+      {/* <div className="fixed top-5 left-5 z-10">
+        <img
+          src={roundLogo}
+          alt="Home"
+          onClick={() => window.location.href = "https://fantomsonic.com"}
+          className="w-12 h-12 cursor-pointer hover:opacity-80 transition-opacity"
+        />
+      </div> */}
 
       <div className="w-full flex flex-col items-center py-5">
         <input

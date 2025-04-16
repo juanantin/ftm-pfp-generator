@@ -47,12 +47,10 @@ body {
 }
 
 .canvas-container {
-  background-color: #F1F0FB; /* Light soft grey */
   border-radius: 20px;
 }
 
 .canvas-container canvas {
-  background-color: #F1F0FB; /* Light soft grey */
   border-radius: 20px;
 }
 
@@ -63,7 +61,6 @@ body {
 .canvas-mobile,
 .canvas-mobile .canvas-container,
 .canvas-mobile canvas {
-  background-color: #F1F0FB; /* Light soft grey */
   width: 300px !important;
   height: 300px !important;
   border-radius: 20px !important;
