@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect, useRef } from "react";
 import { fabric } from "fabric";
 import { ArrowLeft } from "lucide-react"; // Ensure ArrowLeft is imported
@@ -231,7 +230,7 @@ function App() {
     const newCanvas = new fabric.Canvas(canvasRef.current, {
       width: window.innerWidth <= 768 ? 400 : 400,
       height: window.innerWidth <= 768 ? 400 : 400,
-      backgroundColor: "#fff"
+      backgroundColor: "#F1F0FB", // Changed to light grey
     });
 
     setCanvas(newCanvas);
@@ -381,7 +380,7 @@ function App() {
     const newCanvas = new fabric.Canvas(canvasRef.current, {
       width: window.innerWidth <= 768 ? 400 : 400,
       height: window.innerWidth <= 768 ? 400 : 400,
-      backgroundColor: "#fff",
+      backgroundColor: "#F1F0FB", // Changed to light grey
     });
 
     setCanvas(newCanvas);

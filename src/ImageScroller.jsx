@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from "react";
 
 function ImageScroller({
@@ -157,7 +156,7 @@ function ImageScroller({
                   selectedCategory === "background" 
                     ? "w-[90px] h-[65px]" 
                     : "w-[75px] h-[75px]"
-                } bg-[#F1F1F1] rounded-md overflow-hidden cursor-pointer shadow-md transform hover:scale-110 transition-transform`}
+                } bg-[#F1F0FB] rounded-md overflow-hidden cursor-pointer shadow-md transform hover:scale-110 transition-transform`}
                 onClick={() => 
                   selectedCategory === "background"
                     ? changeBackgroundImage(sticker, canvas)
