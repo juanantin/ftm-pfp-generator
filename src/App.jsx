@@ -1,7 +1,6 @@
-
 import React, { useState, useEffect, useRef } from "react";
 import { fabric } from "fabric";
-import { ArrowLeft } from "lucide-react"; // Ensure ArrowLeft is imported
+import { ArrowLeft } from "lucide-react";
 import ImageScroller from "./ImageScroller";
 import baseCharacter from "../public/lovable-uploads/c1f10ba7-7878-44be-9be8-56715615e69f.png";
 import fantomLogo from "../public/lovable-uploads/e562fef2-b876-4191-9dd8-82c2e04581ec.png";
@@ -231,7 +230,7 @@ function App() {
     const newCanvas = new fabric.Canvas(canvasRef.current, {
       width: window.innerWidth <= 768 ? 400 : 400,
       height: window.innerWidth <= 768 ? 400 : 400,
-      backgroundColor: "#fff"
+      backgroundColor: "#F1F0FB" // Light soft grey background
     });
 
     setCanvas(newCanvas);
@@ -377,11 +376,10 @@ function App() {
   };
 
   const handleCanvasClear = () => {
-    // canvas.clear();
     const newCanvas = new fabric.Canvas(canvasRef.current, {
       width: window.innerWidth <= 768 ? 400 : 400,
       height: window.innerWidth <= 768 ? 400 : 400,
-      backgroundColor: "#fff",
+      backgroundColor: "#F1F0FB" // Light soft grey background
     });
 
     setCanvas(newCanvas);
