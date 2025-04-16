@@ -1,4 +1,3 @@
-
 /* App.css - Updated for latest Lovable version */
 
 .lovable-app {
@@ -82,9 +81,8 @@ body {
   background-color: #050b1f; /* Fallback color matching the night sky */
 }
 
-/* Hover effects for category buttons */
+/* Remove initial animations, keep hover effects snappy */
 .category-btn:hover {
-  transform: scale(1.05);
-  transition: all 0.3s ease;
+  transform: scale(1.02);
+  transition: all 0.1s ease; /* Faster scaling */
 }
-
